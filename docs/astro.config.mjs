@@ -1,0 +1,30 @@
+// @ts-check
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+
+// https://astro.build/config
+export default defineConfig({
+	integrations: [
+		starlight({
+			title: 'ZapCircle Project',
+			social: {
+				github: 'https://github.com/jefflinwood/zapcircle',
+			},
+			sidebar: [
+				{
+					label: 'Guides',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Getting Started', slug: 'guides/getting-started' },
+						{ label: 'Create Behaviors', slug: 'guides/create-behaviors'},
+						{ label: 'Generating Code', slug: 'guides/generating-code'}
+					],
+				},
+				{
+					label: 'Behaviors',
+					autogenerate: { directory: 'behaviors' },
+				},
+			],
+		}),
+	],
+});
