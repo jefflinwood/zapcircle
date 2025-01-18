@@ -1,0 +1,6 @@
+Analyze the following React component and provide potential edge cases that should be tested:
+
+Component Source Code:
+\`\`\`jsx
+${sourceCode}
+\`\`\`

@@ -1,0 +1,6 @@
+Analyze the following React component and provide potential accessibility issues that should be addressed:
+
+Component Source Code:
+\`\`\`
+${sourceCode}
+\`\`\`

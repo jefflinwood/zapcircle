@@ -1,0 +1,8 @@
+Analyze the following React component and suggest test cases to validate its behavior and edge cases. 
+
+Return an array of strings, where each string represents a single test case. Do not include any comments, explanations, or markdown formatting. Only return the array.
+
+Component Source Code:
+\`\`\`
+${sourceCode}
+\`\`\`

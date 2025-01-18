@@ -1,0 +1,49 @@
+{
+  "name": "zapcircle",
+  "author": {"name": "Jeff Linwood"},
+  "version": "0.0.1",
+  "license":"MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.14",
+    "@types/mock-fs": "^4.13.4",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "copyfiles": "^2.4.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "fs-extra": "^11.2.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.3.0",
+    "mock-fs": "^5.4.1",
+    "prettier": "^3.4.2",
+    "ts-jest": "^29.2.5",
+    "vitest": "^2.1.8"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "test": "jest",
+    "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@langchain/core": "^0.3.27",
+    "@langchain/openai": "^0.3.16",
+    "commander": "^13.0.0",
+    "dotenv": "^16.4.7",
+    "langchain": "^0.3.9"
+  }
+}
