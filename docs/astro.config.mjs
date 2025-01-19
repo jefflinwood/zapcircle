@@ -21,6 +21,14 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'Concepts',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Behavior-Driven Development', slug: 'concepts/behavior-driven-development' },
+						{ label: 'Developer Workflow', slug: 'concepts/developer-workflow'}
+					],
+				},
+				{
 					label: 'Behaviors',
 					autogenerate: { directory: 'behaviors' },
 				},

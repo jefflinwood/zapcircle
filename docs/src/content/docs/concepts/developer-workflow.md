@@ -1,4 +1,7 @@
-# Using ZapCircle in a Developer's Workflow
+---
+title: Using ZapCircle in a Developer's Workflow
+description: ZapCircle fits into your existing development process, and improves the speed and quality of your development by reducing back and forth between developers and product owners.
+---
 
 ## Overview
 Once you adopt ZapCircle into your development process, you'll see improvements in how fast you can get code from ideas to production-ready.
