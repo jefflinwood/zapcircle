@@ -15,7 +15,7 @@ hero:
       icon: right-arrow
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 ## Developer Guides
 
@@ -33,9 +33,22 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Example Behaviors
 
+
 <CardGrid stagger>
-	<Card title="Login Form" icon="user" link="/examples/front-end/login-form/">
+	<Card title="Login Form" icon="user" link="behaviors/front-end/login-form/">
 		Behavior-driven implementation for a user-friendly login experience.
+	</Card>
+	<Card title="Search Bar" icon="search" link="behaviors/front-end/search-bar/">
+		Behavior-driven search input with debounced API calls.
+	</Card>
+	<Card title="Button" icon="hand-pointer" link="behaviors/front-end/button/">
+		Versatile button component with variant support and loading state.
+	</Card>
+	<Card title="Modal Dialog" icon="window" link="behaviors/front-end/modal-dialog/">
+		Popup container for messages or forms with accessible behavior.
+	</Card>
+	<Card title="Notification Banner" icon="bell" link="behaviors/front-end/notification-banner/">
+		Dismissible banner for displaying alerts or success messages.
 	</Card>
 </CardGrid>
 
