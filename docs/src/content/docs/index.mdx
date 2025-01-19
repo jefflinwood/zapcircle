@@ -11,7 +11,7 @@ hero:
       link: /guides/getting-started/
       icon: right-arrow
     - text: Explore Behaviors
-      link: /examples/front-end/login-form/
+      link: /behaviors/front-end/login-form/
       icon: right-arrow
 ---
 
@@ -20,14 +20,23 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 ## Developer Guides
 
 <CardGrid stagger>
-	<Card title="Getting Started" icon="rocket" link="/guides/getting-started/">
+	<Card title="Getting Started" icon="rocket">
 		Set up ZapCircle and integrate it into your project.
+
+		[Read](/guides/getting-started/)
+
 	</Card>
-	<Card title="Create Behaviors" icon="pencil" link="/guides/create-behaviors/">
+	<Card title="Create Behaviors" icon="pencil">
 		Learn how to define and manage behaviors with `.zap.toml`.
+
+		[Read](/guides/create-behaviors/)
+
 	</Card>
-	<Card title="Generating Code" icon="code" link="/guides/generating-code/">
+	<Card title="Generating Code" icon="code">
 		Automatically generate front-end components from behaviors.
+
+		[Read](/guides/generating-code/)
+
 	</Card>
 </CardGrid>
 
@@ -84,21 +93,23 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 	<div>
 		### Notification Banner
 		Dismissible banner for displaying alerts or success messages.
-		
+
 		[Example](/behaviors/front-end/notification-banner/)
 	</div>
 </div>
 
-## Next steps
+## Concepts
 
 <CardGrid stagger>
-	<Card title="Contribute to Docs" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add More Examples" icon="add-document">
+	<LinkCard title="Behavior-Driven Development (BDD)" 
+	href="/concepts/behavior-driven-development"
+	description="Learn how Behavior-Driven Development works in 2025 with ZapCircle and LLM-powered code generation.">
+		
+	</LinkCard>
+	<LinkCard title="Developer Workflow"
+	href="/concepts/developer-workflow"
+	description="Integrate ZapCircle into your developer workflow as a gradual improvement to your existing process."
+	>
 		Expand the example library by adding new behavior categories.
-	</Card>
-	<Card title="FAQ & Support" icon="question-mark">
-		Find answers and troubleshooting tips in the FAQ.
-	</Card>
+	</LinkCard>
 </CardGrid>
