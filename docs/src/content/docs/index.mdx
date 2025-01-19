@@ -3,34 +3,55 @@ title: ZapCircle - Behavior-Driven Development with LLMs
 description: Accelerate your development with human-readable behavior
 template: splash
 hero:
-  tagline: Add ZapCircle to your project quickly
+  tagline: Start building with behavior-driven development
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Getting Started
+    - text: Get Started
       link: /guides/getting-started/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
+    - text: Explore Behaviors
+      link: /examples/front-end/login-form/
+      icon: right-arrow
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
+## Developer Guides
+
+<CardGrid stagger>
+	<Card title="Getting Started" icon="rocket" link="/guides/getting-started/">
+		Set up ZapCircle and integrate it into your project.
+	</Card>
+	<Card title="Create Behaviors" icon="pencil" link="/guides/create-behaviors/">
+		Learn how to define and manage behaviors with `.zap.toml`.
+	</Card>
+	<Card title="Generating Code" icon="code" link="/guides/generating-code/">
+		Automatically generate front-end components from behaviors.
+	</Card>
+</CardGrid>
+
+## Example Behaviors
+
+<CardGrid stagger>
+	<Card title="Login Form" icon="user" link="/examples/front-end/login-form/">
+		Behavior-driven implementation for a user-friendly login experience.
+	</Card>
+</CardGrid>
+
 ## Next steps
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
+	<Card title="Contribute to Docs" icon="pencil">
 		Edit `src/content/docs/index.mdx` to see this page change.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Add More Examples" icon="add-document">
+		Expand the example library by adding new behavior categories.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Site Configuration" icon="setting">
+		Edit your `astro.config.mjs` to customize your site further.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
+	<Card title="Starlight Documentation" icon="open-book">
 		Learn more in [the Starlight Docs](https://starlight.astro.build/).
 	</Card>
 </CardGrid>
