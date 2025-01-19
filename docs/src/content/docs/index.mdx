@@ -33,24 +33,51 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 ## Example Behaviors
 
+**Explore common front-end components and their behavior-driven specifications.**
 
-<CardGrid stagger>
-	<Card title="Login Form" icon="user" link="behaviors/front-end/login-form/">
-		Behavior-driven implementation for a user-friendly login experience.
-	</Card>
-	<Card title="Search Bar" icon="search" link="behaviors/front-end/search-bar/">
-		Behavior-driven search input with debounced API calls.
-	</Card>
-	<Card title="Button" icon="hand-pointer" link="behaviors/front-end/button/">
-		Versatile button component with variant support and loading state.
-	</Card>
-	<Card title="Modal Dialog" icon="window" link="behaviors/front-end/modal-dialog/">
-		Popup container for messages or forms with accessible behavior.
-	</Card>
-	<Card title="Notification Banner" icon="bell" link="behaviors/front-end/notification-banner/">
-		Dismissible banner for displaying alerts or success messages.
-	</Card>
-</CardGrid>
+<style>
+{`
+.behavior-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1.5rem;
+	padding: 1rem 0;
+}
+.behavior-grid div {
+	padding: 1rem;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background-color: #f9f9f9;
+}
+.behavior-grid div a {
+	color: #0078d4;
+	text-decoration: none;
+}
+`}
+</style>
+
+<div class="behavior-grid">
+	<div>
+		### Login Form
+		[Behavior-driven implementation for a user-friendly login experience.](/behaviors/front-end/login-form/)
+	</div>
+	<div>
+		### Search Bar
+		[Behavior-driven search input with debounced API calls.](/behaviors/front-end/search-bar/)
+	</div>
+	<div>
+		### Button
+		[Versatile button component with variant support and loading state.](/behaviors/front-end/button/)
+	</div>
+	<div>
+		### Modal Dialog
+		[Popup container for messages or forms with accessible behavior.](/behaviors/front-end/modal-dialog/)
+	</div>
+	<div>
+		### Notification Banner
+		[Dismissible banner for displaying alerts or success messages.](/behaviors/front-end/notification-banner/)
+	</div>
+</div>
 
 ## Next steps
 
@@ -61,10 +88,7 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 	<Card title="Add More Examples" icon="add-document">
 		Expand the example library by adding new behavior categories.
 	</Card>
-	<Card title="Site Configuration" icon="setting">
-		Edit your `astro.config.mjs` to customize your site further.
-	</Card>
-	<Card title="Starlight Documentation" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="FAQ & Support" icon="question-mark">
+		Find answers and troubleshooting tips in the FAQ.
 	</Card>
 </CardGrid>
