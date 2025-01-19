@@ -87,10 +87,10 @@ behavior = """
 After you create the file, you'll need to tell ZapCircle to generate the React component.
 
 ```bash
-npx svalbard generate jsx ./LoginForm.zap.toml
+npx zapcircle generate jsx ./LoginForm.zap.toml
 ```
 
-After calling out to the LLM, Svalbard will generate a new JSX React component for you named `LoginForm.jsx`. Here's an example code listing:
+After calling out to the LLM, ZapCircle will generate a new JSX React component for you named `LoginForm.jsx`. Here's an example code listing:
 
 ```jsx title=LoginForm.jsx
 import React, { useState } from 'react';

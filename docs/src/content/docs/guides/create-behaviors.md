@@ -13,7 +13,7 @@ To analyze your code base, run:
 npx zapcircle analyze jsx .
 ```
 
-Svalbard will find each JSX React component in the directory that you specify, and then process that component.
+ZapCircle will find each JSX React component in the directory that you specify, and then process that component.
 
 ## Example behavior
 
