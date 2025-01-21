@@ -6,7 +6,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'ZapCircle Project',
+			title: 'ZapCircle',
 			social: {
 				github: 'https://github.com/jefflinwood/zapcircle',
 			},
@@ -31,6 +31,10 @@ export default defineConfig({
 				{
 					label: 'Behaviors',
 					autogenerate: { directory: 'behaviors' },
+				},
+				{
+					label: 'Reference',
+					autogenerate: { directory: 'reference' },
 				},
 			],
 		}),
