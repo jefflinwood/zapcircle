@@ -58,10 +58,26 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 	border-radius: 8px;
 	background-color: #f9f9f9;
 }
+
+
 .behavior-grid div a {
 	color: #0078d4;
 	text-decoration: none;
 }
+
+@media (prefers-color-scheme: dark) {
+	.behavior-grid div {
+		border: 1px solid #444444; /* Dark mode border */
+		background-color: #2e2e2e; /* Dark mode background */
+		color: #ffffff; /* Light text for contrast */
+	}
+
+	.behavior-grid div a {
+		color: #b6c6fa;
+		text-decoration: none;
+	}
+}
+
 `}
 </style>
 
