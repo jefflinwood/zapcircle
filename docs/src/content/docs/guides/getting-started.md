@@ -5,8 +5,6 @@ description: Set up ZapCircle with your code base to get started with behavior-d
 
 This guide walks you through the basics of adding ZapCircle to your React-based web development project.
 
-At the end of the guide, you'll have human-readable behaviors for all of your React components (JSX or TSX). You'll also have created a new component directly from a behavior prompt, and generated unit tests for that component. We'll then take things a step further and modify how that component works with the ZapCircle Studio.
-
 # Important to know
 
 ZapCircle is a developer tool, and does not modify your production build or generate code at run time. You can review, modify, and test any generated code before adding it to source control - just like any other tool.
@@ -18,7 +16,7 @@ The current version of ZapCircle works with the [Open AI API](https://platform.o
 # Prerequisites
 
 To get started with ZapCircle, you'll need two things:
-* A React code base
+* Your code, or an example project, with React components in either JSX or TSX format. This could be Next, React Router/Remix, or something else.
 * An OpenAI API Key - [Create an API Key here](https://platform.openai.com/api-keys)
 
 Once you have the API Key, add it to your local .env file as:
@@ -29,34 +27,17 @@ OPENAI_API_KEY=sk-proj-XXXYYYZZZZ000011112222333
 
 Or set it as an environment variable. You do not need this API key in your production environment.
 
-# Installing the ZapCircle command line tool
+# Using the ZapCircle command line tool
 
-Add the `@zapcircle/cli` command line tool to your project's developer dependencies with the following command:
+You typically don't need to install ZapCircle as a development dependency in your project.
 
-```bash
-npm install --dev @zapcircle/cli
-```
-
-This will give you access to the `npx zapcircle` command.
-
-# Creating the zapcircle.config.toml configuration file
-
-Once you have the command line tools setup, you can create a `zapcircle.config.toml` file for your current project.
-
-The easiest approach is to use the `npx zapcircle init` command:
+Run the tool with the `npx zapcircle` command.
 
 ```bash
-npx zapcircle init
+npx zapcircle --version
 ```
 
-You'll get a new `zapcircle.config.toml` file, which you can then customize:
-
-```toml
-[prompts]
-additionalInstructions=
-```
-
-Here, you could include suggestions for your code base, such as always use TypeScript, use Tailwind, or use Jest for testing.
+You should see the version of ZapCircle appear in the command line output.
 
 # Next step
 
