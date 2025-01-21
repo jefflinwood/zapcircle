@@ -1,8 +1,21 @@
 {
   "name": "zapcircle",
-  "author": {"name": "Jeff Linwood"},
+  "author": {
+    "name": "Jeff Linwood"
+  },
   "version": "0.0.1",
-  "license":"MIT",
+  "license": "MIT",
+  "bin": {
+    "zapcircle": "./dist/src/commandline/commandLine.js"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "test": "jest",
+    "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
+    "prepare": "husky install",
+    "start": "ts-node src/commandline/commandLine.ts"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
@@ -23,6 +36,7 @@
     "mock-fs": "^5.4.1",
     "prettier": "^3.4.2",
     "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "vitest": "^2.1.8"
   },
   "lint-staged": {
@@ -30,13 +44,6 @@
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "scripts": {
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --write .",
-    "test": "jest",
-    "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
-    "prepare": "husky install"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
