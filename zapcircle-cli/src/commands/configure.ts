@@ -38,10 +38,11 @@ export const configureZapCircle = async () => {
 
   fs.writeFileSync(userConfigPath, `# ZapCircle CLI Configuration
 preferredLLM = "${config.preferredLLM}"
+apiKey = "${config.apiKey}"
+
 [models]
 large = "${config.models.large}"
 small = "${config.models.small}"
-apiKey = "${config.apiKey}"
 `);
 
   console.log(`Configuration saved to ${userConfigPath}`);

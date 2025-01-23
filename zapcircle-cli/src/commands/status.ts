@@ -20,7 +20,7 @@ export const checkZapCircleStatus = () => {
       console.log(`  Preferred LLM: ${userConfig.preferredLLM || 'Not Configured'}`);
       console.log(`  Large Model: ${userConfig.models?.large || 'Not Configured'}`);
       console.log(`  Small Model: ${userConfig.models?.small || 'Not Configured'}`);
-      console.log(`  OpenAI API Key: ${userConfig.apiKey ? 'Configured' : 'Not Configured'}`);
+      console.log(`  API Key: ${userConfig.apiKey ? 'Configured' : 'Not Configured'}`);
     } catch (error) {
       console.error(`Error reading user configuration: ${error}`);
     }
