@@ -19,25 +19,80 @@ To get started with ZapCircle, you'll need two things:
 * Your code, or an example project, with React components in either JSX or TSX format. This could be Next, React Router/Remix, or something else.
 * An OpenAI API Key - [Create an API Key here](https://platform.openai.com/api-keys)
 
-Once you have the API Key, add it to your local .env file as:
 
-```
-OPENAI_API_KEY=sk-proj-XXXYYYZZZZ000011112222333
-```
+## Setting up ZapCircle
 
-Or set it as an environment variable. You do not need this API key in your production environment.
+### Step 1: Verify Installation
 
-# Using the ZapCircle command line tool
-
-You typically don't need to install ZapCircle as a development dependency in your project.
-
-Run the tool with the `npx zapcircle` command.
+You typically don't need to install ZapCircle as a development dependency in your project. Run the following command to check the CLI version:
 
 ```bash
 npx zapcircle --version
 ```
 
-You should see the version of ZapCircle appear in the command line output.
+You should see the version of ZapCircle appear in the command line output, confirming the CLI is installed and ready to use.
+
+---
+
+### Step 2: Configure ZapCircle
+
+Run the following command to interactively set up your preferred LLM and API key:
+
+```bash
+npx zapcircle configure
+```
+
+You'll be prompted to provide:
+
+1. Your preferred LLM (default: `openai`) - note, this is the only LLM supported with the current version.
+2. The large model name (default: `o1`).
+3. The small model name (default: `o1-mini`).
+4. Your LLM API key (if applicable).
+
+Example output:
+
+```plaintext
+Configuring ZapCircle CLI...
+
+Preferred LLM (openai): openai
+OpenAI large model (default: o1): o1
+OpenAI small model (default: o1-mini): o1-mini
+OpenAI API key: ********
+
+Configuration saved to ~/.zapcircle/zapcircle.cli.toml
+```
+
+---
+
+### Step 3: Confirm Your Setup
+
+After configuring ZapCircle, you can confirm everything is set up correctly by running:
+
+```bash
+npx zapcircle status
+```
+
+This command will display:
+
+- The preferred LLM configured for your user.
+- Whether a project-specific configuration file (`zapcircle.config.toml`) exists.
+- Detailed settings for the user and project configuration.
+
+Example output:
+
+```plaintext
+ZapCircle Configuration Status:
+
+User Configuration:
+  Preferred LLM: openai
+  Large Model: o1
+  Small Model: o1-mini
+  OpenAI API Key: Configured
+
+Project Configuration: Not Found
+```
+
+---
 
 # Next step
 
