@@ -94,8 +94,118 @@ npx zapcircle generateTests ts ./behaviors/LoginForm.zap.toml
 Generating tests "ts" from "./behaviors/LoginForm.zap.toml"...
 ```
 
+
 ---
 
+### `configure`
+**Description:**  
+Interactively set up ZapCircle by selecting a preferred LLM (e.g., OpenAI) and providing configuration parameters like the OpenAI API key and model names.
+
+**Usage:**
+```bash
+npx zapcircle configure
+```
+
+**Prompts:**
+- Preferred LLM (default: `openai`).
+- Large model name (default: `gpt-4`).
+- Small model name (default: `gpt-3.5-turbo`).
+- OpenAI API key.
+
+**Example:**
+```bash
+npx zapcircle configure
+```
+
+**Output:**
+```plaintext
+Configuring ZapCircle CLI...
+
+Preferred LLM (openai): openai
+OpenAI large model (default: o1): o1
+OpenAI small model (default: o1-mini): o1-mini
+OpenAI API key: ********
+
+Configuration saved to ~/.zapcircle/zapcircle.cli.toml
+```
+
+---
+
+### `init`
+**Description:**  
+Initialize a new ZapCircle project by creating a `zapcircle.config.toml` file in the current directory.
+
+**Usage:**
+```bash
+npx zapcircle init
+```
+
+**Output:**  
+Creates a `zapcircle.config.toml` file with default settings.
+
+**Example:**
+```bash
+npx zapcircle init
+```
+
+**Generated File:**
+```toml
+# ZapCircle Project Configuration
+[prompts]
+all = ""
+analyze = ""
+generate = ""
+
+[filetype.generate]
+```
+
+**Output:**
+```plaintext
+Initializing new ZapCircle project...
+ZapCircle project initialized. Configuration file created at ./zapcircle.config.toml
+```
+
+---
+
+### `status`
+**Description:**  
+Display the current ZapCircle configuration, including:
+- The user's preferred LLM.
+- Whether a project configuration file is present.
+- Detailed settings for the project.
+
+**Usage:**
+```bash
+npx zapcircle status
+```
+
+**Example:**
+```bash
+npx zapcircle status
+```
+
+**Output:**
+```plaintext
+ZapCircle Configuration Status:
+
+User Configuration:
+  Preferred LLM: openai
+  Large Model: o1
+  Small Model: o1-mini
+  OpenAI API Key: Configured
+
+Project Configuration: Found
+  Prompt Settings:
+    All Prompts: Custom instruction
+    Analyze Prompts: Analyze-specific instruction
+    Generate Prompts: Generate-specific instruction
+  Filetype Generate Prompts:
+    jsx: JSX-specific instruction
+
+Status check complete.
+```
+
+---
 ## Global Options
 
 ### `--version`
