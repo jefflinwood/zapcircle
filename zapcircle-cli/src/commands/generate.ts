@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
-import { invokeLLM } from "../core/llmService";
+import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
 export async function generateComponent(fileType: string, tomlFilePath: string, options: { overwrite?: boolean; output?: string }) {
   try {
@@ -18,7 +18,7 @@ export async function generateComponent(fileType: string, tomlFilePath: string, 
 
     const prompt = await loadPrompt(fileType, 'generate', codeVariables);
 
-    const result = await invokeLLM(prompt);
+    const result = await invokeLLMWithSpinner(prompt);
 
     const outputFilePath = path.join(outputDir, `${path.basename(tomlFilePath, ".zap.toml")}.${fileType}`);
     writeFileSync(outputFilePath, result, { flag: options.overwrite ? "w" : "wx" });
