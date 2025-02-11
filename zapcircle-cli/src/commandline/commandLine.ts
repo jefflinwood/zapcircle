@@ -36,7 +36,7 @@ program
   .command('generateTests <filetype> <pathToToml> <pathToCode>')
   .description('Generate test files from the provided .zap.toml file and source code file')
   .action((filetype, pathToToml, pathToCode) => {
-    console.log(`Generating tests "${filetype}" from "${pathToToml} for ${pathToCode}"...`);
+    console.log(`Generating tests "${filetype}" from "${pathToToml}" for "${pathToCode}"...`);
     generateTests(filetype, pathToToml, pathToCode, {})
   });
 
