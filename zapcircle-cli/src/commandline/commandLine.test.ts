@@ -28,9 +28,9 @@ describe('ZapCircle CLI', () => {
   });
 
   it('should handle the `generateTests` command', () => {
-    process.argv = ['node', 'commandLine.ts', 'generateTests', 'jest', './path/to/file.zap.toml'];
+    process.argv = ['node', 'commandLine.ts', 'generateTests', 'jsx', './path/to/file.zap.toml', './path/file.jsx'];
     program.parse(process.argv);
-    expect(outputData.join(' ')).toContain('Generating tests "jest" from "./path/to/file.zap.toml"...');
+    expect(outputData.join(' ')).toContain('Generating tests "jsx" from "./path/to/file.zap.toml" for "./path/file.jsx"');
   });
 
   it('should return an error for an unknown command', () => {
