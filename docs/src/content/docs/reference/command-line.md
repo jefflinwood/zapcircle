@@ -78,20 +78,22 @@ Generate test files based on a `.zap.toml` behavior specification.
 
 **Usage:**
 ```bash
-npx zapcircle generateTests <filetype> <pathToToml>
+npx zapcircle generateTests <filetype> <pathToToml> <pathToCode>
 ```
 
 **Arguments:**
 - `<filetype>`: The type of test file to generate (e.g., `jsx`, `ts`).
 - `<pathToToml>`: The path to the `.zap.toml` file defining the behavior.
+- `<pathToCode>`: The path to the source code (such as a `.jsx` file) to be tested.
 
 **Example:**
 ```bash
-npx zapcircle generateTests ts ./behaviors/LoginForm.zap.toml
+npx zapcircle generateTests jsx ./behaviors/LoginForm.zap.toml ./src/components/LoginForm.jsx
 ```
+
 **Output:**
 ```plaintext
-Generating tests "ts" from "./behaviors/LoginForm.zap.toml"...
+Generating tests "jsx" from "./behaviors/LoginForm.zap.toml" for "./src/components/LoginForm.jsx"
 ```
 
 

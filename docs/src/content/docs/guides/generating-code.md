@@ -3,7 +3,7 @@ title: Generating Components with ZapCircle
 description: Describe the behavior for your component, and then generate the code for the JSX or TSX file
 ---
 
-Write up the behavior for your new component in a `.zap.toml` file, and then let ZapCircle generate the JSX or TSX file with the `generate-components` command.
+Write up the behavior for your new component in a `.zap.toml` file, and then let ZapCircle generate the JSX or TSX file with the `generate` command.
 
 ## Creating a ZapCircle TOML file
 

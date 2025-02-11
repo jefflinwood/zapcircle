@@ -6,4 +6,5 @@ module.exports = {
   transform: {
     "^.+.tsx?$": ["ts-jest", {}],
   },
+  modulePathIgnorePatterns: ["scratch"]
 };

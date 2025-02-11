@@ -18,7 +18,8 @@ export default defineConfig({
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Getting Started', slug: 'guides/getting-started' },
 						{ label: 'Create Behaviors', slug: 'guides/create-behaviors'},
-						{ label: 'Generating Code', slug: 'guides/generating-code'}
+						{ label: 'Generating Code', slug: 'guides/generating-code'},
+						{ label: 'Generating Tests', slug: 'guides/generating-tests'}
 					],
 				},
 				{
