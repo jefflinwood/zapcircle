@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
-import { invokeLLM } from "../core/llmService";
+import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
 // Mapping file extensions for test files
 const testFileExtensions: Record<string, string> = {
@@ -36,7 +36,7 @@ export async function generateTests(
     const prompt = await loadPrompt(fileType, "generateTests", testVariables);
 
     // Invoke LLM to generate test cases
-    const result = await invokeLLM(prompt);
+    const result = await invokeLLMWithSpinner(prompt);
 
     // Determine the correct test file extension
     const extension = testFileExtensions[fileType] || fileType;

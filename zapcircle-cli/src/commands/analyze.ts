@@ -2,7 +2,7 @@ import { readdirSync, statSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
-import { invokeLLM } from "../core/llmService";
+import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
 export async function analyze(fileType: string, targetPath: string, options: { output?: string }) {
   try {
@@ -31,7 +31,7 @@ export async function analyze(fileType: string, targetPath: string, options: { o
 
         const prompt = await loadPrompt(fileType, "analyze", analysisVariables);
 
-        const result = await invokeLLM(prompt);
+        const result = await invokeLLMWithSpinner(prompt);
 
         const tomlVariables = {
             name: baseName,

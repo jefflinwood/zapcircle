@@ -1,9 +1,8 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { execSync } from "child_process";
-import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
-import { invokeLLM } from "../core/llmService";
+import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
 export async function updateCode(
   pathToToml: string,
@@ -66,8 +65,7 @@ export async function updateCode(
       return;
     }
 
-    // Invoke the LLM for an intelligent update
-    const updatedCode = await invokeLLM(prompt);
+    const updatedCode = await invokeLLMWithSpinner(prompt);
 
     // Interactive Review Mode
     if (options.review) {
