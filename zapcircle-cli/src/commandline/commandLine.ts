@@ -8,6 +8,7 @@ import { initProject } from '../commands/init';
 import { configureZapCircle } from '../commands/configure';
 import { checkZapCircleStatus } from '../commands/status';
 import { generateTests } from '../commands/generateTests';
+import { updateCode } from '../commands/updateCode';
 
 const program = new Command();
 
@@ -38,6 +39,16 @@ program
   .action((filetype, pathToToml, pathToCode) => {
     console.log(`Generating tests "${filetype}" from "${pathToToml}" for "${pathToCode}"...`);
     generateTests(filetype, pathToToml, pathToCode, {})
+  });
+
+program
+  .command('update <pathToToml> <pathToCode>')
+  .description('Update code based on the changes in its .zap.toml behavior file')
+  .option('--review', 'Enable interactive review before applying changes')
+  .option('--diff-only', 'Show the difference but do not apply updates')
+  .action((pathToToml, pathToCode) => {
+    console.log(`Updating code in "${pathToCode}" based on "${pathToToml}"...`);
+    updateCode(pathToToml, pathToCode, {})
   });
 
 program

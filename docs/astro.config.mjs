@@ -19,7 +19,8 @@ export default defineConfig({
 						{ label: 'Getting Started', slug: 'guides/getting-started' },
 						{ label: 'Create Behaviors', slug: 'guides/create-behaviors'},
 						{ label: 'Generating Code', slug: 'guides/generating-code'},
-						{ label: 'Generating Tests', slug: 'guides/generating-tests'}
+						{ label: 'Generating Tests', slug: 'guides/generating-tests'},
+						{ label: 'Updating Code', slug: 'guides/updating-code'}
 					],
 				},
 				{
