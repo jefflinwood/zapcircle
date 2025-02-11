@@ -1,0 +1,24 @@
+Based on the following behavior update and the existing React component, update the component while preserving any additional modifications.
+
+## Behavior Change Summary:
+The component behavior has changed as follows:
+${behaviorDiff}
+
+## New Behavior:
+${behavior}
+
+## Existing Component Code:
+${existingCode}
+
+### Requirements:
+1. Modify the component to reflect the updated behavior.
+2. Preserve any additional logic, state management, and event handlers from the existing code.
+3. Do not remove or alter unrelated code.
+4. Maintain the existing coding style and structure.
+5. If a new prop, function, or state update is required, add it in the most logical place.
+
+### Output Format:
+- Only return the updated React component in JSX format.
+- Do not include comments, markdown, or other text.
+- Do not include the ``` code delimiters for markdown.
+- Ensure the output is a complete and ready-to-run React component.
