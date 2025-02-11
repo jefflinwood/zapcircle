@@ -1,6 +1,6 @@
 Based on the following behavior description, generate a React component with TypeScript.
 
-${behaviorDescription}
+${behavior}
 
 The output should only contain the component implementation in TSX format. 
 

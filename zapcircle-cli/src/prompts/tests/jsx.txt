@@ -1,9 +1,0 @@
-Based on the following unit test description and this React component source code, generate a unit test case:
-
-- Unit Test Description: ${unitTestDescription}
-- Component Source Code:
-\`\`\`
-${componentSource}
-\`\`\`
-
-The output should only contain the unit test implementation in plain JavaScript. Do not include comments, markdown, or any other text.

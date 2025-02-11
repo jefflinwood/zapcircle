@@ -7,6 +7,7 @@ import { analyze } from '../commands/analyze';
 import { initProject } from '../commands/init';
 import { configureZapCircle } from '../commands/configure';
 import { checkZapCircleStatus } from '../commands/status';
+import { generateTests } from '../commands/generateTests';
 
 const program = new Command();
 
@@ -32,10 +33,11 @@ program
   });
 
 program
-  .command('generateTests <filetype> <pathToToml>')
-  .description('Generate test files from the provided .zap.toml file')
-  .action((filetype, pathToToml) => {
-    console.log(`Generating tests "${filetype}" from "${pathToToml}"...`);
+  .command('generateTests <filetype> <pathToToml> <pathToCode>')
+  .description('Generate test files from the provided .zap.toml file and source code file')
+  .action((filetype, pathToToml, pathToCode) => {
+    console.log(`Generating tests "${filetype}" from "${pathToToml} for ${pathToCode}"...`);
+    generateTests(filetype, pathToToml, pathToCode, {})
   });
 
 program

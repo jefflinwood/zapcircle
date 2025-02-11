@@ -1,0 +1,15 @@
+Based on the following behavior and this React component source code, generate a unit test case:
+
+- Behavior: ${behavior}
+- Component Source Code:
+\`\`\`
+${code}
+\`\`\`
+
+The output should only contain the unit test implementation in plain JavaScript. 
+
+Do not include comments, markdown, or any other text. 
+
+Do not include the ``` code delimiters for markdown.
+
+The output should be ready to run as a JavaScript file.
