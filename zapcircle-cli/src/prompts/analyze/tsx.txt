@@ -1,0 +1,6 @@
+Analyze the following React component and provide a detailed behavior summary:
+
+Component Source Code:
+\`\`\`
+${sourceCode}
+\`\`\`
