@@ -1,14 +1,18 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { execSync } from "child_process";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { writeOutputFile } from "../utils/writeOutputFile";
 
 export async function updateCode(
   pathToToml: string,
   pathToCode: string,
-  options: { review?: boolean; diffOnly?: boolean }
+  options: { review?: boolean; diffOnly?: boolean, verbose?: boolean, interactive?: boolean }
 ) {
+  const isVerbose = options.verbose || false;
+  const isInteractive = options.interactive || false;
+
   try {
     // Check if both files exist
     if (!existsSync(pathToToml)) {
@@ -65,7 +69,7 @@ export async function updateCode(
       return;
     }
 
-    const updatedCode = await invokeLLMWithSpinner(prompt);
+    const updatedCode = await invokeLLMWithSpinner(prompt, isVerbose);
 
     // Interactive Review Mode
     if (options.review) {
@@ -79,7 +83,7 @@ export async function updateCode(
     }
 
     // Apply the update and write back to the component file
-    writeFileSync(pathToCode, updatedCode, "utf-8");
+    writeOutputFile(pathToCode, updatedCode, isInteractive)
 
     console.log(`Component updated: ${pathToCode}`);
   } catch (error) {

@@ -2,7 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { loadUserConfig } from "./config";
 import "dotenv/config";
 
-export async function invokeLLM(prompt: string) {
+export async function invokeLLM(prompt: string, isVerbose: boolean) {
 
     const userConfig = loadUserConfig();
 
@@ -22,8 +22,18 @@ export async function invokeLLM(prompt: string) {
     });
 
   try {
+
+    if (isVerbose) {
+      console.log("Prompt: " + prompt);
+    }
+
     const response = await model.invoke(prompt);
-    return response.content.toString();
+    const result = response.content.toString();
+
+    if (isVerbose) {
+      console.log("Response: " + result);
+    }
+    return result;
   } catch (error) {
     console.error("Error invoking LLM:", error);
     throw error;
