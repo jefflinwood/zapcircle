@@ -1,13 +1,15 @@
-import { readdirSync, statSync, readFileSync, writeFileSync } from "fs";
+import { readdirSync, statSync, readFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { writeOutputFile } from "../utils/writeOutputFile";
 
-export async function analyze(fileType: string, targetPath: string, options: { verbose?: boolean, output?: string }) {
+export async function analyze(fileType: string, targetPath: string, options: { verbose?: boolean, output?: string, interactive?: boolean }) {
   try {
     const outputDir = options.output || path.dirname(targetPath);
     const isVerbose = options.verbose || false;
+    const isInteractive = options.interactive || false;
     
     // Helper function for recursion
     const processPath = async (currentPath: string) => {
@@ -44,7 +46,7 @@ export async function analyze(fileType: string, targetPath: string, options: { v
         const outputFilePath = path.join(
           outputDir, path.basename(currentPath) + ".zap.toml");
 
-        writeFileSync(outputFilePath, tomlContents);
+        writeOutputFile(outputFilePath, tomlContents, isInteractive)
 
         console.log(`Analysis generated: ${outputFilePath}`);
       }
