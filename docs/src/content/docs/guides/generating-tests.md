@@ -15,7 +15,7 @@ You'll need:
 Similar to how you generate code with ZapCircle, you can generate tests - there is an extra parameter that points to the code or component being tested:
 
 ```bash
-npx zapcircle generateTests jsx ./LoginForm.zap.toml ./LoginForm.jsx
+npx zapcircle generateTests jsx ./LoginForm.jsx.zap.toml ./LoginForm.jsx
 ```
 
 Currently, ZapCircle assumes the use of the `jest` testing framework, but that will be configurable in future versions.

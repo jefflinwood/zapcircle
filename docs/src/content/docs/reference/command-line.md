@@ -37,6 +37,10 @@ npx zapcircle analyze <filetype> <path>
 - `<filetype>`: The type of file to analyze (e.g., `jsx`, `tsx`).
 - `<path>`: The file or directory path to analyze.
 
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+- `--interactive`: Asks before overwriting any existing files.
+
 **Example:**
 ```bash
 npx zapcircle analyze jsx ./src/components
@@ -61,13 +65,17 @@ npx zapcircle generate <filetype> <pathToToml>
 - `<filetype>`: The type of file to generate (e.g., `jsx`, `ts`).
 - `<pathToToml>`: The path to the `.zap.toml` file defining the behavior.
 
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+- `--interactive`: Asks before overwriting any existing files.
+
 **Example:**
 ```bash
-npx zapcircle generate jsx ./behaviors/LoginForm.zap.toml
+npx zapcircle generate jsx ./behaviors/LoginForm.jsx.zap.toml
 ```
 **Output:**
 ```plaintext
-Generating "jsx" from "./behaviors/LoginForm.zap.toml"...
+Generating "jsx" from "./behaviors/LoginForm.jsx.zap.toml"...
 ```
 
 ---
@@ -86,14 +94,47 @@ npx zapcircle generateTests <filetype> <pathToToml> <pathToCode>
 - `<pathToToml>`: The path to the `.zap.toml` file defining the behavior.
 - `<pathToCode>`: The path to the source code (such as a `.jsx` file) to be tested.
 
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+- `--interactive`: Asks before overwriting any existing files.
+
 **Example:**
 ```bash
-npx zapcircle generateTests jsx ./behaviors/LoginForm.zap.toml ./src/components/LoginForm.jsx
+npx zapcircle generateTests jsx ./behaviors/LoginForm.jsx.zap.toml ./src/components/LoginForm.jsx
 ```
 
 **Output:**
 ```plaintext
-Generating tests "jsx" from "./behaviors/LoginForm.zap.toml" for "./src/components/LoginForm.jsx"
+Generating tests "jsx" from "./behaviors/LoginForm.jsx.zap.toml" for "./src/components/LoginForm.jsx"
+```
+
+---
+
+### `update`
+**Description:**
+Update existing code based on a new or modified `.zap.toml` behavior specification.
+
+**Usage:**
+```bash
+npx zapcircle update <pathToToml> <pathToCode>
+```
+
+**Arguments:**
+- `<pathToToml>`: The path to the `.zap.toml` file defining the behavior.
+- `<pathToCode>`: The path to the source code (such as a `.jsx` file) to be updated.
+
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+- `--interactive`: Asks before overwriting any existing files.
+
+**Example:**
+```bash
+npx zapcircle update ./src/components/LoginForm.jsx.zap.toml ./src/components/LoginForm.jsx
+```
+
+**Output:**
+```plaintext
+Component updated: ./src/components/LoginForm.jsx
 ```
 
 

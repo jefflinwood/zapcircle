@@ -18,7 +18,7 @@ You'll need:
 Here is an example of the update command
 
 ```bash
-npx zapcircle update ./LoginForm.zap.toml ./LoginForm.jsx
+npx zapcircle update ./LoginForm.jsx.zap.toml ./LoginForm.jsx
 ```
 
 ZapCircle infers which update prompt to use by the filetype at the end of the source code file.

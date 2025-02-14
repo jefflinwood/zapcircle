@@ -7,9 +7,9 @@ Write up the behavior for your new component in a `.zap.toml` file, and then let
 
 ## Creating a ZapCircle TOML file
 
-For this guide, we'll create a new file named `LoginForm.zap.toml`, with the following contents:
+For this guide, we'll create a new file named `LoginForm.jsx.zap.toml`, with the following contents:
 
-```toml title=LoginForm.zap.toml
+```toml title=LoginForm.jsx.zap.toml
 name = "LoginForm"
 behavior = """
   # LoginForm Behavior Specification
@@ -87,7 +87,7 @@ behavior = """
 After you create the file, you'll need to tell ZapCircle to generate the React component.
 
 ```bash
-npx zapcircle generate jsx ./LoginForm.zap.toml
+npx zapcircle generate jsx ./LoginForm.jsx.zap.toml
 ```
 
 After calling out to the LLM, ZapCircle will generate a new JSX React component for you named `LoginForm.jsx`. Here's an example code listing:
