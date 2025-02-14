@@ -4,10 +4,11 @@ import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
-export async function analyze(fileType: string, targetPath: string, options: { output?: string }) {
+export async function analyze(fileType: string, targetPath: string, options: { verbose?: boolean, output?: string }) {
   try {
     const outputDir = options.output || path.dirname(targetPath);
-
+    const isVerbose = options.verbose || false;
+    
     // Helper function for recursion
     const processPath = async (currentPath: string) => {
       const stats = statSync(currentPath);
@@ -30,8 +31,8 @@ export async function analyze(fileType: string, targetPath: string, options: { o
         };
 
         const prompt = await loadPrompt(fileType, "analyze", analysisVariables);
-
-        const result = await invokeLLMWithSpinner(prompt);
+        
+        const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
         const tomlVariables = {
             name: baseName,

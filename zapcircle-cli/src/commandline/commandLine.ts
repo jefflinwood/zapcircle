@@ -20,14 +20,16 @@ program
 program
   .command('analyze <filetype> <path>')
   .description('Analyze the provided file or directory for <filetype> - such as jsx')
-  .action((filetype, path) => {
+  .option('--verbose', 'Display LLM prompt and response in the console log')
+  .action((filetype, path, options) => {
     console.log(`Analyzing filetype "${filetype}" for the path "${path}"...`);
-    analyze(filetype, path, {});
+    analyze(filetype, path, options);
   });
 
 program
   .command('generate <filetype> <pathToToml>')
   .description('Generate a file from the provided .zap.toml file')
+  .option('--verbose', 'Display LLM prompt and response in the console log')
   .action((filetype, pathToToml) => {
     console.log(`Generating "${filetype}" from "${pathToToml}"...`);
     generateComponent(filetype, pathToToml, {});
@@ -36,6 +38,7 @@ program
 program
   .command('generateTests <filetype> <pathToToml> <pathToCode>')
   .description('Generate test files from the provided .zap.toml file and source code file')
+  .option('--verbose', 'Display LLM prompt and response in the console log')
   .action((filetype, pathToToml, pathToCode) => {
     console.log(`Generating tests "${filetype}" from "${pathToToml}" for "${pathToCode}"...`);
     generateTests(filetype, pathToToml, pathToCode, {})
@@ -44,6 +47,7 @@ program
 program
   .command('update <pathToToml> <pathToCode>')
   .description('Update code based on the changes in its .zap.toml behavior file')
+  .option('--verbose', 'Display LLM prompt and response in the console log')
   .option('--review', 'Enable interactive review before applying changes')
   .option('--diff-only', 'Show the difference but do not apply updates')
   .action((pathToToml, pathToCode) => {

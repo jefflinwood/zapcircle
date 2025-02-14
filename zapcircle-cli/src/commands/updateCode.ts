@@ -7,8 +7,10 @@ import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 export async function updateCode(
   pathToToml: string,
   pathToCode: string,
-  options: { review?: boolean; diffOnly?: boolean }
+  options: { review?: boolean; diffOnly?: boolean, verbose?: boolean }
 ) {
+  const isVerbose = options.verbose || false;
+
   try {
     // Check if both files exist
     if (!existsSync(pathToToml)) {
@@ -65,7 +67,7 @@ export async function updateCode(
       return;
     }
 
-    const updatedCode = await invokeLLMWithSpinner(prompt);
+    const updatedCode = await invokeLLMWithSpinner(prompt, isVerbose);
 
     // Interactive Review Mode
     if (options.review) {

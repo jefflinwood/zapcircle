@@ -1,6 +1,6 @@
 import { invokeLLM } from "../core/llmService";
 
-export async function invokeLLMWithSpinner(prompt: string): Promise<string> {
+export async function invokeLLMWithSpinner(prompt: string, isVerbose: boolean): Promise<string> {
     const spinnerChars = ['|', '/', '-', '\\'];
     let i = 0;
 
@@ -12,7 +12,7 @@ export async function invokeLLMWithSpinner(prompt: string): Promise<string> {
     }, 100);
 
     try {
-        const result = await invokeLLM(prompt);
+        const result = await invokeLLM(prompt, isVerbose);
         clearInterval(spinnerInterval);
         process.stdout.write("\rProcessing... done!\n");
         return result;
