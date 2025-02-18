@@ -1,5 +1,7 @@
 Based on the following behavior update and the existing React component, update the component while preserving any additional modifications.
 
+${global_prompt}
+
 ## Behavior Change Summary:
 The component behavior has changed as follows:
 ${behaviorDiff}

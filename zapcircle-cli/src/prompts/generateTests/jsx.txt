@@ -1,4 +1,5 @@
 Based on the following behavior and this React component source code, generate a unit test case:
+${global_prompt}
 
 - Behavior: ${behavior}
 - Component Source Code:

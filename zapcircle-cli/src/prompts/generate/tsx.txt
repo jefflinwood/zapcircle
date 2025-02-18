@@ -1,5 +1,9 @@
 Based on the following behavior description, generate a React component with TypeScript.
 
+${global_prompt}
+
+${generate_prompt}
+
 ${behavior}
 
 The output should only contain the component implementation in TSX format. 
