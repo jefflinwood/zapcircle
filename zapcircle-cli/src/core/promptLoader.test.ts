@@ -12,6 +12,11 @@ describe("loadPrompt", () => {
       [path.resolve(__dirname, "../prompts/generate")]: {
         "example.txt": "Welcome, ${user}!",
       },
+      [path.resolve(process.cwd(), "zapcircle.config.toml")]: `
+        [prompts]
+        all = "Always use TypeScript."
+        generate = "Use Tailwind CSS."
+      `,
     });
   });
 
@@ -33,6 +38,11 @@ describe("loadPrompt", () => {
       [path.resolve(__dirname, "../prompts/generate")]: {
         "example.txt": "Welcome, ${user}!",
       },
+      [path.resolve(process.cwd(), "zapcircle.config.toml")]: `
+        [prompts]
+        all = "Always use TypeScript."
+        generate = "Use Tailwind CSS."
+      `,
     });
 
     const result = await loadPrompt("example", "generate", { user: "Developer" });
@@ -45,6 +55,10 @@ describe("loadPrompt", () => {
     mockFs({
       [path.resolve(process.cwd(), ".zapcircle/prompts/generate")]: {},
       [path.resolve(__dirname, "../prompts/generate")]: {},
+      [path.resolve(process.cwd(), "zapcircle.config.toml")]: `
+        [prompts]
+        all = "Always use TypeScript."
+      `,
     });
 
     await expect(loadPrompt("example", "generate", {})).rejects.toThrowError("Prompt template not found: example");
@@ -60,5 +74,31 @@ describe("loadPrompt", () => {
     const result = await loadPrompt("example", "generate", {});
 
     expect(result).toBe("Hello, !");
+  });
+
+  it("injects project-wide prompt settings", async () => {
+    // Test if global config settings are being injected
+    const result = await loadPrompt("example", "generate", { name: "John Doe" });
+
+    expect(result).toBe("Hello, John Doe!");
+  });
+
+  it("merges config settings into variables", async () => {
+    const result = await loadPrompt("example", "generate", {});
+
+    expect(result).toBe("Hello, !");
+  });
+  
+  it("handles missing zapcircle.config.toml gracefully", async () => {
+    // Remove the config file
+    mockFs({
+      [path.resolve(process.cwd(), ".zapcircle/prompts/generate")]: {
+        "example.txt": "Hello, ${name}!",
+      },
+    });
+
+    const result = await loadPrompt("example", "generate", { name: "Jane Doe" });
+
+    expect(result).toBe("Hello, Jane Doe!");
   });
 });
