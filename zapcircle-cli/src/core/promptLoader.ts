@@ -37,8 +37,6 @@ export async function loadPrompt(
   } else {
     throw new Error(`Prompt template not found: ${promptName}`);
   }
-
-  console.log('mergedVariables', mergedVariables);
   
   // Interpolate variables
   return interpolateTemplate(template, mergedVariables);
