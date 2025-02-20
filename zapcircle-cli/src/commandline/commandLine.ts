@@ -9,6 +9,7 @@ import { configureZapCircle } from '../commands/configure';
 import { checkZapCircleStatus } from '../commands/status';
 import { generateTests } from '../commands/generateTests';
 import { updateCode } from '../commands/updateCode';
+import { review } from '../commands/review';
 
 const program = new Command();
 
@@ -55,6 +56,18 @@ program
   .action((pathToToml, pathToCode, options) => {
     console.log(`Updating code in "${pathToCode}" based on "${pathToToml}"...`);
     updateCode(pathToToml, pathToCode, options)
+  });
+
+program
+  .command('review')
+  .description('Run a pull-request review for any issues')
+  .option('--verbose', 'Display LLM prompt and response in the console log')
+  .option('--interactive', 'Prompt before overwriting existing files')
+  .option('--output', 'Output directory (defaults to current directory)')
+  .option('--gitHub', 'Post review to GitHub')
+  .action((options) => {
+    console.log(`Running ZapCircle Review...`);
+    review(options);
   });
 
 program
