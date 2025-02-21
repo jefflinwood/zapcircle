@@ -1,0 +1,33 @@
+name: ZapCircle Review
+
+on:
+  pull_request:
+
+jobs:
+  zapcircle_review:
+    name: ZapCircle PR Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install ZapCircle CLI
+        run: npm install -g zapcircle
+
+      - name: Run ZapCircle Review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          cd zapcircle-cli
+          npm install
+          npm run build
+          npm run review

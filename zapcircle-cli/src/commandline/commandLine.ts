@@ -62,9 +62,7 @@ program
   .command('review')
   .description('Run a pull-request review for any issues')
   .option('--verbose', 'Display LLM prompt and response in the console log')
-  .option('--interactive', 'Prompt before overwriting existing files')
-  .option('--output', 'Output directory (defaults to current directory)')
-  .option('--gitHub', 'Post review to GitHub')
+  .option('--github', 'Post review to GitHub')
   .action((options) => {
     console.log(`Running ZapCircle Review...`);
     review(options);
