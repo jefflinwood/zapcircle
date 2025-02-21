@@ -20,7 +20,8 @@ export default defineConfig({
 						{ label: 'Create Behaviors', slug: 'guides/create-behaviors'},
 						{ label: 'Generating Code', slug: 'guides/generating-code'},
 						{ label: 'Generating Tests', slug: 'guides/generating-tests'},
-						{ label: 'Updating Code', slug: 'guides/updating-code'}
+						{ label: 'Updating Code', slug: 'guides/updating-code'},
+						{ label: 'Reviewing Changes', slug: 'guides/reviewing-changes'}
 					],
 				},
 				{

@@ -140,6 +140,42 @@ Component updated: ./src/components/LoginForm.jsx
 
 ---
 
+### `review`
+**Description:**
+Reviews any code that has been modified based on a `git diff` - can be used from the command line, or within a GitHub Action for a pull request. Uses an LLM to spot issues with individual files, and also asks for a summary review from an LLM for general stylistic details.
+
+The `--github` option will post the results to GitHub to appear within a pull request. Otherwise, the output appears on the console.
+
+**Usage:**
+```bash
+npx zapcircle review
+npx zapcircle review --github
+```
+
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+- `--github`: Formats the issues and summary for GitHub, and posts to GitHub - use this flag within a GitHub action.
+
+**Example:**
+```bash
+npx zapcircle review
+
+**Output:**
+```plaintext
+Running ZapCircle Review...
+🔍 Fetching changed files...
+🧐 Analyzing 1 modified files...
+🔎 Reviewing src/components/Dashboard.tsx...
+Processing... done!
+✅ No issues found in src/components/Dashboard.tsx. Skipping from report.
+📢 Generating summary...
+Processing... done!
+📢 Posting PR review...
+...LLM Response
+```
+
+---
+
 ### `configure`
 **Description:**  
 Interactively set up ZapCircle by selecting a preferred LLM (e.g., OpenAI) and providing configuration parameters like the OpenAI API key and model names.
