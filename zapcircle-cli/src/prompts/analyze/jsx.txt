@@ -1,5 +1,9 @@
 Analyze the following React component and provide a detailed behavior summary:
 
+${global_prompt}
+
+${analyze_prompt}
+
 Component Source Code:
 \`\`\`
 ${sourceCode}
