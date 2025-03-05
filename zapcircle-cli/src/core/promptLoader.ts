@@ -16,7 +16,7 @@ interface ZapCircleConfig {
 export async function loadPrompt(
   promptName: string,
   promptType: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): Promise<string> {
   // Load project-wide configurations from zapcircle.config.toml
   const configVariables = await loadProjectConfig();
@@ -24,8 +24,18 @@ export async function loadPrompt(
   // Merge config variables into the provided variables
   const mergedVariables = { ...configVariables, ...variables };
 
-  const defaultPromptPath = path.resolve(__dirname, "../prompts", promptType, `${promptName}.txt`);
-  const projectPromptPath = path.resolve(process.cwd(), ".zapcircle/prompts", promptType, `${promptName}.txt`);
+  const defaultPromptPath = path.resolve(
+    __dirname,
+    "../prompts",
+    promptType,
+    `${promptName}.txt`,
+  );
+  const projectPromptPath = path.resolve(
+    process.cwd(),
+    ".zapcircle/prompts",
+    promptType,
+    `${promptName}.txt`,
+  );
 
   let template: string;
 
@@ -37,12 +47,15 @@ export async function loadPrompt(
   } else {
     throw new Error(`Prompt template not found: ${promptName}`);
   }
-  
+
   // Interpolate variables
   return interpolateTemplate(template, mergedVariables);
 }
 
-function interpolateTemplate(template: string, variables: Record<string, string>): string {
+function interpolateTemplate(
+  template: string,
+  variables: Record<string, string>,
+): string {
   return template.replace(/\$\{(.*?)\}/g, (_, key) => {
     return variables[key] || "";
   });
@@ -68,7 +81,9 @@ async function loadProjectConfig(): Promise<Record<string, string>> {
 
   try {
     const configContent = await fs.readFile(configPath, "utf-8");
-    const parsedConfig: ZapCircleConfig = toml.parse(configContent) as ZapCircleConfig;
+    const parsedConfig: ZapCircleConfig = toml.parse(
+      configContent,
+    ) as ZapCircleConfig;
 
     // Extract and flatten relevant configurations into a single key-value mapping
     const extractedVariables: Record<string, string> = {};
@@ -78,10 +93,12 @@ async function loadProjectConfig(): Promise<Record<string, string>> {
         extractedVariables["global_prompt"] = parsedConfig.prompts.all.trim();
       }
       if (parsedConfig.prompts.analyze) {
-        extractedVariables["analyze_prompt"] = parsedConfig.prompts.analyze.trim();
+        extractedVariables["analyze_prompt"] =
+          parsedConfig.prompts.analyze.trim();
       }
       if (parsedConfig.prompts.generate) {
-        extractedVariables["generate_prompt"] = parsedConfig.prompts.generate.trim();
+        extractedVariables["generate_prompt"] =
+          parsedConfig.prompts.generate.trim();
       }
     }
 

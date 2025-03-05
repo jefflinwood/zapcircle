@@ -4,7 +4,7 @@ import path from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
-export async function review(options: { verbose?: boolean, github?: boolean }) {
+export async function review(options: { verbose?: boolean; github?: boolean }) {
   try {
     const isVerbose = options.verbose || false;
     const isGitHubEnabled = options.github || false;
@@ -33,7 +33,7 @@ export async function review(options: { verbose?: boolean, github?: boolean }) {
       const fileContents = readFileSync(absolutePath, "utf-8");
       codeToReview.push({
         fileName: filePath,
-        fileContents: fileContents
+        fileContents: fileContents,
       });
 
       // Check if a `.zap.toml` behavior file exists
@@ -43,10 +43,9 @@ export async function review(options: { verbose?: boolean, github?: boolean }) {
         behaviorFileContents = readFileSync(behaviorFilePath, "utf-8");
         codeToReview.push({
           fileName: behaviorFilePath,
-          fileContents: behaviorFileContents
+          fileContents: behaviorFileContents,
         });
       }
-
 
       // Load diff for the file
       const fileDiff = getDiffForFile(filePath);
@@ -66,7 +65,10 @@ export async function review(options: { verbose?: boolean, github?: boolean }) {
       try {
         parsedResult = JSON.parse(rawResult);
       } catch (error) {
-        console.error(`⚠️ Failed to parse LLM response for ${filePath}. Raw result:`, rawResult);
+        console.error(
+          `⚠️ Failed to parse LLM response for ${filePath}. Raw result:`,
+          rawResult,
+        );
         continue;
       }
 
@@ -87,7 +89,7 @@ export async function review(options: { verbose?: boolean, github?: boolean }) {
       console.log("📢 Generating summary...");
       const summary = await generateSummary(codeToReview, isVerbose);
       console.log("📢 Posting PR review...");
-      
+
       if (isGitHubEnabled) {
         await postGitHubComment(summary, formatPRComment(reviewResults));
       } else {
@@ -104,9 +106,12 @@ export async function review(options: { verbose?: boolean, github?: boolean }) {
 /**
  * Generates a high-level summary of the code changes using LLM.
  */
-export async function generateSummary(codeToReview: any[], verbose: boolean): Promise<string> {
+export async function generateSummary(
+  codeToReview: any[],
+  verbose: boolean,
+): Promise<string> {
   const reviewData = {
-    reviewData: JSON.stringify(codeToReview)
+    reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
 
@@ -128,7 +133,10 @@ export function removeFirstDirectory(inputPath: string): string {
 export function getChangedFiles(): string[] {
   try {
     const diffOutput = execSync("git diff --name-only origin/main").toString();
-    return diffOutput.trim().split("\n").filter(file => file.length > 0);
+    return diffOutput
+      .trim()
+      .split("\n")
+      .filter((file) => file.length > 0);
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
@@ -153,7 +161,7 @@ export function getDiffForFile(filePath: string): string {
 export function formatPRComment(reviewData: any[]): string {
   let comment = "";
 
-  reviewData.forEach(file => {
+  reviewData.forEach((file) => {
     comment += `### **${file.file}**\n`;
     file.issues.forEach((issue: any) => {
       comment += `- 🔴 **Line ${issue.line}**: ${issue.message}\n`;
@@ -162,7 +170,8 @@ export function formatPRComment(reviewData: any[]): string {
   });
 
   if (reviewData.length > 0) {
-    comment += "**ZapCircle CI is non-blocking, but these improvements are recommended.**\n";
+    comment +=
+      "**ZapCircle CI is non-blocking, but these improvements are recommended.**\n";
   }
   return comment;
 }
@@ -170,13 +179,18 @@ export function formatPRComment(reviewData: any[]): string {
 /**
  * Posts (or updates) the review summary and issues as a GitHub PR comment.
  */
-export async function postGitHubComment(summary: string, reviewComment: string) {
+export async function postGitHubComment(
+  summary: string,
+  reviewComment: string,
+) {
   const prNumber = process.env.GITHUB_REF?.match(/\d+/)?.[0];
   const repo = process.env.GITHUB_REPOSITORY;
   const token = process.env.GITHUB_TOKEN;
 
   if (!prNumber || !repo || !token) {
-    console.error("❌ GitHub PR review posting failed: Missing environment variables. Required - GITHUB_REF, GITHUB_REPOSITORY, GITHUB_TOKEN");
+    console.error(
+      "❌ GitHub PR review posting failed: Missing environment variables. Required - GITHUB_REF, GITHUB_REPOSITORY, GITHUB_TOKEN",
+    );
     return;
   }
 
@@ -187,17 +201,21 @@ export async function postGitHubComment(summary: string, reviewComment: string) 
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
-        "Authorization": `token ${token}`,
-        "Accept": "application/vnd.github.v3+json"
-      }
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github.v3+json",
+      },
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub API error when fetching comments: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `GitHub API error when fetching comments: ${response.status} ${response.statusText}`,
+      );
     }
 
     const comments = await response.json();
-    const existingComment = comments.find((comment: any) => comment.body.includes("🚀 **ZapCircle PR Review**"));
+    const existingComment = comments.find((comment: any) =>
+      comment.body.includes("🚀 **ZapCircle PR Review**"),
+    );
 
     const newCommentBody = `🚀 **ZapCircle PR Review**\n\n${summary}\n\n${reviewComment}`;
 
@@ -207,11 +225,11 @@ export async function postGitHubComment(summary: string, reviewComment: string) 
       await fetch(updateUrl, {
         method: "PATCH",
         headers: {
-          "Authorization": `token ${token}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
+          Authorization: `token ${token}`,
+          Accept: "application/vnd.github.v3+json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ body: newCommentBody })
+        body: JSON.stringify({ body: newCommentBody }),
       });
       console.log("✅ Updated PR review comment.");
     } else {
@@ -219,11 +237,11 @@ export async function postGitHubComment(summary: string, reviewComment: string) 
       await fetch(apiUrl, {
         method: "POST",
         headers: {
-          "Authorization": `token ${token}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
+          Authorization: `token ${token}`,
+          Accept: "application/vnd.github.v3+json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ body: newCommentBody })
+        body: JSON.stringify({ body: newCommentBody }),
       });
       console.log("✅ Posted new PR review comment.");
     }

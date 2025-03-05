@@ -26,7 +26,9 @@ describe("loadPrompt", () => {
   });
 
   it("loads a project-specific prompt when it exists", async () => {
-    const result = await loadPrompt("example", "generate", { name: "ZapCircle" });
+    const result = await loadPrompt("example", "generate", {
+      name: "ZapCircle",
+    });
 
     expect(result).toBe("Hello, ZapCircle!");
   });
@@ -45,7 +47,9 @@ describe("loadPrompt", () => {
       `,
     });
 
-    const result = await loadPrompt("example", "generate", { user: "Developer" });
+    const result = await loadPrompt("example", "generate", {
+      user: "Developer",
+    });
 
     expect(result).toBe("Welcome, Developer!");
   });
@@ -61,11 +65,15 @@ describe("loadPrompt", () => {
       `,
     });
 
-    await expect(loadPrompt("example", "generate", {})).rejects.toThrowError("Prompt template not found: example");
+    await expect(loadPrompt("example", "generate", {})).rejects.toThrowError(
+      "Prompt template not found: example",
+    );
   });
 
   it("interpolates variables in the template", async () => {
-    const result = await loadPrompt("example", "generate", { name: "John Doe" });
+    const result = await loadPrompt("example", "generate", {
+      name: "John Doe",
+    });
 
     expect(result).toBe("Hello, John Doe!");
   });
@@ -78,7 +86,9 @@ describe("loadPrompt", () => {
 
   it("injects project-wide prompt settings", async () => {
     // Test if global config settings are being injected
-    const result = await loadPrompt("example", "generate", { name: "John Doe" });
+    const result = await loadPrompt("example", "generate", {
+      name: "John Doe",
+    });
 
     expect(result).toBe("Hello, John Doe!");
   });
@@ -88,7 +98,7 @@ describe("loadPrompt", () => {
 
     expect(result).toBe("Hello, !");
   });
-  
+
   it("handles missing zapcircle.config.toml gracefully", async () => {
     // Remove the config file
     mockFs({
@@ -97,7 +107,9 @@ describe("loadPrompt", () => {
       },
     });
 
-    const result = await loadPrompt("example", "generate", { name: "Jane Doe" });
+    const result = await loadPrompt("example", "generate", {
+      name: "Jane Doe",
+    });
 
     expect(result).toBe("Hello, Jane Doe!");
   });

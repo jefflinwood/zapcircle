@@ -8,7 +8,12 @@ import { writeOutputFile } from "../utils/writeOutputFile";
 export async function updateCode(
   pathToToml: string,
   pathToCode: string,
-  options: { review?: boolean; diffOnly?: boolean, verbose?: boolean, interactive?: boolean }
+  options: {
+    review?: boolean;
+    diffOnly?: boolean;
+    verbose?: boolean;
+    interactive?: boolean;
+  },
 ) {
   const isVerbose = options.verbose || false;
   const isInteractive = options.interactive || false;
@@ -58,7 +63,8 @@ export async function updateCode(
       name: tomlVariables["name"] as string,
       behavior: newBehavior,
       existingCode: existingCode,
-      behaviorDiff: behaviorDiff  || "No previous version found. Assume full replacement.",
+      behaviorDiff:
+        behaviorDiff || "No previous version found. Assume full replacement.",
     };
 
     const prompt = await loadPrompt("jsx", "update", codeVariables);
@@ -83,7 +89,7 @@ export async function updateCode(
     }
 
     // Apply the update and write back to the component file
-    writeOutputFile(pathToCode, updatedCode, isInteractive)
+    writeOutputFile(pathToCode, updatedCode, isInteractive);
 
     console.log(`Component updated: ${pathToCode}`);
   } catch (error) {
@@ -99,27 +105,29 @@ function promptUser(question: string): Promise<string> {
 }
 
 function getGitDiff(filePath: string, newContent: string): string {
-    try {
-      // Check if the file is tracked in Git
-      execSync(`git ls-files --error-unmatch ${filePath}`, {
-        encoding: "utf-8",
-        stdio: "pipe",
-      });
-  
-      // Get the last committed version of the file
-      const previousContent = execSync(`git show HEAD:${filePath}`, {
-        encoding: "utf-8",
-      });
-  
-      // Generate diff
-      const diff = execSync(`git diff --unified=3 --word-diff=plain`, {
-        input: `${previousContent}\n---\n${newContent}`,
-        encoding: "utf-8",
-      });
-  
-      return diff.trim();
-    } catch (error) {
-      console.warn(`File "${filePath}" is either new or not committed yet. Proceeding without Git diff.`);
-      return "";
-    }
+  try {
+    // Check if the file is tracked in Git
+    execSync(`git ls-files --error-unmatch ${filePath}`, {
+      encoding: "utf-8",
+      stdio: "pipe",
+    });
+
+    // Get the last committed version of the file
+    const previousContent = execSync(`git show HEAD:${filePath}`, {
+      encoding: "utf-8",
+    });
+
+    // Generate diff
+    const diff = execSync(`git diff --unified=3 --word-diff=plain`, {
+      input: `${previousContent}\n---\n${newContent}`,
+      encoding: "utf-8",
+    });
+
+    return diff.trim();
+  } catch (error) {
+    console.warn(
+      `File "${filePath}" is either new or not committed yet. Proceeding without Git diff.`,
+    );
+    return "";
   }
+}

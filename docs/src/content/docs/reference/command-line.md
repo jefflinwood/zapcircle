@@ -140,6 +140,36 @@ Component updated: ./src/components/LoginForm.jsx
 
 ---
 
+### `distill`
+**Description:**
+Condenses and distills the most pertinent facts about a JavaScript or TypeScript project, to be included as context with an LLM.
+
+Creates a `zapcircle.distill.toml` file in the output directory, which can be specified with the `--output` parameter if it is not the current working directory.
+
+**Usage:**
+```bash
+npx zapcircle distill <pathToCode>
+```
+
+**Arguments:**
+- `<pathToCode>`: The path to the source code of the project
+
+**Options**
+- `--output`: The output directory for the `zapcircle.distill.toml` file.
+
+**Example:**
+```bash
+npx zapcircle distill .
+```
+
+**Output:**
+```plaintext
+Running ZapCircle Distill...
+Distill completed: zapcircle.distill.toml
+```
+
+---
+
 ### `review`
 **Description:**
 Reviews any code that has been modified based on a `git diff` - can be used from the command line, or within a GitHub Action for a pull request. Uses an LLM to spot issues with individual files, and also asks for a summary review from an LLM for general stylistic details.
