@@ -23,7 +23,9 @@ export function loadUserConfig(): UserConfig {
       console.error(`Error reading user configuration: ${error}`);
     }
   } else {
-    console.warn("User configuration file not found. Falling back to defaults.");
+    console.warn(
+      "User configuration file not found. Falling back to defaults.",
+    );
   }
 
   return {};

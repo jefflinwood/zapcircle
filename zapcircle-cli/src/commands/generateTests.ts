@@ -1,4 +1,4 @@
-import { readFileSync,  } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
@@ -15,7 +15,12 @@ export async function generateTests(
   fileType: string,
   tomlFilePath: string,
   codePath: string,
-  options: { framework?: string; output?: string, verbose?: boolean, interactive?: boolean }
+  options: {
+    framework?: string;
+    output?: string;
+    verbose?: boolean;
+    interactive?: boolean;
+  },
 ) {
   try {
     const tomlFileContents = readFileSync(tomlFilePath, "utf-8");
@@ -45,11 +50,11 @@ export async function generateTests(
     const extension = testFileExtensions[fileType] || fileType;
     const outputFilePath = path.join(
       outputDir,
-      `${path.basename(codePath, `.${fileType}`)}.test.${extension}`
+      `${path.basename(codePath, `.${fileType}`)}.test.${extension}`,
     );
 
     // Write test file to disk
-    writeOutputFile(outputFilePath, result, isInteractive)
+    writeOutputFile(outputFilePath, result, isInteractive);
 
     console.log(`Test file generated: ${outputFilePath}`);
   } catch (error) {

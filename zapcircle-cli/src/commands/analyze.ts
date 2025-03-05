@@ -5,12 +5,16 @@ import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { writeOutputFile } from "../utils/writeOutputFile";
 
-export async function analyze(fileType: string, targetPath: string, options: { verbose?: boolean, output?: string, interactive?: boolean }) {
+export async function analyze(
+  fileType: string,
+  targetPath: string,
+  options: { verbose?: boolean; output?: string; interactive?: boolean },
+) {
   try {
     const outputDir = options.output || path.dirname(targetPath);
     const isVerbose = options.verbose || false;
     const isInteractive = options.interactive || false;
-    
+
     // Helper function for recursion
     const processPath = async (currentPath: string) => {
       const stats = statSync(currentPath);
@@ -33,20 +37,22 @@ export async function analyze(fileType: string, targetPath: string, options: { v
         };
 
         const prompt = await loadPrompt(fileType, "analyze", analysisVariables);
-        
+
         const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
         const tomlVariables = {
-            name: baseName,
-            behavior: result
-        }
+          name: baseName,
+          behavior: result,
+        };
 
         const tomlContents = toml.stringify(tomlVariables);
 
         const outputFilePath = path.join(
-          outputDir, path.basename(currentPath) + ".zap.toml");
+          outputDir,
+          path.basename(currentPath) + ".zap.toml",
+        );
 
-        writeOutputFile(outputFilePath, tomlContents, isInteractive)
+        writeOutputFile(outputFilePath, tomlContents, isInteractive);
 
         console.log(`Analysis generated: ${outputFilePath}`);
       }
