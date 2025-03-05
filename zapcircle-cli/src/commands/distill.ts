@@ -8,13 +8,28 @@ export async function distill(targetPath: string, options: { verbose?: boolean, 
         const isVerbose = options.verbose || false;
         const isInteractive = options.interactive || false;
         
-        // Helper function to scan directory and collect files
+        // Load .gitignore and parse exclusions
+        const gitignorePath = path.join(targetPath, '.gitignore');
+        const ignoredPaths: string[] = [];
+        if (statSync(gitignorePath, { throwIfNoEntry: false })) {
+            const gitignoreContent = readFileSync(gitignorePath, 'utf-8');
+            gitignoreContent.split('\n').forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed && !trimmed.startsWith('#')) {
+                    ignoredPaths.push(path.join(targetPath, trimmed));
+                }
+            });
+        }
+
+        // Helper function to scan directory and collect files, excluding .gitignore paths
         const collectFiles = (currentPath: string): string[] => {
             let fileList: string[] = [];
             const files = readdirSync(currentPath);
             
             for (const file of files) {
                 const filePath = path.join(currentPath, file);
+                if (ignoredPaths.some(ignoredPath => filePath.startsWith(ignoredPath))) continue;
+                
                 const stats = statSync(filePath);
                 
                 if (stats.isDirectory()) {
