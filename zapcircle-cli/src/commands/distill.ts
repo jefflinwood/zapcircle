@@ -8,12 +8,11 @@ export async function distill(
 ) {
   try {
     const outputDir = options.output || path.dirname(targetPath);
-    const isVerbose = options.verbose || false;
-    const isInteractive = options.interactive || false;
 
     // Load .gitignore and parse exclusions
     const gitignorePath = path.join(targetPath, ".gitignore");
     const ignoredPaths: string[] = [];
+    ignoredPaths.push(path.join(targetPath, ".git"));
     if (existsSync(gitignorePath)) {
       const gitignoreContent = readFileSync(gitignorePath, "utf-8");
       gitignoreContent.split("\n").forEach((line) => {
@@ -64,7 +63,7 @@ export async function distill(
           ? "Next.js (Page Router)"
           : "Next.js (App Router)";
       }
-      if (dependencies["remix"]) return "Remix";
+      if (dependencies["remix"] || dependencies["@remix-run/react"]) return "Remix";
       if (dependencies["react-router-dom"]) return "React Router";
       return "Unknown";
     };

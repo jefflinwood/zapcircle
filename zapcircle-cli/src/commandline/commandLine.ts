@@ -88,8 +88,6 @@ program
     "--output",
     "Directory to place the output zapcircle.distill.toml file",
   )
-  .option("--verbose", "Display LLM prompt and response in the console log")
-  .option("--interactive", "Prompt before overwriting existing files")
   .action((pathToCode, options) => {
     console.log(`Running ZapCircle Distill...`);
     distill(pathToCode, options);
