@@ -4,10 +4,13 @@ import path from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 
-export async function review(options: { verbose?: boolean; github?: boolean }) {
+const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
+
+export async function review(options: { verbose?: boolean; github?: boolean; contextLimit?: number }) {
   try {
     const isVerbose = options.verbose || false;
     const isGitHubEnabled = options.github || false;
+    const contextLimit = options.contextLimit || DEFAULT_CONTEXT_LIMIT;
 
     console.log("🔍 Fetching changed files...");
     const changedFiles = getChangedFiles();
@@ -21,6 +24,7 @@ export async function review(options: { verbose?: boolean; github?: boolean }) {
 
     let reviewResults: any[] = [];
     let codeToReview: any[] = [];
+    let totalTokensUsed = 0;
 
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
@@ -31,26 +35,32 @@ export async function review(options: { verbose?: boolean; github?: boolean }) {
       }
 
       const fileContents = readFileSync(absolutePath, "utf-8");
-      codeToReview.push({
-        fileName: filePath,
-        fileContents: fileContents,
-      });
+      const estimatedTokens = estimateTokenCount(fileContents);
+      
+      if (totalTokensUsed + estimatedTokens > contextLimit) {
+        console.warn(`Skipping ${filePath} to stay within token limit.`);
+        continue;
+      }
+      totalTokensUsed += estimatedTokens;
+      
+      codeToReview.push({ fileName: filePath, fileContents: fileContents });
 
-      // Check if a `.zap.toml` behavior file exists
       const behaviorFilePath = `${absolutePath}.zap.toml`;
       let behaviorFileContents = "";
       if (existsSync(behaviorFilePath)) {
         behaviorFileContents = readFileSync(behaviorFilePath, "utf-8");
-        codeToReview.push({
-          fileName: behaviorFilePath,
-          fileContents: behaviorFileContents,
-        });
+        totalTokensUsed += estimateTokenCount(behaviorFileContents);
+        codeToReview.push({ fileName: behaviorFilePath, fileContents: behaviorFileContents });
       }
 
-      // Load diff for the file
       const fileDiff = getDiffForFile(filePath);
+      totalTokensUsed += estimateTokenCount(fileDiff);
 
-      // Construct prompt for LLM
+      if (totalTokensUsed > contextLimit) {
+        console.warn(`Skipping ${filePath} diff to stay within token limit.`);
+        continue;
+      }
+
       const reviewVariables = {
         name: path.basename(filePath),
         diff: fileDiff,
@@ -60,15 +70,11 @@ export async function review(options: { verbose?: boolean; github?: boolean }) {
       const prompt = await loadPrompt("code", "review", reviewVariables);
       const rawResult = await invokeLLMWithSpinner(prompt, isVerbose);
 
-      // Parse LLM output into structured review data
       let parsedResult;
       try {
         parsedResult = JSON.parse(rawResult);
       } catch (error) {
-        console.error(
-          `⚠️ Failed to parse LLM response for ${filePath}. Raw result:`,
-          rawResult,
-        );
+        console.error(`⚠️ Failed to parse LLM response for ${filePath}. Raw result:`, rawResult);
         continue;
       }
 
@@ -102,6 +108,11 @@ export async function review(options: { verbose?: boolean; github?: boolean }) {
     console.error("❌ Error reviewing PR:", error);
   }
 }
+
+function estimateTokenCount(text: string): number {
+  return Math.ceil(text.length / 4); // Rough estimate (4 chars per token)
+}
+
 
 /**
  * Generates a high-level summary of the code changes using LLM.
