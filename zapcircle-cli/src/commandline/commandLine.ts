@@ -10,6 +10,7 @@ import { checkZapCircleStatus } from '../commands/status';
 import { generateTests } from '../commands/generateTests';
 import { updateCode } from '../commands/updateCode';
 import { review } from '../commands/review';
+import { distill } from '../commands/distill';
 
 const program = new Command();
 
@@ -66,6 +67,17 @@ program
   .action((options) => {
     console.log(`Running ZapCircle Review...`);
     review(options);
+  });
+
+program
+  .command('distill <pathToCode>')
+  .description('Create a summary distillation of the current code project to use with LLMs as context.')
+  .option('--output', 'Directory to place the output zapcircle.distill.toml file')
+  .option('--verbose', 'Display LLM prompt and response in the console log')
+  .option('--interactive', 'Prompt before overwriting existing files')
+  .action((pathToCode, options) => {
+    console.log(`Running ZapCircle Distill...`);
+    distill(pathToCode, options);
   });
 
 program
