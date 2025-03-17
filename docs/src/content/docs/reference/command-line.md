@@ -137,6 +137,45 @@ npx zapcircle update ./src/components/LoginForm.jsx.zap.toml ./src/components/Lo
 Component updated: ./src/components/LoginForm.jsx
 ```
 
+---
+
+### `context`
+**Description:**
+Combines all of the important source code files in a project into one `zapcircle.context.txt` file which can be used as the input to an LLM to provide context.
+
+Paths in the `.gitignore` file will not be included.
+
+The estimated number of tokens used for the context file is provided in the command-line output.
+
+This `context` command does not use any LLM calls.
+
+The file will be placed in the current working directory, which can be specified with the `--output` parameter if desired.
+
+You will want to review this file for any sensitive information before sending it over to an LLM.
+
+**Usage:**
+```bash
+npx zapcircle context <pathToCode>
+```
+
+**Arguments:**
+- `<pathToCode>`: The path to the source code of the project
+
+**Options**
+- `--output`: The output directory for the `zapcircle.context.txt` file.
+
+**Example:**
+```bash
+npx zapcircle context .
+```
+
+**Output:**
+```plaintext
+Running ZapCircle Context...
+Context file created: zapcircle.context.txt
+Estimated token count: 142978
+```
+
 
 ---
 
