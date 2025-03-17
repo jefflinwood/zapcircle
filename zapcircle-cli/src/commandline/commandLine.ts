@@ -11,6 +11,7 @@ import { generateTests } from "../commands/generateTests";
 import { updateCode } from "../commands/updateCode";
 import { review } from "../commands/review";
 import { distill } from "../commands/distill";
+import { context } from "../commands/context";
 
 const program = new Command();
 
@@ -91,6 +92,20 @@ program
   .action((pathToCode, options) => {
     console.log(`Running ZapCircle Distill...`);
     distill(pathToCode, options);
+  });
+
+program
+  .command("context <pathToCode>")
+  .description(
+    "Generate a consolidated text file of source code for LLM context, including estimated token count."
+  )
+  .option(
+    "--output <directory>",
+    "Directory to place the output zapcircle.context.txt file"
+  )
+  .action((pathToCode, options) => {
+    console.log(`Running ZapCircle Context...`);
+    context(pathToCode, options);
   });
 
 program
