@@ -3,7 +3,7 @@
   **Objective**: Summarize the detected issues in this pull request. Identify key patterns, potential security concerns, performance bottlenecks, and major code improvements.
 
   ### **Context**
-  The following issues were found in the PR:
+  The following file differences were found in the PR:
   ${reviewData}
 
   ### **Guidelines for Summary**

@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
@@ -34,17 +35,6 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
         continue;
       }
 
-      const fileContents = readFileSync(absolutePath, "utf-8");
-      const estimatedTokens = estimateTokenCount(fileContents);
-      
-      if (totalTokensUsed + estimatedTokens > contextLimit) {
-        console.warn(`Skipping ${filePath} to stay within token limit.`);
-        continue;
-      }
-      totalTokensUsed += estimatedTokens;
-      
-      codeToReview.push({ fileName: filePath, fileContents: fileContents });
-
       const behaviorFilePath = `${absolutePath}.zap.toml`;
       let behaviorFileContents = "";
       if (existsSync(behaviorFilePath)) {
@@ -53,13 +43,15 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
         codeToReview.push({ fileName: behaviorFilePath, fileContents: behaviorFileContents });
       }
 
-      const fileDiff = getDiffForFile(filePath);
+      const fileDiff = getDiffForFile(absolutePath);
       totalTokensUsed += estimateTokenCount(fileDiff);
 
       if (totalTokensUsed > contextLimit) {
         console.warn(`Skipping ${filePath} diff to stay within token limit.`);
         continue;
       }
+      codeToReview.push({ fileName: filePath, fileDiff: fileDiff });
+
 
       const reviewVariables = {
         name: path.basename(filePath),
@@ -68,7 +60,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       };
 
       const prompt = await loadPrompt("code", "review", reviewVariables);
-      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose);
+      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose, false, !isGitHubEnabled);
 
       let parsedResult;
       try {
@@ -93,7 +85,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     if (codeToReview.length > 0) {
       console.log("📢 Generating summary...");
-      const summary = await generateSummary(codeToReview, isVerbose);
+      const summary = await generateSummary(codeToReview, isVerbose, isGitHubEnabled);
       console.log("📢 Posting PR review...");
 
       if (isGitHubEnabled) {
@@ -110,7 +102,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 }
 
 function estimateTokenCount(text: string): number {
-  return Math.ceil(text.length / 4); // Rough estimate (4 chars per token)
+  return encode(text).length;
 }
 
 
@@ -120,13 +112,14 @@ function estimateTokenCount(text: string): number {
 export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
+  isGitHubEnabled: boolean
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
-
-  return await invokeLLMWithSpinner(summaryPrompt, verbose);
+  return await invokeLLMWithSpinner(summaryPrompt, verbose, false, !isGitHubEnabled);
+  
 }
 
 export function removeFirstDirectory(inputPath: string): string {

@@ -2,11 +2,13 @@ import { ChatOpenAI } from "@langchain/openai";
 import { loadUserConfig } from "./config";
 import "dotenv/config";
 
-export async function invokeLLM(prompt: string, isVerbose: boolean) {
+export async function invokeLLM(prompt: string, isVerbose: boolean, isLarge=false) {
   const userConfig = loadUserConfig();
 
-  // Get the small model from configuration or fallback to default
   const smallModel = userConfig.models?.small || "gpt-4o-mini";
+  const largeModel = userConfig.models?.large || "gpt-4o";
+  const modelName = isLarge ? largeModel : smallModel;
+  
 
   // Get the OpenAI API key from configuration or environment variable
   const openAIKey = userConfig.apiKey || process.env.OPENAI_API_KEY;
@@ -18,12 +20,13 @@ export async function invokeLLM(prompt: string, isVerbose: boolean) {
   }
 
   const model = new ChatOpenAI({
-    model: smallModel,
+    model: modelName,
     openAIApiKey: openAIKey,
   });
 
   try {
     if (isVerbose) {
+      console.log("Model: " + modelName);
       console.log("Prompt: " + prompt);
     }
 
