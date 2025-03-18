@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
-import { invokeLLM } from "../core/llmService";
+import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
@@ -102,7 +102,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 }
 
 function estimateTokenCount(text: string): number {
-  return Math.ceil(text.length / 4); // Rough estimate (4 chars per token)
+  return encode(text).length;
 }
 
 
