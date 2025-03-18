@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { invokeLLM } from "../core/llmService";
 
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
@@ -53,7 +54,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
         codeToReview.push({ fileName: behaviorFilePath, fileContents: behaviorFileContents });
       }
 
-      const fileDiff = getDiffForFile(filePath);
+      const fileDiff = getDiffForFile(absolutePath);
       totalTokensUsed += estimateTokenCount(fileDiff);
 
       if (totalTokensUsed > contextLimit) {
@@ -68,7 +69,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       };
 
       const prompt = await loadPrompt("code", "review", reviewVariables);
-      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose);
+      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose, false, !isGitHubEnabled);
 
       let parsedResult;
       try {
@@ -93,7 +94,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     if (codeToReview.length > 0) {
       console.log("📢 Generating summary...");
-      const summary = await generateSummary(codeToReview, isVerbose);
+      const summary = await generateSummary(codeToReview, isVerbose, isGitHubEnabled);
       console.log("📢 Posting PR review...");
 
       if (isGitHubEnabled) {
@@ -120,13 +121,14 @@ function estimateTokenCount(text: string): number {
 export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
+  isGitHubEnabled: boolean
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
-
-  return await invokeLLMWithSpinner(summaryPrompt, verbose);
+  return await invokeLLMWithSpinner(summaryPrompt, verbose, true, !isGitHubEnabled);
+  
 }
 
 export function removeFirstDirectory(inputPath: string): string {

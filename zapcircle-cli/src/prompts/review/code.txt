@@ -19,7 +19,8 @@ The output should be ready to parse as a JSON file.
 
   Modified files:
   ${name}
-  ${fileDiff}
+  
+  ${diff}
 
   Behavior if available:
   ${behavior}
