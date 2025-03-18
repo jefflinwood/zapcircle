@@ -127,7 +127,7 @@ export async function generateSummary(
     reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
-  return await invokeLLMWithSpinner(summaryPrompt, verbose, true, !isGitHubEnabled);
+  return await invokeLLMWithSpinner(summaryPrompt, verbose, false, !isGitHubEnabled);
   
 }
 
