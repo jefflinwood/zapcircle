@@ -35,17 +35,6 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
         continue;
       }
 
-      const fileContents = readFileSync(absolutePath, "utf-8");
-      const estimatedTokens = estimateTokenCount(fileContents);
-      
-      if (totalTokensUsed + estimatedTokens > contextLimit) {
-        console.warn(`Skipping ${filePath} to stay within token limit.`);
-        continue;
-      }
-      totalTokensUsed += estimatedTokens;
-      
-      codeToReview.push({ fileName: filePath, fileContents: fileContents });
-
       const behaviorFilePath = `${absolutePath}.zap.toml`;
       let behaviorFileContents = "";
       if (existsSync(behaviorFilePath)) {
@@ -61,6 +50,8 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
         console.warn(`Skipping ${filePath} diff to stay within token limit.`);
         continue;
       }
+      codeToReview.push({ fileName: filePath, fileDiff: fileDiff });
+
 
       const reviewVariables = {
         name: path.basename(filePath),
