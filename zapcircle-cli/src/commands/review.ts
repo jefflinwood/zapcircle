@@ -29,7 +29,8 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
-      const absolutePath = path.resolve(removeFirstDirectory(filePath));
+      const absolutePath = path.resolve(filePath);
+      console.log("Absolute Path: ", absolutePath);
       if (!existsSync(absolutePath)) {
         console.warn(`Skipping ${filePath} (file does not exist)...`);
         continue;
@@ -134,19 +135,32 @@ export function removeFirstDirectory(inputPath: string): string {
 /**
  * Fetches the list of files changed in the current PR.
  */
+
 export function getChangedFiles(): string[] {
   try {
-    const diffOutput = execSync("git diff --name-only origin/main").toString();
-    return diffOutput
-      .trim()
-      .split("\n")
-      .filter((file) => file.length > 0);
+    const statusOutput = execSync("git status --short").toString();
+    
+    const files = [] as string[];
+
+    statusOutput.trim().split("\n").forEach((line) => {
+      const status = line.slice(0, 2).trim();
+      const filePath = line.slice(2).trim();
+
+      if (status.startsWith("M")) {
+        files.push(filePath);
+      } else if (status.startsWith("A")) {
+        files.push(filePath);
+      } else if (status.startsWith("??")) {
+        files.push(filePath);
+      }
+    });
+
+    return files;
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
   }
 }
-
 /**
  * Fetches the diff for a given file.
  */
