@@ -1,0 +1,6 @@
+Analyze the following Source Code block and provide potential redundancy issues that could be refactored:
+
+Source Code:
+\`\`\`
+${sourceCode}
+\`\`\`

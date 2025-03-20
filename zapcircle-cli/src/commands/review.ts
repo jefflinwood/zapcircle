@@ -134,13 +134,19 @@ export function removeFirstDirectory(inputPath: string): string {
 /**
  * Fetches the list of files changed in the current PR.
  */
-export function getChangedFiles(): string[] {
+export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
-    const diffOutput = execSync("git diff --name-only origin/main").toString();
+    const diffOutput = execSync(`git diff --name-status ${baseBranch}...HEAD`).toString();
+
     return diffOutput
       .trim()
       .split("\n")
-      .filter((file) => file.length > 0);
+      .map((line) => {
+        const [status, ...fileParts] = line.split(/\s+/);
+        const filePath = fileParts.join(" "); // Handle file paths with spaces
+        return status === "M" || status === "A" ? filePath : null;
+      })
+      .filter((filePath): filePath is string => filePath !== null); // Remove null values
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
