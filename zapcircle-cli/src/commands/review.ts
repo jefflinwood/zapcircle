@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
-import path from "path";
+import path, { resolve } from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
@@ -29,7 +29,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
-      const absolutePath = path.resolve(removeFirstDirectory(filePath));
+      const absolutePath = path.resolve(filePath);
       if (!existsSync(absolutePath)) {
         console.warn(`Skipping ${filePath} (file does not exist)...`);
         continue;
@@ -121,22 +121,17 @@ export async function generateSummary(
   return await invokeLLMWithSpinner(summaryPrompt, verbose, false, !isGitHubEnabled);
   
 }
-
-export function removeFirstDirectory(inputPath: string): string {
-  const normalizedPath = path.normalize(inputPath);
-  const parts = normalizedPath.split(path.sep);
-  if (parts.length > 1) {
-    parts.shift();
-  }
-  return parts.join(path.sep);
-}
-
 /**
- * Fetches the list of files changed in the current PR.
+ * Fetches the list of files changed in the current PR and resolves them relative to the Git repository root.
+ * @param baseBranch - The base branch to compare against (default: origin/main).
  */
 export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
-    const diffOutput = execSync(`git diff --name-status ${baseBranch}...HEAD`).toString();
+    // Get the absolute path to the root of the Git repository
+    const repoRoot = execSync(`git rev-parse --show-toplevel`).toString().trim();
+    
+    // Run the diff command to get changed files
+    const diffOutput = execSync(`git diff --name-status ${baseBranch}`).toString();
 
     return diffOutput
       .trim()
@@ -144,7 +139,7 @@ export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
       .map((line) => {
         const [status, ...fileParts] = line.split(/\s+/);
         const filePath = fileParts.join(" "); // Handle file paths with spaces
-        return status === "M" || status === "A" ? filePath : null;
+        return status === "M" || status === "A" ? resolve(repoRoot, filePath) : null;
       })
       .filter((filePath): filePath is string => filePath !== null); // Remove null values
   } catch (error) {

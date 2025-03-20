@@ -2,7 +2,6 @@ import { execSync } from "child_process";
 import {
   getChangedFiles,
   getDiffForFile,
-  removeFirstDirectory,
   formatPRComment,
   generateSummary,
   postGitHubComment,
@@ -25,18 +24,6 @@ global.fetch = jest.fn(() =>
 ) as jest.Mock;
 
 describe("ZapCircle Review Tests", () => {
-  /** ✅ Test removeFirstDirectory() */
-  test("should remove the first directory from a path", () => {
-    expect(removeFirstDirectory("src/components/Button.tsx")).toBe(
-      "components/Button.tsx",
-    );
-    expect(removeFirstDirectory("app/models/User.ts")).toBe("models/User.ts");
-  });
-
-  test("should return the same path if no directory exists", () => {
-    expect(removeFirstDirectory("index.ts")).toBe("index.ts");
-  });
-
   /** ✅ Test formatPRComment() */
   test("should format PR comments correctly", () => {
     const reviewData = [
