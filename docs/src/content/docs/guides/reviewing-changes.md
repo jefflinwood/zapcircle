@@ -38,6 +38,10 @@ name: ZapCircle Review
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write  # REQUIRED for posting comments
 
 jobs:
   zapcircle_review:
@@ -48,8 +52,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
-          
+          fetch-depth: 0
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
