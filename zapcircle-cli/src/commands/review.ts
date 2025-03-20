@@ -30,7 +30,6 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
       const absolutePath = path.resolve(removeFirstDirectory(filePath));
-      console.log("Absolute Path: ", absolutePath);
       if (!existsSync(absolutePath)) {
         console.warn(`Skipping ${filePath} (file does not exist)...`);
         continue;
