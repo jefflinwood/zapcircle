@@ -2,6 +2,10 @@ name: ZapCircle Review
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write  # REQUIRED for posting comments
 
 jobs:
   zapcircle_review:
