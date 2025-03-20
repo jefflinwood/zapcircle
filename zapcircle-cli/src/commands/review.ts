@@ -29,7 +29,7 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
-      const absolutePath = path.resolve(filePath);
+      const absolutePath = path.resolve(removeFirstDirectory(filePath));
       console.log("Absolute Path: ", absolutePath);
       if (!existsSync(absolutePath)) {
         console.warn(`Skipping ${filePath} (file does not exist)...`);
@@ -135,32 +135,25 @@ export function removeFirstDirectory(inputPath: string): string {
 /**
  * Fetches the list of files changed in the current PR.
  */
-
-export function getChangedFiles(): string[] {
+export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
-    const statusOutput = execSync("git status --short").toString();
-    
-    const files = [] as string[];
+    const diffOutput = execSync(`git diff --name-status ${baseBranch}...HEAD`).toString();
 
-    statusOutput.trim().split("\n").forEach((line) => {
-      const status = line.slice(0, 2).trim();
-      const filePath = line.slice(2).trim();
-
-      if (status.startsWith("M")) {
-        files.push(filePath);
-      } else if (status.startsWith("A")) {
-        files.push(filePath);
-      } else if (status.startsWith("??")) {
-        files.push(filePath);
-      }
-    });
-
-    return files;
+    return diffOutput
+      .trim()
+      .split("\n")
+      .map((line) => {
+        const [status, ...fileParts] = line.split(/\s+/);
+        const filePath = fileParts.join(" "); // Handle file paths with spaces
+        return status === "M" || status === "A" ? filePath : null;
+      })
+      .filter((filePath): filePath is string => filePath !== null); // Remove null values
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
   }
 }
+
 /**
  * Fetches the diff for a given file.
  */
