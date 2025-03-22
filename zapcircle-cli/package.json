@@ -16,7 +16,7 @@
     "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
     "prepare": "husky install",
     "start": "ts-node src/commandline/commandLine.ts",
-    "review": "node dist/src/commandline/commandLine.js review --github"
+    "review": "node dist/src/commandline/commandLine.js review --github --verbose"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
