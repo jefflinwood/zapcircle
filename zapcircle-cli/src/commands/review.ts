@@ -167,9 +167,9 @@ export function formatPRComment(reviewData: any[]): string {
   let comment = "";
 
   const iconMap: Record<string, string> = {
-    low: "🟡",
-    medium: "🟠",
-    high: "🔴",
+    "low": "🟡",
+    "medium": "🟠",
+    "high": "🔴",
   };
 
   reviewData.forEach((file) => {

@@ -44,6 +44,7 @@ describe("ZapCircle Review Tests", () => {
     expect(result).toContain("file2.ts");
     expect(result).toContain("Line 25");
     expect(result).toContain("Potential security risk");
+    expect(result).toContain("🔴");
   });
 
   test("should return an empty string if no issues found", () => {
