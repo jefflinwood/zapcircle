@@ -29,11 +29,11 @@ describe("ZapCircle Review Tests", () => {
     const reviewData = [
       {
         file: "file1.ts",
-        issues: [{ line: 10, message: "Unused variable found" }],
+        issues: [{ line: 10, severity: "low", message: "Unused variable found" }],
       },
       {
         file: "file2.ts",
-        issues: [{ line: 25, message: "Potential security risk" }],
+        issues: [{ line: 25, severity: "high", message: "Potential security risk" }],
       },
     ];
 
@@ -44,6 +44,7 @@ describe("ZapCircle Review Tests", () => {
     expect(result).toContain("file2.ts");
     expect(result).toContain("Line 25");
     expect(result).toContain("Potential security risk");
+    expect(result).toContain("🔴");
   });
 
   test("should return an empty string if no issues found", () => {

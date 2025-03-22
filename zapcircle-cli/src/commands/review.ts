@@ -166,10 +166,17 @@ export function getDiffForFile(filePath: string): string {
 export function formatPRComment(reviewData: any[]): string {
   let comment = "";
 
+  const iconMap: Record<string, string> = {
+    "low": "🟡",
+    "medium": "🟠",
+    "high": "🔴",
+  };
+
   reviewData.forEach((file) => {
     comment += `### **${file.file}**\n`;
     file.issues.forEach((issue: any) => {
-      comment += `- 🔴 **Line ${issue.line}**: ${issue.message}\n`;
+      const icon = iconMap[issue.severity] || "🟡";
+      comment += `- ${icon} **Line ${issue.line}**: ${issue.message} \n`;
     });
     comment += `\n`;
   });
