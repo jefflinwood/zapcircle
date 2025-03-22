@@ -176,7 +176,7 @@ export function formatPRComment(reviewData: any[]): string {
     comment += `### **${file.file}**\n`;
     file.issues.forEach((issue: any) => {
       const icon = iconMap[issue.severity] || "🟡";
-      comment += `- ${icon} **Line ${issue.line}**: ${issue.message}\n`;
+      comment += `- ${icon} **Line ${issue.line}**: ${issue.message} **(${issue.type})**\n`;
     });
     comment += `\n`;
   });
