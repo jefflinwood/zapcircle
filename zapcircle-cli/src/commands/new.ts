@@ -5,6 +5,27 @@ import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { scaffoldBehaviorsFromProject } from "./new/scaffoldBehaviors";
 import { generateComponent } from "./generate";
 import { writeOutputFile } from "../utils/writeOutputFile";
+import { generateAppTsx } from "./new/generateAppTsx";
+import { zapcircleValidate } from "./validate";
+
+
+const generationInstructions = `You are a behavior-driven development assistant. Given the following app idea, generate a project.zap.toml file that can be used to scaffold a React + Tailwind project with component behaviors, state, and layout.
+
+The TOML should contain:
+- name and description
+- [layout]: structure, framework, and cssFramework
+- [state]: shared state variable names, types, and descriptions
+- [components]: each component should have:
+  - a unique name
+  - a role (what it does)
+  - a list of inputs (props it receives)
+  - a behavior (how it behaves and why)
+  - if applicable, state it manages or provides
+- [data]: for any hard-coded or mock data (including shape and fields)
+- [interaction]: how state flows, how props are passed, if context is used
+- [build]: where generated components should go (e.g. "./src/components")
+
+Respond ONLY with the contents of project.zap.toml, without markdown formatting or commentary.`;
 
 export async function zapcircleNew(
   projectDir: string,
@@ -34,20 +55,12 @@ export async function zapcircleNew(
         ideaPrompt = await rl.question("What are you building? ");
       }
 
-      const prompt = `You are a behavior-driven development assistant. Given the project idea below, generate a project.zap.toml file.
+      const prompt = `${generationInstructions}
 
-The TOML should contain:
-- name and description
-- a [state] section if there is shared state
-- a [layout] section if layout is relevant
-- a [components] section, where each component includes a name, role, and behavior.
-
-Project idea:
+App idea:
 """
 ${ideaPrompt}
-"""
-
-Respond ONLY with the contents of project.zap.toml, with no markdown, comments, or other extraneous language.`;
+"""`;
 
       tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
       writeFileSync(projectTomlPath, tomlContents);
@@ -61,20 +74,12 @@ Respond ONLY with the contents of project.zap.toml, with no markdown, comments, 
       ideaPrompt = await rl.question("What are you building? ");
     }
 
-    const prompt = `You are a behavior-driven development assistant. Given the project idea below, generate a project.zap.toml file.
+    const prompt = `${generationInstructions}
 
-The TOML should contain:
-- name and description
-- a [state] section if there is shared state
-- a [layout] section if layout is relevant
-- a [components] section, where each component includes a name, role, and behavior.
-
-Project idea:
+App idea:
 """
 ${ideaPrompt}
-"""
-
-Respond ONLY with the contents of project.zap.toml, with no markdown, comments, or other extraneous language.`;
+"""`;
 
     tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
     writeFileSync(projectTomlPath, tomlContents);
@@ -108,6 +113,14 @@ Respond ONLY with the contents of project.zap.toml, with no markdown, comments, 
     });
   }
 
+  // Step 4: Generate App.tsx to wire it all together
+  await generateAppTsx(projectTomlPath, outputDir, { verbose: isVerbose });
+
+
+  // Step 5: Validate the generated project
+  await zapcircleValidate(outputDir, { verbose: isVerbose, autofix: true });
+
+
   console.log("✅ Project scaffolding complete!");
-  console.log("👉 You can now edit App.tsx to wire your components together.");
+  console.log("👉 You can now run your app or customize App.tsx and the components.");
 }

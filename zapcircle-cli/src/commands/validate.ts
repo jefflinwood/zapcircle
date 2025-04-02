@@ -33,20 +33,28 @@ export async function zapcircleValidate(
   const componentFiles = readdirSync(componentsPath).filter(f => f.endsWith(".tsx"));
 
   const appPath = path.join(srcDir, "App.tsx");
-  let fullContext = `--- App.tsx ---\n${readFileSync(appPath, "utf-8").trim()}\n\n`;
+  let fullContext = `=== App.tsx ===\n${readFileSync(appPath, "utf-8").trim()}\n\n`;
 
   for (const file of componentFiles) {
     const fullPath = path.join(componentsPath, file);
     const content = readFileSync(fullPath, "utf-8");
-    fullContext += `--- ${file} ---\n${content.trim()}\n\n`;
+    fullContext += `=== ${file} ===\n${content.trim()}\n\n`;
   }
 
   const prompt = `You are a senior React engineer. Analyze the following React files for integration issues:
 - Are props passed correctly?
 - Is state handled and shared logically?
 - Are the components structured in a maintainable and valid way?
+- Ensure that the names of all variables passed between components match.
 
-If you find issues, return updated code blocks with the fixes. If everything is fine, say so.
+If you find issues, return updated code blocks with the fixes in the format:
+
+=== filename ===
+<updated code>
+
+Do not include extraneous comments in the updated code. Include the entire contents of the source code file in the blocks, not just the updated sections.
+
+If everything is fine, say so.
 
 ${fullContext}`;
 
@@ -56,13 +64,16 @@ ${fullContext}`;
   console.log(result);
 
   if (doAutofix) {
-    const codeBlocks = result.match(/--- (.*?) ---\n([\s\S]*?)(?=\n---|$)/g);
+    const codeBlocks = result.match(/=== (.*?) ===\n([\s\S]*?)(?=\n===|$)/g);
     if (codeBlocks) {
       for (const block of codeBlocks) {
-        const match = block.match(/--- (.*?) ---\n([\s\S]*)/);
+        const match = block.match(/=== (.*?) ===\n([\s\S]*)/);
         if (match) {
           const fileName = match[1].trim();
-          const newCode = match[2].trim();
+          let newCode = match[2].trim();
+
+          // Strip markdown formatting and comments from LLM response
+          newCode = newCode.replace(/^```(tsx|typescript)?/gm, "").replace(/```$/gm, "").trim();
 
           const filePath =
             fileName === "App.tsx"
