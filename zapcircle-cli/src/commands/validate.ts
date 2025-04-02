@@ -1,0 +1,81 @@
+// validate.ts
+import path from "path";
+import { execSync } from "child_process";
+import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { readFileSync, readdirSync, writeFileSync } from "fs";
+
+export async function zapcircleValidate(
+  projectDir: string,
+  options: { analyze?: boolean; verbose?: boolean; autofix?: boolean } = {}
+) {
+  const isVerbose = options.verbose || false;
+  const runLLM = options.analyze !== false;
+  const doAutofix = options.autofix === true;
+
+  const srcDir = path.join(projectDir, "src");
+
+  console.log("🧪 Running TypeScript check...");
+  try {
+    execSync("npx tsc --noEmit", {
+      cwd: projectDir,
+      stdio: "inherit",
+    });
+    console.log("✅ TypeScript check passed with no compile-time errors.");
+  } catch (error) {
+    console.error("❌ TypeScript errors were found.");
+  }
+
+  if (!runLLM) return;
+
+  console.log("🔍 Sending source code to LLM for validation...");
+
+  const componentsPath = path.join(srcDir, "components");
+  const componentFiles = readdirSync(componentsPath).filter(f => f.endsWith(".tsx"));
+
+  const appPath = path.join(srcDir, "App.tsx");
+  let fullContext = `--- App.tsx ---\n${readFileSync(appPath, "utf-8").trim()}\n\n`;
+
+  for (const file of componentFiles) {
+    const fullPath = path.join(componentsPath, file);
+    const content = readFileSync(fullPath, "utf-8");
+    fullContext += `--- ${file} ---\n${content.trim()}\n\n`;
+  }
+
+  const prompt = `You are a senior React engineer. Analyze the following React files for integration issues:
+- Are props passed correctly?
+- Is state handled and shared logically?
+- Are the components structured in a maintainable and valid way?
+
+If you find issues, return updated code blocks with the fixes. If everything is fine, say so.
+
+${fullContext}`;
+
+  const result = await invokeLLMWithSpinner(prompt, isVerbose);
+
+  console.log("\n🧠 LLM Validation Report:\n");
+  console.log(result);
+
+  if (doAutofix) {
+    const codeBlocks = result.match(/--- (.*?) ---\n([\s\S]*?)(?=\n---|$)/g);
+    if (codeBlocks) {
+      for (const block of codeBlocks) {
+        const match = block.match(/--- (.*?) ---\n([\s\S]*)/);
+        if (match) {
+          const fileName = match[1].trim();
+          const newCode = match[2].trim();
+
+          const filePath =
+            fileName === "App.tsx"
+              ? appPath
+              : path.join(componentsPath, fileName);
+
+          writeFileSync(filePath, newCode);
+          console.log(`🛠️  Auto-fixed ${fileName}`);
+        }
+      }
+      console.log("✅ One round of LLM-based auto-fixes applied.");
+    } else {
+      console.log("✅ No fixes returned. Project looks good.");
+    }
+  }
+}
