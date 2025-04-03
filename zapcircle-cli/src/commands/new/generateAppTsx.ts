@@ -16,12 +16,17 @@ export async function generateAppTsx(
 
   const prompt = `You are a TypeScript React developer. Based on the following project.zap.toml, generate a complete App.tsx file.
 
-This file should:
-- Import the generated components from ./components/
-- Define any shared state if mentioned
-- Pass props between components correctly
-- Include some mock or hard-coded data if necessary
-- Use Tailwind CSS for layout if layout is specified
+
+  This file should:
+  - Import the generated components from ./components/
+  - Define any shared state if mentioned
+  - Pass props between components correctly
+  - Include some mock or hard-coded data if necessary
+  - Use Tailwind CSS for layout if layout is specified
+  - Ensure that all prop names and types match the expected inputs of each component
+  - Ensure the state variable names used in App.tsx match those defined in [state]
+  - Do not rename any prop or state keys inconsistently
+  - Do not include unused imports or components
 
 Respond ONLY with valid TypeScript code. Do not include markdown, explanations, or other extraneous information.
 

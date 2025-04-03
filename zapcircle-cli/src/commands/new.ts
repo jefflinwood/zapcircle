@@ -3,11 +3,8 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync } from "fs";
 import path from "path";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { scaffoldBehaviorsFromProject } from "./new/scaffoldBehaviors";
-import { generateComponent } from "./generate";
-import { writeOutputFile } from "../utils/writeOutputFile";
-import { generateAppTsx } from "./new/generateAppTsx";
 import { zapcircleValidate } from "./validate";
-
+import { generateAllComponents } from "./new/generateAllComponents";
 
 const generationInstructions = `You are a behavior-driven development assistant. Given the following app idea, generate a project.zap.toml file that can be used to scaffold a React + Tailwind project with component behaviors, state, and layout.
 
@@ -24,6 +21,7 @@ The TOML should contain:
 - [data]: for any hard-coded or mock data (including shape and fields)
 - [interaction]: how state flows, how props are passed, if context is used
 - [build]: where generated components should go (e.g. "./src/components")
+- [design]: overall user interface theme, primaryColor, secondaryColor, and fontFamily, if the user has a visual style preference
 
 Respond ONLY with the contents of project.zap.toml, without markdown formatting or commentary.`;
 
@@ -101,25 +99,11 @@ ${ideaPrompt}
     interactive: isInteractive,
   });
 
-  // Step 3: Generate component files from behaviors
-  const fs = await import("fs");
-  const behaviorFiles = fs.readdirSync(componentsDir).filter((f) => f.endsWith(".zap.toml"));
-  for (const file of behaviorFiles) {
-    const fullPath = path.join(componentsDir, file);
-    await generateComponent("tsx", fullPath, {
-      output: componentsDir,
-      interactive: isInteractive,
-      verbose: isVerbose,
-    });
-  }
+  // Step 3: One-shot generation of all components + App.tsx
+  await generateAllComponents(outputDir, { verbose: isVerbose });
 
-  // Step 4: Generate App.tsx to wire it all together
-  await generateAppTsx(projectTomlPath, outputDir, { verbose: isVerbose });
-
-
-  // Step 5: Validate the generated project
+  // Step 4: Validate the generated project
   await zapcircleValidate(outputDir, { verbose: isVerbose, autofix: true });
-
 
   console.log("✅ Project scaffolding complete!");
   console.log("👉 You can now run your app or customize App.tsx and the components.");
