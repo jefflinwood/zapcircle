@@ -5,28 +5,11 @@ import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { scaffoldBehaviorsFromProject } from "./new/scaffoldBehaviors";
 import { zapcircleValidate } from "./validate";
 import { generateAllComponents } from "./new/generateAllComponents";
-
-const generationInstructions = `You are a behavior-driven development assistant. Given the following app idea, generate a project.zap.toml file that can be used to scaffold a React + Tailwind project with component behaviors, state, and layout.
-
-The TOML should contain:
-- name and description
-- [layout]: structure, framework, and cssFramework
-- [state]: shared state variable names, types, and descriptions
-- [components]: each component should have:
-  - a unique name
-  - a role (what it does)
-  - a list of inputs (props it receives)
-  - a behavior (how it behaves and why)
-  - if applicable, state it manages or provides
-- [data]: for any hard-coded or mock data (including shape and fields)
-- [interaction]: how state flows, how props are passed, if context is used
-- [build]: where generated components should go (e.g. "./src/components")
-- [design]: overall user interface theme, primaryColor, secondaryColor, and fontFamily, if the user has a visual style preference
-
-Respond ONLY with the contents of project.zap.toml, without markdown formatting or commentary.`;
+import { loadPrompt } from "../core/promptLoader";
 
 export async function zapcircleNew(
-  projectDir: string,
+  projectType: string,
+  projectDir: string = ".",
   ideaPrompt?: string,
   options: { interactive?: boolean; output?: string; verbose?: boolean } = {}
 ) {
@@ -52,13 +35,7 @@ export async function zapcircleNew(
       if (!ideaPrompt) {
         ideaPrompt = await rl.question("What are you building? ");
       }
-
-      const prompt = `${generationInstructions}
-
-App idea:
-"""
-${ideaPrompt}
-"""`;
+      const prompt = await loadPrompt(projectType, "new", {ideaPrompt: ideaPrompt});
 
       tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
       writeFileSync(projectTomlPath, tomlContents);
@@ -72,12 +49,7 @@ ${ideaPrompt}
       ideaPrompt = await rl.question("What are you building? ");
     }
 
-    const prompt = `${generationInstructions}
-
-App idea:
-"""
-${ideaPrompt}
-"""`;
+    const prompt = await loadPrompt(projectType, "new", {ideaPrompt: ideaPrompt});
 
     tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
     writeFileSync(projectTomlPath, tomlContents);

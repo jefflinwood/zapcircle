@@ -82,13 +82,13 @@ program
   });
 
 program
-  .command("new <pathToCode> [ideaPrompt]")
-  .description("Create a new React application (React/TypeScript)")
+  .command("new <projectType> [pathToCode] [ideaPrompt]")
+  .description("Create a new application from an idea. Supports react-tsx as a project type.")
   .option("--verbose", "Display LLM prompt and response in the console log")
   .option("--interactive", "Operate in interactive mode, ask for input")
-  .action((pathToCode, ideaPrompt, options) => {
+  .action((projectType, pathToCode, ideaPrompt, options) => {
     console.log(`Running ZapCircle New...`);
-    zapcircleNew(pathToCode, ideaPrompt, options);
+    zapcircleNew(projectType, pathToCode, ideaPrompt, options);
   });
 
 
