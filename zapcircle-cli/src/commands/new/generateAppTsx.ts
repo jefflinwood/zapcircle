@@ -6,7 +6,7 @@ import { invokeLLMWithSpinner } from "../../commandline/invokeLLMWithSpinner";
 export async function generateAppTsx(
   projectTomlPath: string,
   outputDir: string,
-  options: { verbose?: boolean } = {}
+  options: { verbose?: boolean } = {},
 ) {
   const isVerbose = options.verbose || false;
   const appPath = path.join(outputDir, "src", "App.tsx");

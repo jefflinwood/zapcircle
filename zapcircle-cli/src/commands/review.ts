@@ -7,7 +7,11 @@ import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
-export async function review(options: { verbose?: boolean; github?: boolean; contextLimit?: number }) {
+export async function review(options: {
+  verbose?: boolean;
+  github?: boolean;
+  contextLimit?: number;
+}) {
   try {
     const isVerbose = options.verbose || false;
     const isGitHubEnabled = options.github || false;
@@ -40,7 +44,10 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       if (existsSync(behaviorFilePath)) {
         behaviorFileContents = readFileSync(behaviorFilePath, "utf-8");
         totalTokensUsed += estimateTokenCount(behaviorFileContents);
-        codeToReview.push({ fileName: behaviorFilePath, fileContents: behaviorFileContents });
+        codeToReview.push({
+          fileName: behaviorFilePath,
+          fileContents: behaviorFileContents,
+        });
       }
 
       const fileDiff = getDiffForFile(absolutePath);
@@ -52,7 +59,6 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       }
       codeToReview.push({ fileName: filePath, fileDiff: fileDiff });
 
-
       const reviewVariables = {
         name: path.basename(filePath),
         diff: fileDiff,
@@ -60,13 +66,21 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       };
 
       const prompt = await loadPrompt("code", "review", reviewVariables);
-      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose, false, !isGitHubEnabled);
+      const rawResult = await invokeLLMWithSpinner(
+        prompt,
+        isVerbose,
+        false,
+        !isGitHubEnabled,
+      );
 
       let parsedResult;
       try {
         parsedResult = JSON.parse(rawResult);
       } catch (error) {
-        console.error(`⚠️ Failed to parse LLM response for ${filePath}. Raw result:`, rawResult);
+        console.error(
+          `⚠️ Failed to parse LLM response for ${filePath}. Raw result:`,
+          rawResult,
+        );
         continue;
       }
 
@@ -85,7 +99,11 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     if (codeToReview.length > 0) {
       console.log("📢 Generating summary...");
-      const summary = await generateSummary(codeToReview, isVerbose, isGitHubEnabled);
+      const summary = await generateSummary(
+        codeToReview,
+        isVerbose,
+        isGitHubEnabled,
+      );
       console.log("📢 Posting PR review...");
 
       if (isGitHubEnabled) {
@@ -105,21 +123,24 @@ function estimateTokenCount(text: string): number {
   return encode(text).length;
 }
 
-
 /**
  * Generates a high-level summary of the code changes using LLM.
  */
 export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
-  isGitHubEnabled: boolean
+  isGitHubEnabled: boolean,
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
-  return await invokeLLMWithSpinner(summaryPrompt, verbose, false, !isGitHubEnabled);
-  
+  return await invokeLLMWithSpinner(
+    summaryPrompt,
+    verbose,
+    false,
+    !isGitHubEnabled,
+  );
 }
 /**
  * Fetches the list of files changed in the current PR and resolves them relative to the Git repository root.
@@ -128,10 +149,14 @@ export async function generateSummary(
 export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
     // Get the absolute path to the root of the Git repository
-    const repoRoot = execSync(`git rev-parse --show-toplevel`).toString().trim();
-    
+    const repoRoot = execSync(`git rev-parse --show-toplevel`)
+      .toString()
+      .trim();
+
     // Run the diff command to get changed files
-    const diffOutput = execSync(`git diff --name-status ${baseBranch}`).toString();
+    const diffOutput = execSync(
+      `git diff --name-status ${baseBranch}`,
+    ).toString();
 
     return diffOutput
       .trim()
@@ -139,7 +164,9 @@ export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
       .map((line) => {
         const [status, ...fileParts] = line.split(/\s+/);
         const filePath = fileParts.join(" "); // Handle file paths with spaces
-        return status === "M" || status === "A" ? resolve(repoRoot, filePath) : null;
+        return status === "M" || status === "A"
+          ? resolve(repoRoot, filePath)
+          : null;
       })
       .filter((filePath): filePath is string => filePath !== null); // Remove null values
   } catch (error) {
@@ -167,9 +194,9 @@ export function formatPRComment(reviewData: any[]): string {
   let comment = "";
 
   const iconMap: Record<string, string> = {
-    "low": "🟡",
-    "medium": "🟠",
-    "high": "🔴",
+    low: "🟡",
+    medium: "🟠",
+    high: "🔴",
   };
 
   reviewData.forEach((file) => {

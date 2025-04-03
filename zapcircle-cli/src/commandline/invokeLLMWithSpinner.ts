@@ -4,12 +4,12 @@ export async function invokeLLMWithSpinner(
   prompt: string,
   isVerbose: boolean,
   isLarge = false,
-  showSpinner = true
+  showSpinner = true,
 ): Promise<string> {
   if (!showSpinner) {
     return await invokeLLM(prompt, isVerbose, isLarge);
   }
-  
+
   const spinnerChars = ["|", "/", "-", "\\"];
   let i = 0;
 
