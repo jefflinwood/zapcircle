@@ -1,4 +1,3 @@
-// zapcircle-new.ts
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "fs";
 import path from "path";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
@@ -71,11 +70,11 @@ export async function zapcircleNew(
     interactive: isInteractive,
   });
 
-  // Step 3: One-shot generation of all components + App.tsx
-  await generateAllComponents(outputDir, { verbose: isVerbose });
+  // Step 3: One-shot generation of all components
+  await generateAllComponents(projectType, outputDir, { verbose: isVerbose });
 
   // Step 4: Validate the generated project
-  await zapcircleValidate(outputDir, { verbose: isVerbose, autofix: true });
+  await zapcircleValidate(projectType, outputDir, { verbose: isVerbose, autofix: true });
 
   console.log("✅ Project scaffolding complete!");
   console.log("👉 You can now run your app or customize App.tsx and the components.");

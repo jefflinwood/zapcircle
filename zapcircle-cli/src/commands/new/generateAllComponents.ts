@@ -3,8 +3,10 @@ import { readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { readdirSync } from "fs";
 import { invokeLLMWithSpinner } from "../../commandline/invokeLLMWithSpinner";
+import { loadPrompt } from "../../core/promptLoader";
 
 export async function generateAllComponents(
+  projectType: string,
   projectDir: string,
   options: { verbose?: boolean; interactive?: boolean } = {}
 ) {
@@ -21,30 +23,7 @@ export async function generateAllComponents(
     behaviorContext += `=== ${file} ===\n${behavior}\n\n`;
   }
 
-  const prompt = `You are a senior React developer. Given the project.zap.toml file and the following component behaviors, generate the complete set of React component files for this application.
-
-You must:
-- Include one top-level App.tsx
-- Generate one file for each component
-- Ensure that props and shared state are used consistently
-- Include only valid TypeScript React code, using function components
-- Use Tailwind CSS classes where layout is relevant
-- Do not include markdown, commentary, or explanations
-
-Format your output using:
-=== App.tsx ===
-<code>
-
-=== ComponentName.tsx ===
-<code>
-
-project.zap.toml:
-"""
-${projectToml}
-"""
-
-Component behaviors:
-${behaviorContext}`;
+  const prompt = await loadPrompt(projectType, "components", { projectToml: projectToml, behaviorContext: behaviorContext })
 
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 

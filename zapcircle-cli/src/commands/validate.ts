@@ -3,8 +3,10 @@ import path from "path";
 import { execSync } from "child_process";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { readFileSync, readdirSync, writeFileSync } from "fs";
+import { loadPrompt } from "../core/promptLoader";
 
 export async function zapcircleValidate(
+  projectType: string,
   projectDir: string,
   options: { analyze?: boolean; verbose?: boolean; autofix?: boolean } = {}
 ) {
@@ -41,23 +43,8 @@ export async function zapcircleValidate(
     fullContext += `=== ${file} ===\n${content.trim()}\n\n`;
   }
 
-  const prompt = `You are a senior React engineer. Analyze the following React files for integration issues:
-- Are props passed correctly?
-- Is state handled and shared logically?
-- Are the components structured in a maintainable and valid way?
-- Ensure that the names of all variables passed between components match.
-
-If you find issues, return updated code blocks with the fixes in the format:
-
-=== filename ===
-<updated code>
-
-Do not include extraneous comments in the updated code. Include the entire contents of the source code file in the blocks, not just the updated sections.
-
-If everything is fine, say so.
-
-${fullContext}`;
-
+  const prompt = await loadPrompt(projectType, "validate", { fullContext: fullContext })
+  
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
   console.log("\n🧠 LLM Validation Report:\n");
