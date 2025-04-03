@@ -12,6 +12,7 @@ import { updateCode } from "../commands/updateCode";
 import { review } from "../commands/review";
 import { distill } from "../commands/distill";
 import { context } from "../commands/context";
+import { zapcircleNew } from "../commands/new";
 
 const program = new Command();
 
@@ -79,6 +80,17 @@ program
     console.log(`Running ZapCircle Review...`);
     review(options);
   });
+
+program
+  .command("new <projectType> [pathToCode] [ideaPrompt]")
+  .description("Create a new application from an idea. Supports react-tsx as a project type.")
+  .option("--verbose", "Display LLM prompt and response in the console log")
+  .option("--interactive", "Operate in interactive mode, ask for input")
+  .action((projectType, pathToCode, ideaPrompt, options) => {
+    console.log(`Running ZapCircle New...`);
+    zapcircleNew(projectType, pathToCode, ideaPrompt, options);
+  });
+
 
 program
   .command("distill <pathToCode>")
