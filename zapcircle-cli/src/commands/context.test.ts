@@ -10,22 +10,22 @@ describe("context", () => {
       "test-project": {
         "package.json": JSON.stringify({
           dependencies: {
-            "next": "latest",
-            "jest": "latest"
+            next: "latest",
+            jest: "latest",
           },
           devDependencies: {
-            "typescript": "latest"
-          }
+            typescript: "latest",
+          },
         }),
         "tsconfig.json": "{}",
-        "pages": {
-          "index.tsx": "export default function Home() {}"
+        pages: {
+          "index.tsx": "export default function Home() {}",
         },
-        "tests": {
-          "example.test.ts": "describe('Example Test', () => {});"
+        tests: {
+          "example.test.ts": "describe('Example Test', () => {});",
         },
-        ".gitignore": "node_modules\n.env"
-      }
+        ".gitignore": "node_modules\n.env",
+      },
     });
   });
 
@@ -38,7 +38,7 @@ describe("context", () => {
 
     const output = readFileSync(
       path.join("test-project", "zapcircle.context.txt"),
-      "utf-8"
+      "utf-8",
     );
 
     expect(output).toContain("=== package.json ===");
@@ -52,7 +52,7 @@ describe("context", () => {
 
     const output = readFileSync(
       path.join("test-project", "zapcircle.context.txt"),
-      "utf-8"
+      "utf-8",
     );
 
     expect(output).not.toContain("node_modules");
@@ -62,18 +62,18 @@ describe("context", () => {
   it("handles projects with missing package.json gracefully", async () => {
     mockFs({
       "test-project": {
-        "pages": {
-          "index.tsx": "export default function Home() {}"
+        pages: {
+          "index.tsx": "export default function Home() {}",
         },
-        ".gitignore": "node_modules\n.env"
-      }
+        ".gitignore": "node_modules\n.env",
+      },
     });
 
     await context("test-project", { output: "test-project" });
 
     const output = readFileSync(
       path.join("test-project", "zapcircle.context.txt"),
-      "utf-8"
+      "utf-8",
     );
 
     expect(output).toContain("=== pages/index.tsx ===");
@@ -86,7 +86,7 @@ describe("context", () => {
     await context("test-project", { output: "test-project" });
 
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringMatching(/Estimated token count: \d+/)
+      expect.stringMatching(/Estimated token count: \d+/),
     );
   });
 });

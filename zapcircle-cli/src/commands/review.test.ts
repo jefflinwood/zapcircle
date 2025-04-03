@@ -29,11 +29,15 @@ describe("ZapCircle Review Tests", () => {
     const reviewData = [
       {
         file: "file1.ts",
-        issues: [{ line: 10, severity: "low", message: "Unused variable found" }],
+        issues: [
+          { line: 10, severity: "low", message: "Unused variable found" },
+        ],
       },
       {
         file: "file2.ts",
-        issues: [{ line: 25, severity: "high", message: "Potential security risk" }],
+        issues: [
+          { line: 25, severity: "high", message: "Potential security risk" },
+        ],
       },
     ];
 

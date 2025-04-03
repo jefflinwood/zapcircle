@@ -1,10 +1,16 @@
-import { readdirSync, existsSync, statSync, readFileSync, writeFileSync } from "fs";
+import {
+  readdirSync,
+  existsSync,
+  statSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
 import path from "path";
 import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 
 export async function context(
   targetPath: string,
-  options: { verbose?: boolean; output?: string }
+  options: { verbose?: boolean; output?: string },
 ) {
   try {
     const outputDir = options.output || path.dirname(targetPath);
@@ -31,7 +37,9 @@ export async function context(
 
       for (const file of files) {
         const filePath = path.join(currentPath, file);
-        if (ignoredPaths.some((ignoredPath) => filePath.startsWith(ignoredPath)))
+        if (
+          ignoredPaths.some((ignoredPath) => filePath.startsWith(ignoredPath))
+        )
           continue;
 
         const stats = statSync(filePath);
@@ -40,7 +48,13 @@ export async function context(
           fileList = fileList.concat(collectFiles(filePath));
         } else {
           // Include only source files
-          if (file.endsWith(".js") || file.endsWith(".ts") || file.endsWith(".jsx") || file.endsWith(".tsx") || file.endsWith(".json")) {
+          if (
+            file.endsWith(".js") ||
+            file.endsWith(".ts") ||
+            file.endsWith(".jsx") ||
+            file.endsWith(".tsx") ||
+            file.endsWith(".json")
+          ) {
             fileList.push(filePath);
           }
         }
@@ -65,7 +79,6 @@ export async function context(
 
     console.log(`Context file created: ${outputFilePath}`);
     console.log(`Estimated token count: ${tokenCount}`);
-
   } catch (error) {
     console.error("Error running context:", error);
   }

@@ -8,22 +8,30 @@ import { loadPrompt } from "../../core/promptLoader";
 export async function generateAllComponents(
   projectType: string,
   projectDir: string,
-  options: { verbose?: boolean; interactive?: boolean } = {}
+  options: { verbose?: boolean; interactive?: boolean } = {},
 ) {
   const isVerbose = options.verbose || false;
   const componentsDir = path.join(projectDir, "src", "components");
   const projectTomlPath = path.join(projectDir, "project.zap.toml");
   const projectToml = readFileSync(projectTomlPath, "utf-8");
 
-  const behaviorFiles = readdirSync(componentsDir).filter(f => f.endsWith(".zap.toml"));
+  const behaviorFiles = readdirSync(componentsDir).filter((f) =>
+    f.endsWith(".zap.toml"),
+  );
   let behaviorContext = "";
 
   for (const file of behaviorFiles) {
-    const behavior = readFileSync(path.join(componentsDir, file), "utf-8").trim();
+    const behavior = readFileSync(
+      path.join(componentsDir, file),
+      "utf-8",
+    ).trim();
     behaviorContext += `=== ${file} ===\n${behavior}\n\n`;
   }
 
-  const prompt = await loadPrompt(projectType, "components", { projectToml: projectToml, behaviorContext: behaviorContext })
+  const prompt = await loadPrompt(projectType, "components", {
+    projectToml: projectToml,
+    behaviorContext: behaviorContext,
+  });
 
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
@@ -34,7 +42,10 @@ export async function generateAllComponents(
       if (match) {
         const filename = match[1].trim();
         let code = match[2].trim();
-        code = code.replace(/^```(tsx|typescript)?/gm, "").replace(/```$/gm, "").trim();
+        code = code
+          .replace(/^```(tsx|typescript)?/gm, "")
+          .replace(/```$/gm, "")
+          .trim();
 
         const outputPath =
           filename === "App.tsx"

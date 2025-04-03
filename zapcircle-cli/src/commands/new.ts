@@ -10,7 +10,7 @@ export async function zapcircleNew(
   projectType: string,
   projectDir: string = ".",
   ideaPrompt?: string,
-  options: { interactive?: boolean; output?: string; verbose?: boolean } = {}
+  options: { interactive?: boolean; output?: string; verbose?: boolean } = {},
 ) {
   const outputDir = path.resolve(projectDir);
   const projectTomlPath = path.join(outputDir, "project.zap.toml");
@@ -28,13 +28,15 @@ export async function zapcircleNew(
 
   if (existsSync(projectTomlPath)) {
     const useExisting = await rl.question(
-      `A project.zap.toml file already exists. Use it? (Y/n): `
+      `A project.zap.toml file already exists. Use it? (Y/n): `,
     );
     if (useExisting.trim().toLowerCase() === "n") {
       if (!ideaPrompt) {
         ideaPrompt = await rl.question("What are you building? ");
       }
-      const prompt = await loadPrompt(projectType, "new", {ideaPrompt: ideaPrompt});
+      const prompt = await loadPrompt(projectType, "new", {
+        ideaPrompt: ideaPrompt,
+      });
 
       tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
       writeFileSync(projectTomlPath, tomlContents);
@@ -48,7 +50,9 @@ export async function zapcircleNew(
       ideaPrompt = await rl.question("What are you building? ");
     }
 
-    const prompt = await loadPrompt(projectType, "new", {ideaPrompt: ideaPrompt});
+    const prompt = await loadPrompt(projectType, "new", {
+      ideaPrompt: ideaPrompt,
+    });
 
     tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
     writeFileSync(projectTomlPath, tomlContents);
@@ -74,8 +78,13 @@ export async function zapcircleNew(
   await generateAllComponents(projectType, outputDir, { verbose: isVerbose });
 
   // Step 4: Validate the generated project
-  await zapcircleValidate(projectType, outputDir, { verbose: isVerbose, autofix: true });
+  await zapcircleValidate(projectType, outputDir, {
+    verbose: isVerbose,
+    autofix: true,
+  });
 
   console.log("✅ Project scaffolding complete!");
-  console.log("👉 You can now run your app or customize App.tsx and the components.");
+  console.log(
+    "👉 You can now run your app or customize App.tsx and the components.",
+  );
 }
