@@ -21,7 +21,8 @@ export default defineConfig({
 						{ label: 'Generating Code', slug: 'guides/generating-code'},
 						{ label: 'Generating Tests', slug: 'guides/generating-tests'},
 						{ label: 'Updating Code', slug: 'guides/updating-code'},
-						{ label: 'Reviewing Changes', slug: 'guides/reviewing-changes'}
+						{ label: 'Reviewing Changes', slug: 'guides/reviewing-changes'},
+						{ label: 'New Project', slug: 'guides/new-project'}
 					],
 				},
 				{

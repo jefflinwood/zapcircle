@@ -245,6 +245,55 @@ Processing... done!
 
 ---
 
+### `new`
+**Description:**
+Creates a new project based on an idea prompt. Builds on top of existing project scaffolders, so it only generates the React components, not the supporting files such as `package.json` or other configuration files.
+
+Currently, the only project option to create is `react-tsx`, which generates React TSX components, including App.tsx.
+
+This feature should be considered experimental, as it is more complicated than some of the other features of ZapCircle. In addition, you may need to hand edit some of the generated files to fix minor errors, even with the addition of the validation step.
+
+**Usage:**
+```bash
+npx zapcircle new react-tsx .
+```
+
+**Options**
+- `--verbose`: Logs the LLM prompt and response to the console.
+
+**Example:**
+```bash
+npx zapcircle new react-tsx .
+
+**Output:**
+```plaintext
+Running ZapCircle New...
+A project.zap.toml file already exists. Use it? (Y/n): n
+What are you building? A database to keep track of the dogs I walk, along with how many miles each one has gone for the month for my doggy walking business.
+Processing... done!
+📄 Overwrote /Users/jefflinwood/Projects/zc-examples/zc-new/project.zap.toml
+Processing... done!
+🧩 Wrote App.tsx
+🧩 Wrote DogList.tsx
+🧩 Wrote DogDetails.tsx
+🧩 Wrote AddDogForm.tsx
+🧩 Wrote StatsOverview.tsx
+✅ All components and App.tsx generated successfully.
+🧪 Running TypeScript check...
+✅ TypeScript check passed with no compile-time errors.
+🔍 Sending source code to LLM for validation...
+Processing... done!
+
+🧠 LLM Validation Report:
+
+Everything seems fine with the implementation. All prop names being passed between components match correctly, state handling is logical, and the components are structured in a maintainable way. The code should work as intended without any modifications.
+✅ No fixes returned. Project looks good.
+✅ Project scaffolding complete!
+👉 You can now run your app or customize App.tsx and the components.
+```
+
+---
+
 ### `configure`
 **Description:**  
 Interactively set up ZapCircle by selecting a preferred LLM (e.g., OpenAI) and providing configuration parameters like the OpenAI API key and model names.
