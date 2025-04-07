@@ -8,7 +8,7 @@ import { loadPrompt } from "../core/promptLoader";
 export async function zapcircleValidate(
   projectType: string,
   projectDir: string,
-  options: { analyze?: boolean; verbose?: boolean; autofix?: boolean } = {},
+  options: { analyze?: boolean; verbose?: boolean; autofix?: boolean } = {}
 ) {
   const isVerbose = options.verbose || false;
   const runLLM = options.analyze !== false;
@@ -32,9 +32,7 @@ export async function zapcircleValidate(
   console.log("🔍 Sending source code to LLM for validation...");
 
   const componentsPath = path.join(srcDir, "components");
-  const componentFiles = readdirSync(componentsPath).filter((f) =>
-    f.endsWith(".tsx"),
-  );
+  const componentFiles = readdirSync(componentsPath).filter(f => f.endsWith(".tsx"));
 
   const appPath = path.join(srcDir, "App.tsx");
   let fullContext = `=== App.tsx ===\n${readFileSync(appPath, "utf-8").trim()}\n\n`;
@@ -45,10 +43,8 @@ export async function zapcircleValidate(
     fullContext += `=== ${file} ===\n${content.trim()}\n\n`;
   }
 
-  const prompt = await loadPrompt(projectType, "validate", {
-    fullContext: fullContext,
-  });
-
+  const prompt = await loadPrompt(projectType, "validate", { fullContext: fullContext })
+  
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
   console.log("\n🧠 LLM Validation Report:\n");
@@ -64,10 +60,7 @@ export async function zapcircleValidate(
           let newCode = match[2].trim();
 
           // Strip markdown formatting and comments from LLM response
-          newCode = newCode
-            .replace(/^```(tsx|typescript)?/gm, "")
-            .replace(/```$/gm, "")
-            .trim();
+          newCode = newCode.replace(/^```(tsx|typescript)?/gm, "").replace(/```$/gm, "").trim();
 
           const filePath =
             fileName === "App.tsx"
