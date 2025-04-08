@@ -11,7 +11,7 @@ export async function generateAllComponents(
   options: { verbose?: boolean; interactive?: boolean } = {},
 ) {
   const isVerbose = options.verbose || false;
-  const componentsDir = path.join(projectDir, "src", "components");
+  const componentsDir = path.join(projectDir, "src");
   const projectTomlPath = path.join(projectDir, "project.zap.toml");
   const projectToml = readFileSync(projectTomlPath, "utf-8");
 
@@ -47,10 +47,8 @@ export async function generateAllComponents(
           .replace(/```$/gm, "")
           .trim();
 
-        const outputPath =
-          filename === "App.tsx"
-            ? path.join(projectDir, "src", filename)
-            : path.join(componentsDir, filename);
+        const outputPath = path.join(componentsDir, filename);
+
 
         writeFileSync(outputPath, code);
         console.log(`🧩 Wrote ${filename}`);

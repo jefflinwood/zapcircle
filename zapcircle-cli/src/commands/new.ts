@@ -61,16 +61,16 @@ export async function zapcircleNew(
 
   rl.close();
 
-  // Ensure src/components directory exists
-  const componentsDir = path.join(outputDir, "src", "components");
-  if (!existsSync(componentsDir)) {
-    mkdirSync(componentsDir, { recursive: true });
-    console.log("📁 Created src/components directory");
+  // Ensure src directory exists
+  const srcDir = path.join(outputDir, "src");
+  if (!existsSync(srcDir)) {
+    mkdirSync(srcDir, { recursive: true });
+    console.log("📁 Created src directory");
   }
 
   // Step 2: Scaffold behavior files from project.zap.toml
   await scaffoldBehaviorsFromProject(projectTomlPath, {
-    output: componentsDir,
+    output: srcDir,
     interactive: isInteractive,
   });
 
