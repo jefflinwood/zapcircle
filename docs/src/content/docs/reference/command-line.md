@@ -304,10 +304,11 @@ npx zapcircle configure
 ```
 
 **Prompts:**
-- Preferred LLM (default: `openai`).
-- Large model name (default: `gpt-4`).
-- Small model name (default: `gpt-3.5-turbo`).
-- OpenAI API key.
+- Preferred Provider (default: `openai`) - also `anthropic`, `google`, and `local`.
+- Large model name (default: `gpt-4o`).
+- Small model name (default: `gpt-4o-mini`).
+- API key for each Provider.
+- URL for local LLM
 
 **Example:**
 ```bash
@@ -315,15 +316,21 @@ npx zapcircle configure
 ```
 
 **Output:**
+
 ```plaintext
-Configuring ZapCircle CLI...
+🛠️ Configuring ZapCircle CLI...
 
-Preferred LLM (openai): openai
-OpenAI large model (default: o1): o1
-OpenAI small model (default: o1-mini): o1-mini
-OpenAI API key: ********
+Preferred Provider (openai): openai
+Large model (default: gpt-4o): gpt-4o
+Small model (default: gpt-4o-mini): gpt-4o-mini
 
-Configuration saved to ~/.zapcircle/zapcircle.cli.toml
+🔑 Enter API keys for the providers you want to use.
+OpenAI API key (optional): sk-***********
+Anthropic API key (optional): 
+Google API key (optional): 
+Local LLM base URL (optional): http://localhost:1234
+
+✅ Configuration saved to ~/.zapcircle/zapcircle.cli.toml
 ```
 
 ---
@@ -367,7 +374,7 @@ ZapCircle project initialized. Configuration file created at ./zapcircle.config.
 ### `status`
 **Description:**  
 Display the current ZapCircle configuration, including:
-- The user's preferred LLM.
+- The user's preferred LLM provider.
 - Whether a project configuration file is present.
 - Detailed settings for the project.
 
@@ -382,25 +389,25 @@ npx zapcircle status
 ```
 
 **Output:**
+
 ```plaintext
-ZapCircle Configuration Status:
+📦 ZapCircle Configuration Status:
 
-User Configuration:
-  Preferred LLM: openai
-  Large Model: o1
-  Small Model: o1-mini
-  OpenAI API Key: Configured
+🔧 User Configuration:
+  Provider: openai
+  Large Model: gpt-4o
+  Small Model: gpt-4o-mini
+  API Keys:
+    OpenAI: ✅ Configured
+    Anthropic: ❌ Not Configured
+    Google: ❌ Not Configured
+    Local LLM: ✅ Configured (http://localhost:1234)
 
-Project Configuration: Found
-  Prompt Settings:
-    All Prompts: Custom instruction
-    Analyze Prompts: Analyze-specific instruction
-    Generate Prompts: Generate-specific instruction
-  Filetype Generate Prompts:
-    jsx: JSX-specific instruction
+📁 Project Configuration: ❌ Not Found
 
-Status check complete.
+✅ Status check complete.
 ```
+
 
 ---
 ## Global Options

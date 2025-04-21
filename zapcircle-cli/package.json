@@ -3,7 +3,7 @@
   "author": {
     "name": "Jeff Linwood"
   },
-  "version": "0.1.9",
+  "version": "0.2.0",
   "license": "MIT",
   "homepage": "https://zapcircle.com/",
   "bin": {
@@ -50,6 +50,9 @@
     "@iarna/toml": "^2.2.5",
     "@langchain/core": "^0.3.27",
     "@langchain/openai": "^0.3.16",
+    "@langchain/anthropic": "^0.3.18",
+    "@langchain/google-genai": "^0.2.4",
+    "@langchain/google-vertexai": "^0.2.4",
     "commander": "^13.0.0",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
