@@ -12,8 +12,7 @@ export async function invokeLLM(
   const llm = getLLMClient(config, isLarge);
 
   if (isVerbose) {
-    console.log("Provider: " + config.provider || "openai");
-    console.log("Prompt: " + prompt);
+    console.log("Provider: " + (config.provider || "openai"));
   }
 
   const response = await llm.invoke(prompt);
