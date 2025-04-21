@@ -1,47 +1,39 @@
-import { ChatOpenAI } from "@langchain/openai";
+// llmService.ts
 import { loadUserConfig } from "./config";
+import { getLLMClient } from "./llmProviders";
 import "dotenv/config";
 
 export async function invokeLLM(
   prompt: string,
   isVerbose: boolean,
   isLarge = false,
-) {
-  const userConfig = loadUserConfig();
+): Promise<string> {
+  const config = loadUserConfig();
+  const llm = getLLMClient(config, isLarge);
 
-  const smallModel = userConfig.models?.small || "gpt-4o-mini";
-  const largeModel = userConfig.models?.large || "gpt-4o";
-  const modelName = isLarge ? largeModel : smallModel;
-
-  // Get the OpenAI API key from configuration or environment variable
-  const openAIKey = userConfig.apiKey || process.env.OPENAI_API_KEY;
-
-  if (!openAIKey) {
-    throw new Error(
-      "OpenAI API key is not configured in zapcircle.cli.toml or the environment.",
-    );
+  if (isVerbose) {
+    console.log("Provider: " + config.provider || "openai");
+    console.log("Prompt: " + prompt);
   }
 
-  const model = new ChatOpenAI({
-    model: modelName,
-    openAIApiKey: openAIKey,
-  });
+  const response = await llm.invoke(prompt);
+  let result: string;
 
-  try {
-    if (isVerbose) {
-      console.log("Model: " + modelName);
-      console.log("Prompt: " + prompt);
-    }
-
-    const response = await model.invoke(prompt);
-    const result = response.content.toString();
-
-    if (isVerbose) {
-      console.log("Response: " + result);
-    }
-    return result;
-  } catch (error) {
-    console.error("Error invoking LLM:", error);
-    throw error;
+  if (typeof response === "string") {
+    result = response;
+  } else if (typeof response?.content === "string") {
+    result = response.content;
+  } else if (Array.isArray(response?.content)) {
+    // Some streaming models (like OpenAI via LangChain) may return a list of chunks
+    result = response.content.map((chunk: any) => chunk?.text || chunk).join("");
+  } else {
+    result = JSON.stringify(response, null, 2); // Fallback for unknown structure
   }
+
+  
+  if (isVerbose) {
+    console.log("Response: " + result);
+  }
+
+  return result;
 }
