@@ -1,12 +1,20 @@
 import * as fs from "fs";
-import * as os from "os";
 import * as readline from "readline";
 import * as path from "path";
 import { configureZapCircle } from "../commands/configure";
 import { loadUserConfig } from "../core/config";
 
 jest.mock("fs");
-jest.mock("os");
+jest.mock("os", () => {
+    const actualOs = jest.requireActual("os");
+    return {
+      ...actualOs,
+      homedir: jest.fn(), // now it's a mock function
+    };
+  });
+
+import * as os from "os";
+
 jest.mock("readline");
 jest.mock("../core/config");
 
