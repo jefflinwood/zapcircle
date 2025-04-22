@@ -1,23 +1,19 @@
-import * as fs from "fs";
-import * as readline from "readline";
 import * as path from "path";
 import { loadUserConfig } from "../core/config";
 import { UserConfig } from "../types/config";
+import { createDirectory, createReadlineInterface, getHomeDir, pathExists, writeFile } from "../utils/platformUtils";
 
 export const configureZapCircle = async () => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  const rl = createReadlineInterface();
 
   const askQuestion = (question: string): Promise<string> =>
     new Promise((resolve) => rl.question(question, resolve));
 
-  const userConfigDir = path.join(require("os").homedir(), ".zapcircle");
+  const userConfigDir = path.join(getHomeDir(), ".zapcircle");
   const userConfigPath = path.join(userConfigDir, "zapcircle.cli.toml");
 
-  if (!fs.existsSync(userConfigDir)) {
-    fs.mkdirSync(userConfigDir);
+  if (!pathExists(userConfigDir)) {
+    createDirectory(userConfigDir);
   }
 
   const existingConfig: UserConfig = loadUserConfig();
@@ -94,7 +90,7 @@ export const configureZapCircle = async () => {
     configLines.push(`[local]`, `baseUrl = "${localBaseUrl}"`, ``);
   }
 
-  fs.writeFileSync(userConfigPath, configLines.join("\n"));
+  writeFile(userConfigPath, configLines.join("\n"));
 
   console.log(`✅ Configuration saved to ${userConfigPath}`);
 };
