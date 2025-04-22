@@ -1,10 +1,5 @@
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
+import * as platformUtils from "../utils/platformUtils";
 import { checkZapCircleStatus } from "../commands/status";
-
-jest.mock("fs");
-jest.mock("os");
 
 describe("checkZapCircleStatus", () => {
   const mockConsoleLog = jest.spyOn(console, "log").mockImplementation(() => {});
@@ -12,29 +7,21 @@ describe("checkZapCircleStatus", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-  });
 
-  it("prints full status when user and project config files exist", () => {
-    const mockedFs = fs as jest.Mocked<typeof fs>;
-    const mockedOs = os as jest.Mocked<typeof os>;
-
-    // Setup fake paths
+    // Fake paths
     const fakeHomeDir = "/fake/home";
     const fakeCwd = "/fake/project";
+    const userConfigPath = `${fakeHomeDir}/.zapcircle/zapcircle.cli.toml`;
+    const projectConfigPath = `${fakeCwd}/zapcircle.config.toml`;
 
-    mockedOs.homedir.mockReturnValue(fakeHomeDir);
-    jest.spyOn(process, "cwd").mockReturnValue(fakeCwd);
-
-    const userConfigPath = path.join(fakeHomeDir, ".zapcircle", "zapcircle.cli.toml");
-    const projectConfigPath = path.join(fakeCwd, "zapcircle.config.toml");
-
-    mockedFs.existsSync.mockImplementation((filepath) => {
-      return (
-        filepath === userConfigPath || filepath === projectConfigPath
-      );
+    // ✅ Platform utils mocks
+    jest.spyOn(platformUtils, "getHomeDir").mockReturnValue(fakeHomeDir);
+    jest.spyOn(platformUtils, "getCurrentDir").mockReturnValue(fakeCwd);
+    jest.spyOn(platformUtils, "pathExists").mockImplementation((filepath) => {
+      return filepath === userConfigPath || filepath === projectConfigPath;
     });
 
-    mockedFs.readFileSync.mockImplementation((filepath: any) => {
+    jest.spyOn(platformUtils, "readFile").mockImplementation((filepath: string) => {
       if (filepath === userConfigPath) {
         return `
           provider = "openai"
@@ -63,7 +50,13 @@ describe("checkZapCircleStatus", () => {
       }
       return "";
     });
+  });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("prints full status when user and project config files exist", () => {
     checkZapCircleStatus();
 
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Provider: openai"));

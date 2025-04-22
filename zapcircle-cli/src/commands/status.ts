@@ -1,19 +1,19 @@
-import * as fs from "fs";
 import * as path from "path";
 import * as toml from "@iarna/toml";
 import { ProjectConfig, UserConfig } from "../types/config";
+import { getCurrentDir, getHomeDir, pathExists, readFile } from "../utils/platformUtils";
 
 export const checkZapCircleStatus = () => {
-  const userConfigDir = path.join(require("os").homedir(), ".zapcircle");
+  const userConfigDir = path.join(getHomeDir(), ".zapcircle");
   const userConfigPath = path.join(userConfigDir, "zapcircle.cli.toml");
-  const projectConfigPath = path.join(process.cwd(), "zapcircle.config.toml");
+  const projectConfigPath = path.join(getCurrentDir(), "zapcircle.config.toml");
 
   console.log("📦 ZapCircle Configuration Status:\n");
 
   // Load user-level configuration
-  if (fs.existsSync(userConfigPath)) {
+  if (pathExists(userConfigPath)) {
     try {
-      const userConfigData = fs.readFileSync(userConfigPath, "utf-8");
+      const userConfigData = readFile(userConfigPath);
       const userConfig = toml.parse(userConfigData) as UserConfig;
 
       console.log("🔧 User Configuration:");
@@ -43,9 +43,9 @@ export const checkZapCircleStatus = () => {
   console.log("\n");
 
   // Load project-level configuration
-  if (fs.existsSync(projectConfigPath)) {
+  if (pathExists(projectConfigPath)) {
     try {
-      const projectConfigData = fs.readFileSync(projectConfigPath, "utf-8");
+      const projectConfigData = readFile(projectConfigPath);
       const projectConfig = toml.parse(projectConfigData) as ProjectConfig;
 
       console.log("📁 Project Configuration: ✅ Found");
