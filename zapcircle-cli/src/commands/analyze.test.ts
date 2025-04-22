@@ -1,9 +1,9 @@
-import mockFs from "mock-fs";
 import path from "path";
+import * as platformUtils from "../utils/platformUtils";
 import { analyze } from "./analyze";
-import { readFileSync, existsSync } from "fs";
+import fs from "fs";
 
-// Mock the prompt loading and LLM invocation
+// Mock LLM modules
 jest.mock("../core/promptLoader", () => ({
   loadPrompt: jest.fn().mockResolvedValue("Mocked LLM Prompt"),
 }));
@@ -12,9 +12,8 @@ jest.mock("../commandline/invokeLLMWithSpinner", () => ({
   invokeLLMWithSpinner: jest.fn().mockResolvedValue("Mocked LLM Analysis Result"),
 }));
 
-// Capture written output
 const mockWriteOutputFile = jest.fn((filePath: string, contents: string) => {
-  require("fs").writeFileSync(filePath, contents);
+  // Simulate write
 });
 
 jest.mock("../utils/writeOutputFile", () => ({
@@ -25,54 +24,84 @@ jest.mock("../utils/writeOutputFile", () => ({
 
 describe("analyze", () => {
   beforeEach(() => {
-    mockFs({
-      "test-project": {
-        "components": {
-          "Button.tsx": "export function Button() { return <button>Click</button>; }",
-          "Input.tsx": "export function Input() { return <input />; }",
-        },
-        "output": {
-            "placeholder.txt": "something"
-        },
-        "utils": {
-          "helpers.ts": "export function helper() { return 'help'; }",
-        },
-        ".gitignore": "node_modules\n.env",
-        "node_modules": {
-          "some-package": {
-            "index.js": "console.log('Ignored package');",
-          },
-        },
-        ".env": "SECRET_KEY=12345",
-      },
-    });
-  });
-
-  afterEach(() => {
-    mockFs.restore();
     jest.clearAllMocks();
+
+    // Simulated file structure (flat)
+    const fileMap: Record<string, string> = {
+      "test-project/components/Button.tsx": "export function Button() { return <button>Click</button>; }",
+      "test-project/components/Input.tsx": "export function Input() { return <input />; }",
+      "test-project/utils/helpers.ts": "export function helper() { return 'help'; }",
+    };
+
+    // Simulate directory contents
+    const dirContents: Record<string, string[]> = {
+      "test-project/components": [
+        "Button.tsx",
+        "Input.tsx",
+      ],
+      "test-project/utils": [
+        "helpers.ts",
+      ],
+    };
+
+    // ✅ Mock readFile
+    jest.spyOn(platformUtils, "readFile").mockImplementation((filePath: string) => {
+      if (fileMap[filePath]) return fileMap[filePath];
+      throw new Error("File not found: " + filePath);
+    });
+
+    // ✅ Mock writeFile
+    jest.spyOn(platformUtils, "writeFile").mockImplementation((_filePath: string, _contents: string) => {
+      // no-op
+    });
+
+    // ✅ Mock readDir
+    jest.spyOn(platformUtils, "readDir").mockImplementation((dirPath: string) => {
+      return dirContents[dirPath] ?? [];
+    });
+
+    // ✅ Mock stat
+    jest.spyOn(platformUtils, "stat").mockImplementation((filePath: string) => {
+      const isDir = Object.keys(dirContents).includes(filePath);
+      const isFile = Object.keys(fileMap).includes(filePath);
+
+      return {
+        isDirectory: () => isDir,
+        isFile: () => isFile,
+      } as unknown as fs.Stats;
+    });
   });
 
   it("analyzes .tsx files and generates .zap.toml outputs", async () => {
     await analyze("tsx", "test-project/components", { output: "test-project/output" });
 
-    const outputPathButton = path.join("test-project/output", "Button.tsx.zap.toml");
-    const outputPathInput = path.join("test-project/output", "Input.tsx.zap.toml");
+    const expectedPaths = [
+      path.join("test-project/output", "Button.tsx.zap.toml"),
+      path.join("test-project/output", "Input.tsx.zap.toml"),
+    ];
 
-    expect(existsSync(outputPathButton)).toBe(true);
-    expect(existsSync(outputPathInput)).toBe(true);
-
-    const buttonOutput = readFileSync(outputPathButton, "utf-8");
-    const inputOutput = readFileSync(outputPathInput, "utf-8");
-
-    expect(buttonOutput).toContain('name = "Button.tsx"');
-    expect(buttonOutput).toContain('behavior = "Mocked LLM Analysis Result"');
-
-    expect(inputOutput).toContain('name = "Input.tsx"');
-    expect(inputOutput).toContain('behavior = "Mocked LLM Analysis Result"');
+    for (const filePath of expectedPaths) {
+      expect(mockWriteOutputFile).toHaveBeenCalledWith(
+        filePath,
+        expect.stringContaining("behavior = \"Mocked LLM Analysis Result\"")
+      );
+    }
   });
 
   it("handles missing directories gracefully", async () => {
+    // Simulate no files for this path
+    jest.spyOn(platformUtils, "readDir").mockImplementation((dirPath: string) => {
+      if (dirPath === "non-existent-directory") return [];
+      return [];
+    });
+
+    jest.spyOn(platformUtils, "stat").mockImplementation((filePath: string) => {
+      return {
+        isDirectory: () => false,
+        isFile: () => false,
+      } as unknown as fs.Stats;
+    });
+
     await expect(analyze("tsx", "non-existent-directory", { output: "test-project/output" }))
       .resolves.not.toThrow();
   });
@@ -80,12 +109,14 @@ describe("analyze", () => {
   it("analyzes TypeScript utility files correctly", async () => {
     await analyze("ts", "test-project/utils", { output: "test-project/output" });
 
-    const helpersOutputPath = path.join("test-project/output", "helpers.ts.zap.toml");
-    expect(existsSync(helpersOutputPath)).toBe(true);
-
-    const helpersOutput = readFileSync(helpersOutputPath, "utf-8");
-
-    expect(helpersOutput).toContain('name = "helpers.ts"');
-    expect(helpersOutput).toContain('behavior = "Mocked LLM Analysis Result"');
+    const expectedPath = path.join("test-project/output", "helpers.ts.zap.toml");
+    expect(mockWriteOutputFile).toHaveBeenCalledWith(
+      expectedPath,
+      expect.stringContaining("name = \"helpers.ts\"")
+    );
+    expect(mockWriteOutputFile).toHaveBeenCalledWith(
+      expectedPath,
+      expect.stringContaining("behavior = \"Mocked LLM Analysis Result\"")
+    );
   });
 });

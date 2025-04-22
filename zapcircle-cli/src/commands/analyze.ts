@@ -1,9 +1,9 @@
-import { readdirSync, statSync, readFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { writeOutputFile } from "../utils/writeOutputFile";
+import { readDir, readFile, stat } from "../utils/platformUtils";
 
 export async function analyze(
   fileType: string,
@@ -17,17 +17,17 @@ export async function analyze(
 
     // Helper function for recursion
     const processPath = async (currentPath: string) => {
-      const stats = statSync(currentPath);
+      const stats = stat(currentPath);
 
       if (stats.isDirectory()) {
         // Recursively analyze files in the directory
-        const files = readdirSync(currentPath);
+        const files = readDir(currentPath);
         for (const file of files) {
           await processPath(path.join(currentPath, file));
         }
       } else if (stats.isFile() && currentPath.endsWith("." + fileType)) {
         // Analyze the source code file
-        const sourceFileContents = readFileSync(currentPath, "utf-8");
+        const sourceFileContents = readFile(currentPath);
 
         const baseName = path.basename(currentPath);
 
