@@ -19,7 +19,7 @@ ZapCircle takes BDD to the next level by leveraging modern technologies like **L
 ## ✨ Features
 
 - **Behavior-First Development:** Define your components using `.zap.toml` files.
-- **LLM-Powered:** Use your preferred AI model to assist in code creation. Currently supporting the OpenAI API through LangChain.
+- **LLM-Powered:** Use your preferred AI model to assist in code creation. Currently supporting OpenAI, Google Gemini, Anthropic/Claude, and local LLMs through LangChain.
 - **Component Drift Detection:** Automatically track and resolve inconsistencies between your code and behaviors. Coming soon!
 - **Seamless Integration:** Works with your favorite frameworks like React, Next.js, and Remix/React Router.
 - **Open Source:** ZapCircle is licensed under the MIT License.
@@ -64,7 +64,7 @@ npx zapcircle update
 
 Select the AI model that fits your team’s needs with environment variables.
 
-For now, only OpenAI is supported, but we're building on top of [LangChain](https://js.langchain.com/docs/introduction/).
+We're building on top of [LangChain](https://js.langchain.com/docs/introduction/).
 
 ```bash
 OPENAI_API_KEY=secret
