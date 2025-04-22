@@ -1,9 +1,8 @@
-import mockFs from "mock-fs";
+import * as platformUtils from "../utils/platformUtils";
 import path from "path";
 import { generateComponent } from "./generate";
-import { readFileSync, existsSync } from "fs";
 
-// Mock dependencies
+// Mock LLM-related modules
 jest.mock("../core/promptLoader", () => ({
   loadPrompt: jest.fn().mockResolvedValue("Mocked LLM Generation Prompt"),
 }));
@@ -12,8 +11,9 @@ jest.mock("../commandline/invokeLLMWithSpinner", () => ({
   invokeLLMWithSpinner: jest.fn().mockResolvedValue("Mocked LLM Generated Code"),
 }));
 
+// Mock writeOutputFile and track it
 const mockWriteOutputFile = jest.fn((filePath: string, contents: string) => {
-  require("fs").writeFileSync(filePath, contents);
+  // Simulate writing (in-memory, no-op)
 });
 
 jest.mock("../utils/writeOutputFile", () => ({
@@ -24,70 +24,58 @@ jest.mock("../utils/writeOutputFile", () => ({
 
 describe("generateComponent", () => {
   beforeEach(() => {
-    mockFs({
-      "test-project": {
-        "components": {
-          "Button.tsx.zap.toml": `
-            name = "Button.tsx"
-            behavior = "A simple button component with a click handler."
-          `,
-          "Input.tsx.zap.toml": `
-            name = "Input.tsx"
-            behavior = "An input component that takes user text input."
-          `,
-        },
-        "output": {
-          "placeholder.txt": "This ensures the directory exists."
-        },
-      },
+    jest.clearAllMocks();
+
+    jest.spyOn(platformUtils, "readFile").mockImplementation((filePath: string) => {
+      if (filePath.includes("Button.tsx.zap.toml")) {
+        return `name = "Button.tsx"\nbehavior = "A simple button component with a click handler."`;
+      }
+      if (filePath.includes("Input.tsx.zap.toml")) {
+        return `name = "Input.tsx"\nbehavior = "An input component that takes user text input."`;
+      }
+      throw new Error("File not found");
+    });
+
+    jest.spyOn(platformUtils, "pathExists").mockImplementation((filePath: string) => {
+      return filePath.includes("Button.tsx.zap.toml") || filePath.includes("Input.tsx.zap.toml");
+    });
+
+    jest.spyOn(platformUtils, "writeFile").mockImplementation(() => {
+      // no-op
     });
   });
 
-  afterEach(() => {
-    mockFs.restore();
-    jest.clearAllMocks();
-  });
-
   it("generates a component file from a .zap.toml file", async () => {
-    await generateComponent("tsx", "test-project/components/Button.tsx.zap.toml", { output: "test-project/output" });
+    const inputFile = "test-project/components/Button.tsx.zap.toml";
+    const outputDir = "test-project/output";
+    const outputPath = path.join(outputDir, "Button.tsx");
 
-    const outputPath = path.join("test-project/output", "Button.tsx");
-
-    expect(existsSync(outputPath)).toBe(true);
-
-    const generatedCode = readFileSync(outputPath, "utf-8");
-    expect(generatedCode).toBe("Mocked LLM Generated Code");
+    await generateComponent("tsx", inputFile, { output: outputDir });
 
     expect(mockWriteOutputFile).toHaveBeenCalledWith(outputPath, "Mocked LLM Generated Code");
   });
 
   it("handles multiple .zap.toml files correctly", async () => {
-    await generateComponent("tsx", "test-project/components/Input.tsx.zap.toml", { output: "test-project/output" });
+    const inputFile = "test-project/components/Input.tsx.zap.toml";
+    const outputDir = "test-project/output";
+    const outputPath = path.join(outputDir, "Input.tsx");
 
-    const outputPath = path.join("test-project/output", "Input.tsx");
-
-    expect(existsSync(outputPath)).toBe(true);
-
-    const generatedCode = readFileSync(outputPath, "utf-8");
-    expect(generatedCode).toBe("Mocked LLM Generated Code");
+    await generateComponent("tsx", inputFile, { output: outputDir });
 
     expect(mockWriteOutputFile).toHaveBeenCalledWith(outputPath, "Mocked LLM Generated Code");
   });
 
   it("handles missing .zap.toml file gracefully", async () => {
-    await expect(generateComponent("tsx", "test-project/components/NonExistent.tsx.zap.toml", { output: "test-project/output" }))
+    const inputFile = "test-project/components/NonExistent.tsx.zap.toml";
+    await expect(generateComponent("tsx", inputFile, { output: "test-project/output" }))
       .resolves.not.toThrow();
   });
 
   it("generates the component in the same directory if no output is specified", async () => {
-    await generateComponent("tsx", "test-project/components/Button.tsx.zap.toml", {});
+    const inputFile = "test-project/components/Button.tsx.zap.toml";
+    const outputPath = "test-project/components/Button.tsx";
 
-    const outputPath = path.join("test-project/components", "Button.tsx");
-
-    expect(existsSync(outputPath)).toBe(true);
-
-    const generatedCode = readFileSync(outputPath, "utf-8");
-    expect(generatedCode).toBe("Mocked LLM Generated Code");
+    await generateComponent("tsx", inputFile, {});
 
     expect(mockWriteOutputFile).toHaveBeenCalledWith(outputPath, "Mocked LLM Generated Code");
   });
