@@ -2,7 +2,6 @@ import { execSync } from "child_process";
 import {
   getChangedFiles,
   getDiffForFile,
-  removeFirstDirectory,
   formatPRComment,
   generateSummary,
   postGitHubComment,
@@ -25,28 +24,20 @@ global.fetch = jest.fn(() =>
 ) as jest.Mock;
 
 describe("ZapCircle Review Tests", () => {
-  /** ✅ Test removeFirstDirectory() */
-  test("should remove the first directory from a path", () => {
-    expect(removeFirstDirectory("src/components/Button.tsx")).toBe(
-      "components/Button.tsx",
-    );
-    expect(removeFirstDirectory("app/models/User.ts")).toBe("models/User.ts");
-  });
-
-  test("should return the same path if no directory exists", () => {
-    expect(removeFirstDirectory("index.ts")).toBe("index.ts");
-  });
-
   /** ✅ Test formatPRComment() */
   test("should format PR comments correctly", () => {
     const reviewData = [
       {
         file: "file1.ts",
-        issues: [{ line: 10, message: "Unused variable found" }],
+        issues: [
+          { line: 10, severity: "low", message: "Unused variable found" },
+        ],
       },
       {
         file: "file2.ts",
-        issues: [{ line: 25, message: "Potential security risk" }],
+        issues: [
+          { line: 25, severity: "high", message: "Potential security risk" },
+        ],
       },
     ];
 
@@ -57,6 +48,7 @@ describe("ZapCircle Review Tests", () => {
     expect(result).toContain("file2.ts");
     expect(result).toContain("Line 25");
     expect(result).toContain("Potential security risk");
+    expect(result).toContain("🔴");
   });
 
   test("should return an empty string if no issues found", () => {

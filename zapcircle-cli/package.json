@@ -3,7 +3,7 @@
   "author": {
     "name": "Jeff Linwood"
   },
-  "version": "0.1.2",
+  "version": "0.2.1",
   "license": "MIT",
   "homepage": "https://zapcircle.com/",
   "bin": {
@@ -16,7 +16,7 @@
     "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
     "prepare": "husky install",
     "start": "ts-node src/commandline/commandLine.ts",
-    "review": "node dist/src/commandline/commandLine.js review --github"
+    "review": "node dist/src/commandline/commandLine.js review --github --verbose"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
@@ -50,9 +50,13 @@
     "@iarna/toml": "^2.2.5",
     "@langchain/core": "^0.3.27",
     "@langchain/openai": "^0.3.16",
+    "@langchain/anthropic": "^0.3.18",
+    "@langchain/google-genai": "^0.2.4",
+    "@langchain/google-vertexai": "^0.2.4",
     "commander": "^13.0.0",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
+    "gpt-tokenizer": "^2.9.0",
     "langchain": "^0.3.9"
   }
 }

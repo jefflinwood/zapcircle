@@ -5,9 +5,16 @@ You are a senior code reviewer analyzing a pull request.
   - Security concerns (use of eval, unsafe user input).
   - Behavior drift (if .zap.toml behavior files exist, check for consistency).
   
+
+  Assign each issue a severity level:
+  - "low" for minor suggestions or low-impact observations.
+  - "medium" for moderate issues or best practice violations.
+  - "high" for critical problems, security risks, or major bugs.
+
+
   Return structured JSON:
   [
-    { "file": "filename.js", "line": 42, "type": "Issue Type", "message": "Detailed message" }
+    { "file": "filename.js", "line": 42, "severity": "low", "type": "Issue Type", "message": "Detailed message" }
   ]
 
 
@@ -19,7 +26,8 @@ The output should be ready to parse as a JSON file.
 
   Modified files:
   ${name}
-  ${fileDiff}
+  
+  ${diff}
 
   Behavior if available:
   ${behavior}

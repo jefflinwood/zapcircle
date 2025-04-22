@@ -1,15 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as toml from "@iarna/toml";
+import { UserConfig } from "../types/config";
 
-export interface UserConfig {
-  preferredLLM?: string;
-  models?: {
-    large?: string;
-    small?: string;
-  };
-  apiKey?: string;
-}
 
 export function loadUserConfig(): UserConfig {
   const userConfigDir = path.join(require("os").homedir(), ".zapcircle");

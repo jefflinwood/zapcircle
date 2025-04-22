@@ -1,12 +1,17 @@
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
-import path from "path";
+import path, { resolve } from "path";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
-export async function review(options: { verbose?: boolean; github?: boolean; contextLimit?: number }) {
+export async function review(options: {
+  verbose?: boolean;
+  github?: boolean;
+  contextLimit?: number;
+}) {
   try {
     const isVerbose = options.verbose || false;
     const isGitHubEnabled = options.github || false;
@@ -28,38 +33,31 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     for (const filePath of changedFiles) {
       console.log(`🔎 Reviewing ${filePath}...`);
-      const absolutePath = path.resolve(removeFirstDirectory(filePath));
+      const absolutePath = path.resolve(filePath);
       if (!existsSync(absolutePath)) {
         console.warn(`Skipping ${filePath} (file does not exist)...`);
         continue;
       }
-
-      const fileContents = readFileSync(absolutePath, "utf-8");
-      const estimatedTokens = estimateTokenCount(fileContents);
-      
-      if (totalTokensUsed + estimatedTokens > contextLimit) {
-        console.warn(`Skipping ${filePath} to stay within token limit.`);
-        continue;
-      }
-      totalTokensUsed += estimatedTokens;
-      
-      codeToReview.push({ fileName: filePath, fileContents: fileContents });
 
       const behaviorFilePath = `${absolutePath}.zap.toml`;
       let behaviorFileContents = "";
       if (existsSync(behaviorFilePath)) {
         behaviorFileContents = readFileSync(behaviorFilePath, "utf-8");
         totalTokensUsed += estimateTokenCount(behaviorFileContents);
-        codeToReview.push({ fileName: behaviorFilePath, fileContents: behaviorFileContents });
+        codeToReview.push({
+          fileName: behaviorFilePath,
+          fileContents: behaviorFileContents,
+        });
       }
 
-      const fileDiff = getDiffForFile(filePath);
+      const fileDiff = getDiffForFile(absolutePath);
       totalTokensUsed += estimateTokenCount(fileDiff);
 
       if (totalTokensUsed > contextLimit) {
         console.warn(`Skipping ${filePath} diff to stay within token limit.`);
         continue;
       }
+      codeToReview.push({ fileName: filePath, fileDiff: fileDiff });
 
       const reviewVariables = {
         name: path.basename(filePath),
@@ -68,13 +66,21 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
       };
 
       const prompt = await loadPrompt("code", "review", reviewVariables);
-      const rawResult = await invokeLLMWithSpinner(prompt, isVerbose);
+      const rawResult = await invokeLLMWithSpinner(
+        prompt,
+        isVerbose,
+        false,
+        !isGitHubEnabled,
+      );
 
       let parsedResult;
       try {
         parsedResult = JSON.parse(rawResult);
       } catch (error) {
-        console.error(`⚠️ Failed to parse LLM response for ${filePath}. Raw result:`, rawResult);
+        console.error(
+          `⚠️ Failed to parse LLM response for ${filePath}. Raw result:`,
+          rawResult,
+        );
         continue;
       }
 
@@ -93,7 +99,11 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 
     if (codeToReview.length > 0) {
       console.log("📢 Generating summary...");
-      const summary = await generateSummary(codeToReview, isVerbose);
+      const summary = await generateSummary(
+        codeToReview,
+        isVerbose,
+        isGitHubEnabled,
+      );
       console.log("📢 Posting PR review...");
 
       if (isGitHubEnabled) {
@@ -110,9 +120,8 @@ export async function review(options: { verbose?: boolean; github?: boolean; con
 }
 
 function estimateTokenCount(text: string): number {
-  return Math.ceil(text.length / 4); // Rough estimate (4 chars per token)
+  return encode(text).length;
 }
-
 
 /**
  * Generates a high-level summary of the code changes using LLM.
@@ -120,34 +129,46 @@ function estimateTokenCount(text: string): number {
 export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
+  isGitHubEnabled: boolean,
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
   };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
-
-  return await invokeLLMWithSpinner(summaryPrompt, verbose);
+  return await invokeLLMWithSpinner(
+    summaryPrompt,
+    verbose,
+    false,
+    !isGitHubEnabled,
+  );
 }
-
-export function removeFirstDirectory(inputPath: string): string {
-  const normalizedPath = path.normalize(inputPath);
-  const parts = normalizedPath.split(path.sep);
-  if (parts.length > 1) {
-    parts.shift();
-  }
-  return parts.join(path.sep);
-}
-
 /**
- * Fetches the list of files changed in the current PR.
+ * Fetches the list of files changed in the current PR and resolves them relative to the Git repository root.
+ * @param baseBranch - The base branch to compare against (default: origin/main).
  */
-export function getChangedFiles(): string[] {
+export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
-    const diffOutput = execSync("git diff --name-only origin/main").toString();
+    // Get the absolute path to the root of the Git repository
+    const repoRoot = execSync(`git rev-parse --show-toplevel`)
+      .toString()
+      .trim();
+
+    // Run the diff command to get changed files
+    const diffOutput = execSync(
+      `git diff --name-status ${baseBranch}`,
+    ).toString();
+
     return diffOutput
       .trim()
       .split("\n")
-      .filter((file) => file.length > 0);
+      .map((line) => {
+        const [status, ...fileParts] = line.split(/\s+/);
+        const filePath = fileParts.join(" "); // Handle file paths with spaces
+        return status === "M" || status === "A"
+          ? resolve(repoRoot, filePath)
+          : null;
+      })
+      .filter((filePath): filePath is string => filePath !== null); // Remove null values
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
@@ -172,10 +193,17 @@ export function getDiffForFile(filePath: string): string {
 export function formatPRComment(reviewData: any[]): string {
   let comment = "";
 
+  const iconMap: Record<string, string> = {
+    low: "🟡",
+    medium: "🟠",
+    high: "🔴",
+  };
+
   reviewData.forEach((file) => {
     comment += `### **${file.file}**\n`;
     file.issues.forEach((issue: any) => {
-      comment += `- 🔴 **Line ${issue.line}**: ${issue.message}\n`;
+      const icon = iconMap[issue.severity] || "🟡";
+      comment += `- ${icon} **Line ${issue.line}**: ${issue.message} \n`;
     });
     comment += `\n`;
   });

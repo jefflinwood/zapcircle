@@ -11,6 +11,8 @@ import { generateTests } from "../commands/generateTests";
 import { updateCode } from "../commands/updateCode";
 import { review } from "../commands/review";
 import { distill } from "../commands/distill";
+import { context } from "../commands/context";
+import { zapcircleNew } from "../commands/new";
 
 const program = new Command();
 
@@ -80,6 +82,18 @@ program
   });
 
 program
+  .command("new <projectType> [pathToCode] [ideaPrompt]")
+  .description(
+    "Create a new application from an idea. Supports react-tsx as a project type.",
+  )
+  .option("--verbose", "Display LLM prompt and response in the console log")
+  .option("--interactive", "Operate in interactive mode, ask for input")
+  .action((projectType, pathToCode, ideaPrompt, options) => {
+    console.log(`Running ZapCircle New...`);
+    zapcircleNew(projectType, pathToCode, ideaPrompt, options);
+  });
+
+program
   .command("distill <pathToCode>")
   .description(
     "Create a summary distillation of the current code project to use with LLMs as context.",
@@ -91,6 +105,20 @@ program
   .action((pathToCode, options) => {
     console.log(`Running ZapCircle Distill...`);
     distill(pathToCode, options);
+  });
+
+program
+  .command("context <pathToCode>")
+  .description(
+    "Generate a consolidated text file of source code for LLM context, including estimated token count.",
+  )
+  .option(
+    "--output <directory>",
+    "Directory to place the output zapcircle.context.txt file",
+  )
+  .action((pathToCode, options) => {
+    console.log(`Running ZapCircle Context...`);
+    context(pathToCode, options);
   });
 
 program

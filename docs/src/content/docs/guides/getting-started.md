@@ -5,97 +5,127 @@ description: Set up ZapCircle with your code base to get started with behavior-d
 
 This guide walks you through the basics of adding ZapCircle to your React-based web development project.
 
-# Important to know
+# Important to Know
 
-ZapCircle is a developer tool, and does not modify your production build or generate code at run time. You can review, modify, and test any generated code before adding it to source control - just like any other tool.
+ZapCircle is a developer tool that **does not modify your production build or run-time code**. It generates code based on your written behaviors and allows you to review, modify, and test it before adding it to source control.
 
-The ZapCircle tool also works with any React framework - such as Next or Remix/React Router - and does not require any changes or upgrades.
+ZapCircle works with any React framework, including **Next.js**, **Remix**, **Vite**, and others. It does not require changes to your application architecture.
 
-The current version of ZapCircle works with the [Open AI API](https://platform.openai.com/docs/overview), using your own API key. Please be aware of any privacy, security, or cost concerns associated with using this API with your code base.
+ZapCircle supports multiple LLM providers via [LangChain](https://www.langchain.com/). As of now, the following providers are supported:
+
+- ✅ OpenAI
+- ✅ Anthropic
+- ✅ Google (Gemini)
+- ✅ Local LLMs (via REST API, such as LM Studio or Ollama)
+
+> ⚠️ Each provider requires its own API key or URL. See below for configuration.
+
+---
 
 # Prerequisites
 
-To get started with ZapCircle, you'll need two things:
-* Your code, or an example project, with React components in either JSX or TSX format. This could be Next, React Router/Remix, or something else.
-* An OpenAI API Key - [Create an API Key here](https://platform.openai.com/api-keys)
+To get started with ZapCircle, you'll need:
 
+- A React project with components in `.jsx` or `.tsx` format
+- One or more API keys or endpoints for supported LLM providers (OpenAI, Anthropic, etc.)
 
-## Setting up ZapCircle
+---
+
+## Setting Up ZapCircle
 
 ### Step 1: Verify Installation
 
-You typically don't need to install ZapCircle as a development dependency in your project. Run the following command to check the CLI version:
+You don’t need to install ZapCircle globally. Instead, use `npx` to run the CLI directly:
 
 ```bash
 npx zapcircle --version
 ```
 
-You should see the version of ZapCircle appear in the command line output, confirming the CLI is installed and ready to use.
+If installed correctly, this will print the current version of ZapCircle.
 
 ---
 
 ### Step 2: Configure ZapCircle
 
-Run the following command to interactively set up your preferred LLM and API key:
+Run the configuration wizard:
 
 ```bash
 npx zapcircle configure
 ```
 
-You'll be prompted to provide:
+You’ll be prompted to set:
 
-1. Your preferred LLM (default: `openai`) - note, this is the only LLM supported with the current version.
-2. The large model name (default: `o1`).
-3. The small model name (default: `o1-mini`).
-4. Your LLM API key (if applicable).
+- Your **preferred LLM provider** (e.g., `openai`, `anthropic`, `google`, or `local`)
+- Your preferred **large** and **small** model names
+- API keys for any provider you'd like to use
+- (Optional) A base URL for a locally running LLM
 
-Example output:
+#### Example output:
 
 ```plaintext
-Configuring ZapCircle CLI...
+🛠️ Configuring ZapCircle CLI...
 
-Preferred LLM (openai): openai
-OpenAI large model (default: o1): o1
-OpenAI small model (default: o1-mini): o1-mini
-OpenAI API key: ********
+Preferred Provider (openai): openai
+Large model (default: gpt-4o): gpt-4o
+Small model (default: gpt-4o-mini): gpt-4o-mini
 
-Configuration saved to ~/.zapcircle/zapcircle.cli.toml
+🔑 Enter API keys for the providers you want to use.
+OpenAI API key (optional): sk-***********
+Anthropic API key (optional): 
+Google API key (optional): 
+Local LLM base URL (optional): http://localhost:1234
+
+✅ Configuration saved to ~/.zapcircle/zapcircle.cli.toml
+```
+
+Your configuration is stored in a TOML file at:
+
+```bash
+~/.zapcircle/zapcircle.cli.toml
 ```
 
 ---
 
 ### Step 3: Confirm Your Setup
 
-After configuring ZapCircle, you can confirm everything is set up correctly by running:
+Run the following command to confirm everything is correctly configured:
 
 ```bash
 npx zapcircle status
 ```
 
-This command will display:
+This will show:
 
-- The preferred LLM configured for your user.
-- Whether a project-specific configuration file (`zapcircle.config.toml`) exists.
-- Detailed settings for the user and project configuration.
+- The configured provider
+- Model names for large and small tasks
+- API key status for each provider
+- Local LLM settings (if applicable)
+- Whether a project-level config file is present
 
-Example output:
+#### Example Output:
 
 ```plaintext
-ZapCircle Configuration Status:
+📦 ZapCircle Configuration Status:
 
-User Configuration:
-  Preferred LLM: openai
-  Large Model: o1
-  Small Model: o1-mini
-  OpenAI API Key: Configured
+🔧 User Configuration:
+  Provider: openai
+  Large Model: gpt-4o
+  Small Model: gpt-4o-mini
+  API Keys:
+    OpenAI: ✅ Configured
+    Anthropic: ❌ Not Configured
+    Google: ❌ Not Configured
+    Local LLM: ✅ Configured (http://localhost:1234)
 
-Project Configuration: Not Found
+📁 Project Configuration: ❌ Not Found
+
+✅ Status check complete.
 ```
 
 ---
 
-# Next step
+# Next Step
 
-Now that you have ZapCircle setup for your project, you can start to use it as a development assistant.
+Now that ZapCircle is ready to use, you're just a few steps away from using behavior-driven development in your React project.
 
-Let's learn how to [create behaviors](/guides/create-behaviors) for an existing project in the next step of the tutorial.
+➡️ [Continue to Create Behaviors](/guides/create-behaviors)

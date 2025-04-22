@@ -1,4 +1,10 @@
-import { readdirSync, existsSync, statSync, readFileSync, writeFileSync } from "fs";
+import {
+  readdirSync,
+  existsSync,
+  statSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 
@@ -49,8 +55,7 @@ export async function distill(
     // Detect framework based on package.json dependencies
     const detectFramework = (): string => {
       const packageJsonPath = path.join(targetPath, "package.json");
-      if (!existsSync(packageJsonPath))
-        return "Unknown";
+      if (!existsSync(packageJsonPath)) return "Unknown";
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
       const dependencies = {
@@ -63,7 +68,8 @@ export async function distill(
           ? "Next.js (Page Router)"
           : "Next.js (App Router)";
       }
-      if (dependencies["remix"] || dependencies["@remix-run/react"]) return "Remix";
+      if (dependencies["remix"] || dependencies["@remix-run/react"])
+        return "Remix";
       if (dependencies["react-router-dom"]) return "React Router";
       return "Unknown";
     };
@@ -71,8 +77,7 @@ export async function distill(
     // Detect programming language (TypeScript or JavaScript)
     const detectLanguage = (): string => {
       const tsConfigPath = path.join(targetPath, "tsconfig.json");
-      if (existsSync(tsConfigPath))
-        return "TypeScript";
+      if (existsSync(tsConfigPath)) return "TypeScript";
       return "JavaScript";
     };
 
@@ -80,8 +85,7 @@ export async function distill(
     const detectTestFrameworks = (): string[] => {
       const testFrameworks: string[] = [];
       const packageJsonPath = path.join(targetPath, "package.json");
-      if (!existsSync(packageJsonPath))
-        return testFrameworks;
+      if (!existsSync(packageJsonPath)) return testFrameworks;
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
       const dependencies = {
@@ -109,8 +113,7 @@ export async function distill(
     const detectAuthProviders = (): string[] => {
       const authProviders: string[] = [];
       const packageJsonPath = path.join(targetPath, "package.json");
-      if (!existsSync(packageJsonPath))
-        return authProviders;
+      if (!existsSync(packageJsonPath)) return authProviders;
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
       const dependencies = {
@@ -144,8 +147,7 @@ export async function distill(
     const detectComponentLibraries = (): string[] => {
       const componentLibraries: string[] = [];
       const packageJsonPath = path.join(targetPath, "package.json");
-      if (!existsSync(packageJsonPath))
-        return componentLibraries;
+      if (!existsSync(packageJsonPath)) return componentLibraries;
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
       const dependencies = {
