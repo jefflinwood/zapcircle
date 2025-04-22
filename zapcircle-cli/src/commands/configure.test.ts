@@ -3,7 +3,7 @@ import * as path from "path";
 import * as platformUtils from "../utils/platformUtils";
 
 import { configureZapCircle } from "../commands/configure";
-import { loadUserConfig } from "../core/config";
+import * as configModule from "../core/config";
 
 jest.mock("../core/config");
 
@@ -27,17 +27,13 @@ describe("configureZapCircle", () => {
     questionIndex = 0;
 
 
-    // ✅ Safe mock of getHomeDir
     jest.spyOn(platformUtils, "getHomeDir").mockReturnValue(fakeHomeDir);
-
-
     jest.spyOn(platformUtils, "getHomeDir").mockReturnValue("/fake/home");
     jest.spyOn(platformUtils, "pathExists").mockReturnValue(false);
     jest.spyOn(platformUtils, "createDirectory").mockImplementation(() => undefined);
     jest.spyOn(platformUtils, "writeFile").mockImplementation(() => {});
 
-    // Mock user config
-    (loadUserConfig as jest.Mock).mockReturnValue({});
+    jest.spyOn(configModule, "loadUserConfig").mockReturnValue({});
 
     // Mock readline
     jest.spyOn(platformUtils, 'createReadlineInterface').mockReturnValue({
