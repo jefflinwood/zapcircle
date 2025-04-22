@@ -1,26 +1,35 @@
 import * as platformUtils from "../utils/platformUtils";
 import path from "path";
 import { generateComponent } from "./generate";
+import * as llmSpinner from "../commandline/invokeLLMWithSpinner";
+import * as promptLoader from "../core/promptLoader";
+import * as writeModule from "../utils/writeOutputFile"
 
 // Mock LLM-related modules
-jest.mock("../core/promptLoader", () => ({
-  loadPrompt: jest.fn().mockResolvedValue("Mocked LLM Generation Prompt"),
-}));
+jest.mock("../core/promptLoader");
+beforeEach(() => {
+  jest.spyOn(promptLoader, "loadPrompt").mockResolvedValue("Mocked LLM Generation Prompt");
+});
 
-jest.mock("../commandline/invokeLLMWithSpinner", () => ({
-  invokeLLMWithSpinner: jest.fn().mockResolvedValue("Mocked LLM Generated Code"),
-}));
+jest.mock("../commandline/invokeLLMWithSpinner");
+beforeEach(() => {
+  jest.spyOn(llmSpinner, "invokeLLMWithSpinner").mockResolvedValue("Mocked LLM Generated Code");
+});
+
 
 // Mock writeOutputFile and track it
 const mockWriteOutputFile = jest.fn((filePath: string, contents: string) => {
   // Simulate writing (in-memory, no-op)
 });
 
-jest.mock("../utils/writeOutputFile", () => ({
-  writeOutputFile: (filePath: string, contents: string, _interactive: boolean) => {
+jest.mock("../utils/writeOutputFile");
+
+
+jest.spyOn(writeModule, "writeOutputFile").mockImplementation(
+  (filePath: string, contents: string, isInteractive?: boolean) => {
     mockWriteOutputFile(filePath, contents);
-  },
-}));
+  }
+);
 
 describe("generateComponent", () => {
   beforeEach(() => {

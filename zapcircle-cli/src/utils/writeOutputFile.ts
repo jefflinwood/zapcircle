@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 const chalk = require("chalk");
+import { writeFile } from "./platformUtils";
 
 export function writeOutputFile(
   filePath: string,
@@ -22,7 +23,7 @@ export function writeOutputFile(
         (answer: string) => {
           rl.close();
           if (answer.toLowerCase() === "y") {
-            fs.writeFileSync(filePath, contents);
+            writeFile(filePath, contents);
             console.log(chalk.green(`✅ Overwritten: ${filePath}`));
           } else {
             console.log(chalk.red("❌ Operation canceled."));
@@ -30,11 +31,11 @@ export function writeOutputFile(
         },
       );
     } else {
-      fs.writeFileSync(filePath, contents);
+      writeFile(filePath, contents);
       console.log(chalk.green(`✅ Overwritten: ${filePath}`));
     }
   } else {
-    fs.writeFileSync(filePath, contents);
+    writeFile(filePath, contents);
     console.log(chalk.blue(`📝 Created: ${filePath}`));
   }
 }
