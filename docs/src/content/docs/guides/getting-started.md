@@ -27,7 +27,7 @@ ZapCircle supports multiple LLM providers via [LangChain](https://www.langchain.
 To get started with ZapCircle, you'll need:
 
 - A React project with components in `.jsx` or `.tsx` format
-- One or more API keys or endpoints for supported LLM providers (OpenAI, Anthropic, etc.)
+- One or more API keys or endpoints for supported LLM providers (OpenAI, Anthropic, Google, Local, etc.)
 
 ---
 
@@ -56,7 +56,7 @@ npx zapcircle configure
 You’ll be prompted to set:
 
 - Your **preferred LLM provider** (e.g., `openai`, `anthropic`, `google`, or `local`)
-- Your preferred **large** and **small** model names
+- Your preferred **large** and **small** model names for each LLM
 - API keys for any provider you'd like to use
 - (Optional) A base URL for a locally running LLM
 
@@ -74,6 +74,21 @@ OpenAI API key (optional): sk-***********
 Anthropic API key (optional): 
 Google API key (optional): 
 Local LLM base URL (optional): http://localhost:1234
+
+Configuring ZapCircle CLI...
+🛠️ Configuring ZapCircle CLI...
+
+Preferred Provider (openai): 
+OpenAI API key (optional): SK-********
+OpenAI large model (gpt-4.1): 
+OpenAI small model (o4-mini): o3-mini
+Anthropic API key (optional): 
+Anthropic large model (claude-3-7-sonnet-latest): 
+Anthropic small model (claude-3-5-haiku-latest): 
+Google API key (optional): 
+Google large model (gemini-2.0-flash): 
+Google small model (gemini-2.0-flash): 
+Local LLM base URL (http://localhost:1234): http://localhost:1234
 
 ✅ Configuration saved to ~/.zapcircle/zapcircle.cli.toml
 ```
@@ -108,14 +123,25 @@ This will show:
 📦 ZapCircle Configuration Status:
 
 🔧 User Configuration:
-  Provider: openai
-  Large Model: gpt-4o
-  Small Model: gpt-4o-mini
-  API Keys:
-    OpenAI: ✅ Configured
-    Anthropic: ❌ Not Configured
-    Google: ❌ Not Configured
-    Local LLM: ✅ Configured (http://localhost:1234)
+  Default Provider: openai
+
+  [openai]
+    API Key: ✅ Configured
+    Large Model: gpt-4o
+    Small Model: gpt-4o-mini
+
+  [anthropic]
+    API Key: ✅ Configured
+    Large Model: claude-3
+    Small Model: claude-3-haiku
+
+  [google]
+    API Key: ✅ Configured
+    Large Model: gemini-2.0-flash
+    Small Model: gemini-2.0-flash
+
+  [local]
+    Base URL: ✅ http://localhost:1234
 
 📁 Project Configuration: ❌ Not Found
 
