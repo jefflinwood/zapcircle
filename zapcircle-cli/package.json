@@ -16,7 +16,7 @@
     "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
     "prepare": "husky install",
     "start": "ts-node src/commandline/commandLine.ts",
-    "review": "node dist/src/commandline/commandLine.js review --github --verbose"
+    "review": "node dist/src/commandline/commandLine.js review --github --verbose --provider=openai --model=o4-mini"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",

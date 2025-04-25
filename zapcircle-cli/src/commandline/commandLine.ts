@@ -74,6 +74,8 @@ program
 program
   .command("review")
   .description("Run a pull-request review for any issues")
+  .option("--provider <provider>", "LLM provider to use (e.g., openai, anthropic, google, local)")
+  .option("--model <model>", "Model to use (e.g., o4-mini, claude-3-opus, gemini-2.0-flash)")
   .option("--verbose", "Display LLM prompt and response in the console log")
   .option("--github", "Post review to GitHub")
   .action((options) => {

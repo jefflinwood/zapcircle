@@ -4,9 +4,20 @@ import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { CustomLocalLLM } from "./CustomLocalLLM";
 
-export function getLLMClient(config: any, isLarge: boolean) {
-  const provider = config.provider || "openai";
-  const providerBlock = config[provider] || {};
+export function getLLMClient(config: any, 
+  isLarge: boolean,
+  provider: string | undefined = undefined,
+  model: string | undefined = undefined
+) {
+
+  if (provider && model) {
+    const providerBlock = config[provider];
+    return getLLMClientDirect(provider, model, providerBlock.apiKey, providerBlock.baseUrl);
+  }
+
+  const configuredProvider = config.provider || "openai";
+  let providerBlock = config[configuredProvider] || {};
+
 
   const modelName = isLarge
     ? providerBlock.large
@@ -18,29 +29,32 @@ export function getLLMClient(config: any, isLarge: boolean) {
     );
   }
 
+  return getLLMClientDirect(configuredProvider, modelName, providerBlock.apiKey, providerBlock.baseUrl);
+}
+export function getLLMClientDirect(provider: string, modelName: string, apiKey?: string, baseUrl?: string) {
 
   switch (provider) {
     case "openai":
       return new ChatOpenAI({
         model: modelName,
-        openAIApiKey: config.openai?.apiKey || process.env.OPENAI_API_KEY,
+        openAIApiKey: apiKey || process.env.OPENAI_API_KEY,
       });
 
     case "anthropic":
       return new ChatAnthropic({
         modelName,
-        anthropicApiKey: config.anthropic?.apiKey || process.env.ANTHROPIC_API_KEY,
+        anthropicApiKey: apiKey || process.env.ANTHROPIC_API_KEY,
       });
 
     case "google":
       return new ChatGoogleGenerativeAI({
         model: modelName,
-        apiKey: config.google?.apiKey || process.env.GOOGLE_API_KEY,
+        apiKey: apiKey || process.env.GOOGLE_API_KEY,
       });
 
     case "local":
       return new CustomLocalLLM({
-        baseUrl: config.local?.baseUrl || "http://localhost:1234",
+        baseUrl: baseUrl || "http://localhost:1234",
         modelName,
       });
 

@@ -8,6 +8,8 @@ import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
 export async function review(options: {
+  provider?: string; 
+  model?: string;
   verbose?: boolean;
   github?: boolean;
   contextLimit?: number;
@@ -71,6 +73,8 @@ export async function review(options: {
         isVerbose,
         false,
         !isGitHubEnabled,
+        options.provider,
+        options.model
       );
 
       let parsedResult;
