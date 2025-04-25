@@ -12,7 +12,11 @@ export function getLLMClient(config: any,
 
   if (provider && model) {
     const providerBlock = config[provider];
-    return getLLMClientDirect(provider, model, providerBlock.apiKey, providerBlock.baseUrl);
+    if (providerBlock) {
+      return getLLMClientDirect(provider, model, providerBlock['apiKey'], providerBlock['baseUrl']);
+    } else {
+      return getLLMClientDirect(provider, model);
+    }
   }
 
   const configuredProvider = config.provider || "openai";
