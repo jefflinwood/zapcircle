@@ -2,21 +2,25 @@
 export interface UserConfig {
   provider?: string;
   preferredLLM?: string;
-  models?: {
+  openai?: {
+    apiKey?: string;
     large?: string;
     small?: string;
   };
-  openai?: {
-    apiKey?: string;
-  };
   anthropic?: {
     apiKey?: string;
+    large?: string;
+    small?: string;
   };
   google?: {
     apiKey?: string;
+    large?: string;
+    small?: string;
   };
   local?: {
     baseUrl?: string;
+    large?: string;
+    small?: string;
   };
 }
 

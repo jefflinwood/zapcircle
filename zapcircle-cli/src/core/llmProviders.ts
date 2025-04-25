@@ -6,9 +6,18 @@ import { CustomLocalLLM } from "./CustomLocalLLM";
 
 export function getLLMClient(config: any, isLarge: boolean) {
   const provider = config.provider || "openai";
+  const providerBlock = config[provider] || {};
+
   const modelName = isLarge
-    ? config.models?.large
-    : config.models?.small;
+    ? providerBlock.large
+    : providerBlock.small;
+
+  if (!modelName) {
+    throw new Error(
+      `Model not configured for provider "${provider}" (${isLarge ? "large" : "small"})`,
+    );
+  }
+
 
   switch (provider) {
     case "openai":

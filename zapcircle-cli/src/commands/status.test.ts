@@ -26,12 +26,10 @@ describe("checkZapCircleStatus", () => {
         return `
           provider = "openai"
 
-          [models]
-          large = "gpt-4o"
-          small = "gpt-4o-mini"
-
           [openai]
           apiKey = "sk-test"
+          large = "gpt-4o"
+          small = "gpt-4o-mini"
 
           [local]
           baseUrl = "http://localhost:1234"
@@ -62,8 +60,8 @@ describe("checkZapCircleStatus", () => {
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Provider: openai"));
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Large Model: gpt-4o"));
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Small Model: gpt-4o-mini"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("OpenAI: ✅ Configured"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Local LLM: ✅ Configured (http://localhost:1234)"));
+    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("API Key: ✅ Configured"));
+    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Base URL: ✅ http://localhost:1234"));
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("📁 Project Configuration: ✅ Found"));
   });
 });
