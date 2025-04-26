@@ -8,6 +8,8 @@ import { encode } from "gpt-tokenizer"; // Assuming OpenAI's tokenizer is used
 const DEFAULT_CONTEXT_LIMIT = 128000; // Default token limit
 
 export async function review(options: {
+  provider?: string; 
+  model?: string;
   verbose?: boolean;
   github?: boolean;
   contextLimit?: number;
@@ -71,6 +73,8 @@ export async function review(options: {
         isVerbose,
         false,
         !isGitHubEnabled,
+        options.provider,
+        options.model
       );
 
       let parsedResult;
@@ -103,6 +107,8 @@ export async function review(options: {
         codeToReview,
         isVerbose,
         isGitHubEnabled,
+        options.provider,
+        options.model
       );
       console.log("📢 Posting PR review...");
 
@@ -130,6 +136,8 @@ export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
   isGitHubEnabled: boolean,
+  provider: string | undefined = undefined,
+  model: string | undefined = undefined
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
@@ -140,6 +148,8 @@ export async function generateSummary(
     verbose,
     false,
     !isGitHubEnabled,
+    provider,
+    model
   );
 }
 /**

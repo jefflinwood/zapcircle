@@ -16,23 +16,33 @@ export const checkZapCircleStatus = () => {
       const userConfigData = readFile(userConfigPath);
       const userConfig = toml.parse(userConfigData) as UserConfig;
 
+      const provider = userConfig.provider || "Not Configured";
       console.log("🔧 User Configuration:");
-      console.log(`  Provider: ${userConfig.provider || "Not Configured"}`);
-      console.log(`  Large Model: ${userConfig.models?.large || "Not Configured"}`);
-      console.log(`  Small Model: ${userConfig.models?.small || "Not Configured"}`);
+      console.log(`  Default Provider: ${provider}`);
 
-      console.log("  API Keys:");
-      console.log(`    OpenAI: ${userConfig.openai?.apiKey ? "✅ Configured" : "❌ Not Configured"}`);
-      console.log(`    Anthropic: ${userConfig.anthropic?.apiKey ? "✅ Configured" : "❌ Not Configured"}`);
-      console.log(`    Google: ${userConfig.google?.apiKey ? "✅ Configured" : "❌ Not Configured"}`);
+      const providers = ["openai", "anthropic", "google", "local"];
 
-      const localUrl = userConfig.local?.baseUrl;
-      const isValidURL = (url: string) =>
-        /^https?:\/\/[\w.-]+(:\d+)?(\/.*)?$/.test(url);
+      for (const p of providers) {
+        const block = (userConfig as any)[p];
+        if (!block) continue;
 
-      console.log(`    Local LLM: ${
-        localUrl ? (isValidURL(localUrl) ? `✅ Configured (${localUrl})` : `⚠️ Invalid URL (${localUrl})`) : "❌ Not Configured"
-      }`);
+        console.log(`\n  [${p}]`);
+        if (p === "local") {
+          const url = block.baseUrl;
+          const isValidURL = (url: string) =>
+            /^https?:\/\/[\w.-]+(:\d+)?(\/.*)?$/.test(url);
+
+          console.log(
+            `    Base URL: ${
+              url ? (isValidURL(url) ? `✅ ${url}` : `⚠️ Invalid URL (${url})`) : "❌ Not Configured"
+            }`,
+          );
+        } else {
+          console.log(`    API Key: ${block.apiKey ? "✅ Configured" : "❌ Not Configured"}`);
+          console.log(`    Large Model: ${block.large || "❌ Not Configured"}`);
+          console.log(`    Small Model: ${block.small || "❌ Not Configured"}`);
+        }
+      }
     } catch (error) {
       console.error(`❌ Error reading user configuration: ${error}`);
     }

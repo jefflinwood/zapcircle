@@ -305,10 +305,10 @@ npx zapcircle configure
 
 **Prompts:**
 - Preferred Provider (default: `openai`) - also `anthropic`, `google`, and `local`.
-- Large model name (default: `gpt-4o`).
-- Small model name (default: `gpt-4o-mini`).
 - API key for each Provider.
-- URL for local LLM
+- Large model name for each provider (default values provided).
+- Small model name for each provider (default values provided).
+- URL for local LLM if available
 
 **Example:**
 ```bash
@@ -329,6 +329,21 @@ OpenAI API key (optional): sk-***********
 Anthropic API key (optional): 
 Google API key (optional): 
 Local LLM base URL (optional): http://localhost:1234
+
+Configuring ZapCircle CLI...
+🛠️ Configuring ZapCircle CLI...
+
+Preferred Provider (openai): 
+OpenAI API key (optional): SK-********
+OpenAI large model (gpt-4.1): 
+OpenAI small model (o4-mini): o3-mini
+Anthropic API key (optional): 
+Anthropic large model (claude-3-7-sonnet-latest): 
+Anthropic small model (claude-3-5-haiku-latest): 
+Google API key (optional): 
+Google large model (gemini-2.0-flash): 
+Google small model (gemini-2.0-flash): 
+Local LLM base URL (http://localhost:1234): http://localhost:1234
 
 ✅ Configuration saved to ~/.zapcircle/zapcircle.cli.toml
 ```
@@ -375,6 +390,8 @@ ZapCircle project initialized. Configuration file created at ./zapcircle.config.
 **Description:**  
 Display the current ZapCircle configuration, including:
 - The user's preferred LLM provider.
+- Whether an API Key exists for each provider.
+- The large and small models to use for each provider.
 - Whether a project configuration file is present.
 - Detailed settings for the project.
 
@@ -391,17 +408,29 @@ npx zapcircle status
 **Output:**
 
 ```plaintext
+
 📦 ZapCircle Configuration Status:
 
 🔧 User Configuration:
-  Provider: openai
-  Large Model: gpt-4o
-  Small Model: gpt-4o-mini
-  API Keys:
-    OpenAI: ✅ Configured
-    Anthropic: ❌ Not Configured
-    Google: ❌ Not Configured
-    Local LLM: ✅ Configured (http://localhost:1234)
+  Default Provider: openai
+
+  [openai]
+    API Key: ✅ Configured
+    Large Model: gpt-4o
+    Small Model: gpt-4o-mini
+
+  [anthropic]
+    API Key: ✅ Configured
+    Large Model: claude-3
+    Small Model: claude-3-haiku
+
+  [google]
+    API Key: ✅ Configured
+    Large Model: gemini-2.0-flash
+    Small Model: gemini-2.0-flash
+
+  [local]
+    Base URL: ✅ http://localhost:1234
 
 📁 Project Configuration: ❌ Not Found
 

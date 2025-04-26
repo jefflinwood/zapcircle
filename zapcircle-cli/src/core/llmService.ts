@@ -7,9 +7,11 @@ export async function invokeLLM(
   prompt: string,
   isVerbose: boolean,
   isLarge = false,
+  provider: string | undefined = undefined,
+  model: string | undefined = undefined
 ): Promise<string> {
   const config = loadUserConfig();
-  const llm = getLLMClient(config, isLarge);
+  const llm = getLLMClient(config, isLarge, provider, model);
 
   if (isVerbose) {
     console.log("Provider: " + (config.provider || "openai"));
