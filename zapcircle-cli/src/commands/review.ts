@@ -107,6 +107,8 @@ export async function review(options: {
         codeToReview,
         isVerbose,
         isGitHubEnabled,
+        options.provider,
+        options.model
       );
       console.log("📢 Posting PR review...");
 
@@ -134,6 +136,8 @@ export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
   isGitHubEnabled: boolean,
+  provider: string | undefined = undefined,
+  model: string | undefined = undefined
 ): Promise<string> {
   const reviewData = {
     reviewData: JSON.stringify(codeToReview),
@@ -144,6 +148,8 @@ export async function generateSummary(
     verbose,
     false,
     !isGitHubEnabled,
+    provider,
+    model
   );
 }
 /**
