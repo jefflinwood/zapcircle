@@ -1,9 +1,9 @@
-import { readFileSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { writeOutputFile } from "../utils/writeOutputFile";
+import { readFile } from "../utils/platformUtils"
 
 export async function generateComponent(
   fileType: string,
@@ -11,7 +11,7 @@ export async function generateComponent(
   options: { interactive?: boolean; output?: string; verbose?: boolean },
 ) {
   try {
-    const tomlFileContents = readFileSync(tomlFilePath, "utf-8");
+    const tomlFileContents = readFile(tomlFilePath);
     const tomlVariables = toml.parse(tomlFileContents);
 
     const outputDir = options.output || path.dirname(tomlFilePath);
