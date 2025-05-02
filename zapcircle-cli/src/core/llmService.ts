@@ -8,7 +8,7 @@ export async function invokeLLM(
   isVerbose: boolean,
   isLarge = false,
   provider: string | undefined = undefined,
-  model: string | undefined = undefined
+  model: string | undefined = undefined,
 ): Promise<string> {
   const config = loadUserConfig();
   const llm = getLLMClient(config, isLarge, provider, model);
@@ -26,12 +26,13 @@ export async function invokeLLM(
     result = response.content;
   } else if (Array.isArray(response?.content)) {
     // Some streaming models (like OpenAI via LangChain) may return a list of chunks
-    result = response.content.map((chunk: any) => chunk?.text || chunk).join("");
+    result = response.content
+      .map((chunk: any) => chunk?.text || chunk)
+      .join("");
   } else {
     result = JSON.stringify(response, null, 2); // Fallback for unknown structure
   }
 
-  
   if (isVerbose) {
     console.log("Response: " + result);
   }

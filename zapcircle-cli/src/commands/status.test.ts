@@ -2,8 +2,12 @@ import * as platformUtils from "../utils/platformUtils";
 import { checkZapCircleStatus } from "../commands/status";
 
 describe("checkZapCircleStatus", () => {
-  const mockConsoleLog = jest.spyOn(console, "log").mockImplementation(() => {});
-  const mockConsoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+  const mockConsoleLog = jest
+    .spyOn(console, "log")
+    .mockImplementation(() => {});
+  const mockConsoleError = jest
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,9 +25,11 @@ describe("checkZapCircleStatus", () => {
       return filepath === userConfigPath || filepath === projectConfigPath;
     });
 
-    jest.spyOn(platformUtils, "readFile").mockImplementation((filepath: string) => {
-      if (filepath === userConfigPath) {
-        return `
+    jest
+      .spyOn(platformUtils, "readFile")
+      .mockImplementation((filepath: string) => {
+        if (filepath === userConfigPath) {
+          return `
           provider = "openai"
 
           [openai]
@@ -34,9 +40,9 @@ describe("checkZapCircleStatus", () => {
           [local]
           baseUrl = "http://localhost:1234"
         `;
-      }
-      if (filepath === projectConfigPath) {
-        return `
+        }
+        if (filepath === projectConfigPath) {
+          return `
           [prompts]
           all = ".zapcircle/prompts/shared.txt"
           analyze = ".zapcircle/prompts/analyze.txt"
@@ -45,9 +51,9 @@ describe("checkZapCircleStatus", () => {
           [filetype.generate]
           jsx = ".zapcircle/prompts/generate-jsx.txt"
         `;
-      }
-      return "";
-    });
+        }
+        return "";
+      });
   });
 
   afterEach(() => {
@@ -57,11 +63,23 @@ describe("checkZapCircleStatus", () => {
   it("prints full status when user and project config files exist", () => {
     checkZapCircleStatus();
 
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Provider: openai"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Large Model: gpt-4o"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Small Model: gpt-4o-mini"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("API Key: ✅ Configured"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("Base URL: ✅ http://localhost:1234"));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining("📁 Project Configuration: ✅ Found"));
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("Provider: openai"),
+    );
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("Large Model: gpt-4o"),
+    );
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("Small Model: gpt-4o-mini"),
+    );
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("API Key: ✅ Configured"),
+    );
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("Base URL: ✅ http://localhost:1234"),
+    );
+    expect(mockConsoleLog).toHaveBeenCalledWith(
+      expect.stringContaining("📁 Project Configuration: ✅ Found"),
+    );
   });
 });

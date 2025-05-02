@@ -3,7 +3,6 @@ import * as path from "path";
 import * as toml from "@iarna/toml";
 import { UserConfig } from "../types/config";
 
-
 export function loadUserConfig(): UserConfig {
   const userConfigDir = path.join(require("os").homedir(), ".zapcircle");
   const userConfigPath = path.join(userConfigDir, "zapcircle.cli.toml");

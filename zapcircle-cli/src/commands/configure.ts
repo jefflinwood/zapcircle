@@ -1,7 +1,13 @@
 import * as path from "path";
 import { loadUserConfig } from "../core/config";
 import { UserConfig } from "../types/config";
-import { createDirectory, createReadlineInterface, getHomeDir, pathExists, writeFile } from "../utils/platformUtils";
+import {
+  createDirectory,
+  createReadlineInterface,
+  getHomeDir,
+  pathExists,
+  writeFile,
+} from "../utils/platformUtils";
 
 export const configureZapCircle = async () => {
   const rl = createReadlineInterface();
@@ -21,58 +27,97 @@ export const configureZapCircle = async () => {
   console.log("🛠️ Configuring ZapCircle CLI...\n");
 
   const provider =
-    (await askQuestion(`Preferred Provider (${existingConfig.provider || "openai"}): `)) ||
+    (await askQuestion(
+      `Preferred Provider (${existingConfig.provider || "openai"}): `,
+    )) ||
     existingConfig.provider ||
     "openai";
 
   const openaiKey =
-    (await askQuestion(`OpenAI API key (${existingConfig.openai?.apiKey ? "already set" : "optional"}): `)) ||
-    existingConfig.openai?.apiKey || "";
+    (await askQuestion(
+      `OpenAI API key (${existingConfig.openai?.apiKey ? "already set" : "optional"}): `,
+    )) ||
+    existingConfig.openai?.apiKey ||
+    "";
 
   const openaiLarge =
-    (await askQuestion(`OpenAI large model (${existingConfig.openai?.large || "gpt-4.1"}): `)) ||
-    existingConfig.openai?.large || "gpt-4o";
+    (await askQuestion(
+      `OpenAI large model (${existingConfig.openai?.large || "gpt-4.1"}): `,
+    )) ||
+    existingConfig.openai?.large ||
+    "gpt-4o";
 
   const openaiSmall =
-    (await askQuestion(`OpenAI small model (${existingConfig.openai?.small || "o4-mini"}): `)) ||
-    existingConfig.openai?.small || "gpt-4o-mini";
+    (await askQuestion(
+      `OpenAI small model (${existingConfig.openai?.small || "o4-mini"}): `,
+    )) ||
+    existingConfig.openai?.small ||
+    "gpt-4o-mini";
 
   const anthropicKey =
-    (await askQuestion(`Anthropic API key (${existingConfig.anthropic?.apiKey ? "already set" : "optional"}): `)) ||
-    existingConfig.anthropic?.apiKey || "";
+    (await askQuestion(
+      `Anthropic API key (${existingConfig.anthropic?.apiKey ? "already set" : "optional"}): `,
+    )) ||
+    existingConfig.anthropic?.apiKey ||
+    "";
 
   const anthropicLarge =
-    (await askQuestion(`Anthropic large model (${existingConfig.anthropic?.large || "claude-3-7-sonnet-latest"}): `)) ||
-    existingConfig.anthropic?.large || "claude-3";
+    (await askQuestion(
+      `Anthropic large model (${existingConfig.anthropic?.large || "claude-3-7-sonnet-latest"}): `,
+    )) ||
+    existingConfig.anthropic?.large ||
+    "claude-3";
 
   const anthropicSmall =
-    (await askQuestion(`Anthropic small model (${existingConfig.anthropic?.small || "claude-3-5-haiku-latest"}): `)) ||
-    existingConfig.anthropic?.small || "claude-3-haiku";
+    (await askQuestion(
+      `Anthropic small model (${existingConfig.anthropic?.small || "claude-3-5-haiku-latest"}): `,
+    )) ||
+    existingConfig.anthropic?.small ||
+    "claude-3-haiku";
 
   const googleKey =
-    (await askQuestion(`Google API key (${existingConfig.google?.apiKey ? "already set" : "optional"}): `)) ||
-    existingConfig.google?.apiKey || "";
+    (await askQuestion(
+      `Google API key (${existingConfig.google?.apiKey ? "already set" : "optional"}): `,
+    )) ||
+    existingConfig.google?.apiKey ||
+    "";
 
   const googleLarge =
-    (await askQuestion(`Google large model (${existingConfig.google?.large || "gemini-2.0-flash"}): `)) ||
-    existingConfig.google?.large || "gemini-2.0";
+    (await askQuestion(
+      `Google large model (${existingConfig.google?.large || "gemini-2.0-flash"}): `,
+    )) ||
+    existingConfig.google?.large ||
+    "gemini-2.0";
 
   const googleSmall =
-    (await askQuestion(`Google small model (${existingConfig.google?.small || "gemini-2.0-flash"}): `)) ||
-    existingConfig.google?.small || "gemini-2.0-flash";
+    (await askQuestion(
+      `Google small model (${existingConfig.google?.small || "gemini-2.0-flash"}): `,
+    )) ||
+    existingConfig.google?.small ||
+    "gemini-2.0-flash";
 
   const localBaseUrl =
-    (await askQuestion(`Local LLM base URL (${existingConfig.local?.baseUrl || "none"}): `)) ||
-    existingConfig.local?.baseUrl || "";
+    (await askQuestion(
+      `Local LLM base URL (${existingConfig.local?.baseUrl || "none"}): `,
+    )) ||
+    existingConfig.local?.baseUrl ||
+    "";
 
-  const isValidURL = (url: string) => /^https?:\/\/[\w.-]+(:\d+)?(\/.*)?$/.test(url);
+  const isValidURL = (url: string) =>
+    /^https?:\/\/[\w.-]+(:\d+)?(\/.*)?$/.test(url);
   if (localBaseUrl && !isValidURL(localBaseUrl)) {
-    console.warn("⚠️  Warning: Local LLM base URL does not appear to be valid.");
+    console.warn(
+      "⚠️  Warning: Local LLM base URL does not appear to be valid.",
+    );
   }
 
   rl.close();
 
-  const configLines = [`# ZapCircle CLI Configuration`, `provider = "${provider}"`, ``];
+  const configLines = [
+    `# ZapCircle CLI Configuration`,
+    `provider = "${provider}"`,
+    ``,
+  ];
 
   if (openaiKey) {
     configLines.push(
@@ -80,7 +125,7 @@ export const configureZapCircle = async () => {
       `apiKey = "${openaiKey}"`,
       `large = "${openaiLarge}"`,
       `small = "${openaiSmall}"`,
-      ``
+      ``,
     );
   }
 
@@ -90,7 +135,7 @@ export const configureZapCircle = async () => {
       `apiKey = "${anthropicKey}"`,
       `large = "${anthropicLarge}"`,
       `small = "${anthropicSmall}"`,
-      ``
+      ``,
     );
   }
 
@@ -100,7 +145,7 @@ export const configureZapCircle = async () => {
       `apiKey = "${googleKey}"`,
       `large = "${googleLarge}"`,
       `small = "${googleSmall}"`,
-      ``
+      ``,
     );
   }
 

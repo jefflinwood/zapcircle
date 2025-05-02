@@ -6,7 +6,7 @@ export async function invokeLLMWithSpinner(
   isLarge = false,
   showSpinner = true,
   provider: string | undefined = undefined,
-  model: string | undefined = undefined
+  model: string | undefined = undefined,
 ): Promise<string> {
   if (!showSpinner) {
     return await invokeLLM(prompt, isVerbose, isLarge, provider, model);

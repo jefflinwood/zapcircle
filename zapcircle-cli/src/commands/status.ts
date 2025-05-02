@@ -1,7 +1,12 @@
 import * as path from "path";
 import * as toml from "@iarna/toml";
 import { ProjectConfig, UserConfig } from "../types/config";
-import { getCurrentDir, getHomeDir, pathExists, readFile } from "../utils/platformUtils";
+import {
+  getCurrentDir,
+  getHomeDir,
+  pathExists,
+  readFile,
+} from "../utils/platformUtils";
 
 export const checkZapCircleStatus = () => {
   const userConfigDir = path.join(getHomeDir(), ".zapcircle");
@@ -34,11 +39,17 @@ export const checkZapCircleStatus = () => {
 
           console.log(
             `    Base URL: ${
-              url ? (isValidURL(url) ? `✅ ${url}` : `⚠️ Invalid URL (${url})`) : "❌ Not Configured"
+              url
+                ? isValidURL(url)
+                  ? `✅ ${url}`
+                  : `⚠️ Invalid URL (${url})`
+                : "❌ Not Configured"
             }`,
           );
         } else {
-          console.log(`    API Key: ${block.apiKey ? "✅ Configured" : "❌ Not Configured"}`);
+          console.log(
+            `    API Key: ${block.apiKey ? "✅ Configured" : "❌ Not Configured"}`,
+          );
           console.log(`    Large Model: ${block.large || "❌ Not Configured"}`);
           console.log(`    Small Model: ${block.small || "❌ Not Configured"}`);
         }
@@ -60,9 +71,15 @@ export const checkZapCircleStatus = () => {
 
       console.log("📁 Project Configuration: ✅ Found");
       console.log("  Prompt Settings:");
-      console.log(`    All Prompts: ${projectConfig.prompts?.all || "Not Configured"}`);
-      console.log(`    Analyze Prompts: ${projectConfig.prompts?.analyze || "Not Configured"}`);
-      console.log(`    Generate Prompts: ${projectConfig.prompts?.generate || "Not Configured"}`);
+      console.log(
+        `    All Prompts: ${projectConfig.prompts?.all || "Not Configured"}`,
+      );
+      console.log(
+        `    Analyze Prompts: ${projectConfig.prompts?.analyze || "Not Configured"}`,
+      );
+      console.log(
+        `    Generate Prompts: ${projectConfig.prompts?.generate || "Not Configured"}`,
+      );
 
       console.log("  Filetype Generate Prompts:");
       if (projectConfig["filetype.generate"]) {
