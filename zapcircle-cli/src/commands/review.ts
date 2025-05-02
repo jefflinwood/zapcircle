@@ -93,6 +93,7 @@ export async function review(options: {
           file: filePath,
           issues: parsedResult.map((issue: any) => ({
             line: issue.line ?? "Unknown",
+            severity: issue.severity ?? "Unknown",
             message: issue.message ?? "No description provided.",
           })),
         });
