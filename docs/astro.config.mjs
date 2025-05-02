@@ -8,9 +8,9 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'ZapCircle',
-			social: {
-				github: 'https://github.com/jefflinwood/zapcircle',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/jefflinwood/zapcircle' },
+			],
 			sidebar: [
 				{
 					label: 'Guides',
