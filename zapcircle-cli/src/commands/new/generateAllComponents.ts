@@ -49,7 +49,6 @@ export async function generateAllComponents(
 
         const outputPath = path.join(componentsDir, filename);
 
-
         writeFileSync(outputPath, code);
         console.log(`🧩 Wrote ${filename}`);
       }

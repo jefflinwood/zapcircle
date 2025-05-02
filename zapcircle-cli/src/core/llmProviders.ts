@@ -4,16 +4,21 @@ import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { CustomLocalLLM } from "./CustomLocalLLM";
 
-export function getLLMClient(config: any, 
+export function getLLMClient(
+  config: any,
   isLarge: boolean,
   provider: string | undefined = undefined,
-  model: string | undefined = undefined
+  model: string | undefined = undefined,
 ) {
-
   if (provider && model) {
     const providerBlock = config[provider];
     if (providerBlock) {
-      return getLLMClientDirect(provider, model, providerBlock['apiKey'], providerBlock['baseUrl']);
+      return getLLMClientDirect(
+        provider,
+        model,
+        providerBlock["apiKey"],
+        providerBlock["baseUrl"],
+      );
     } else {
       return getLLMClientDirect(provider, model);
     }
@@ -22,10 +27,7 @@ export function getLLMClient(config: any,
   const configuredProvider = config.provider || "openai";
   let providerBlock = config[configuredProvider] || {};
 
-
-  const modelName = isLarge
-    ? providerBlock.large
-    : providerBlock.small;
+  const modelName = isLarge ? providerBlock.large : providerBlock.small;
 
   if (!modelName) {
     throw new Error(
@@ -33,10 +35,19 @@ export function getLLMClient(config: any,
     );
   }
 
-  return getLLMClientDirect(configuredProvider, modelName, providerBlock.apiKey, providerBlock.baseUrl);
+  return getLLMClientDirect(
+    configuredProvider,
+    modelName,
+    providerBlock.apiKey,
+    providerBlock.baseUrl,
+  );
 }
-export function getLLMClientDirect(provider: string, modelName: string, apiKey?: string, baseUrl?: string) {
-
+export function getLLMClientDirect(
+  provider: string,
+  modelName: string,
+  apiKey?: string,
+  baseUrl?: string,
+) {
   switch (provider) {
     case "openai":
       return new ChatOpenAI({
