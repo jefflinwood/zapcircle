@@ -1,0 +1,15 @@
+name = "BehaviorLinker"
+
+role = "Attempts to match a component file with its corresponding `.zap.toml` behavior file."
+
+inputs = ["componentFile"]
+behavior = """
+The findBehaviorForComponent function returns the path to a behavior file that matches a given component file.
+
+It searches for `.zap.toml` files in the same directory (or nearby) and performs a fuzzy match based on:
+
+- Matching basename (e.g., LoginForm.jsx ↔ LoginForm.zap.toml)
+- Optional metadata inside the behavior file, if parsed
+
+If no match is found, the function returns undefined. It does not attempt to generate behavior files — only locate them.
+"""

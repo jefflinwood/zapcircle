@@ -1,0 +1,12 @@
+name = "StateResolver"
+
+role = "Extracts shared state modules referenced in a behavior file and returns their paths."
+
+inputs = ["zapToml"]
+behavior = """
+The extractSharedStateFromBehavior function takes the parsed contents of a `.zap.toml` file and extracts references to shared state variables.
+
+It identifies state variables listed under the `[state]` section and attempts to resolve their corresponding file paths within the project.
+
+The returned list of file paths is intended to help build an accurate execution context for components that depend on global or shared state (e.g., auth, cart, notifications). The function does not validate file existence or load contents — it only resolves paths.
+"""
