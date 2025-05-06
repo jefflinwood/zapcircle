@@ -26,50 +26,79 @@ export function buildContextForComponent(
     return filePath.includes("/fixtures/") || filePath.includes("src"); // relaxed for test fixture
   }
 
-  function loadFile(filePath: string): string | null {
-    if (visitedFiles.has(filePath) || !isFileInSrc(filePath)) {
-      return null;
-    }
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
+  function readRawFile(filePath: string): string | null {
+    if (!fs.existsSync(filePath)) return null;
+    return fs.readFileSync(filePath, "utf-8");
+  }
 
-    visitedFiles.add(filePath);
-    const content = fs.readFileSync(filePath, "utf-8");
+  function stripAndTrim(content: string): string {
     const stripped = content.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
     const tokenEstimate = stripped.split(/\s+/).length;
     return tokenEstimate <= maxTokensPerFile ? stripped : stripped.slice(0, maxTokensPerFile);
   }
 
+  function resolveImportPath(baseFile: string, importedPath: string): string | null {
+    const baseDir = path.dirname(baseFile);
+    const fullPath = path.resolve(baseDir, importedPath);
+  
+    const candidates = [
+      fullPath,
+      `${fullPath}.js`,
+      `${fullPath}.ts`,
+      `${fullPath}.jsx`,
+      `${fullPath}.tsx`,
+      path.join(fullPath, "index.js"),
+      path.join(fullPath, "index.ts"),
+      path.join(fullPath, "index.jsx"),
+      path.join(fullPath, "index.tsx"),
+    ];
+  
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  
+    return null;
+  }
+
   function gatherFiles(file: string): void {
+    if (visitedFiles.has(file)) return;
     if (Object.keys(contextPackage.files).length >= maxFiles) return;
+    if (!isFileInSrc(file)) return;
 
-    const content = loadFile(file);
-    if (content) {
-      contextPackage.files[file] = content;
+    const raw = readRawFile(file);
+    if (!raw) return;
 
-      const importRegex = /import\s+(?:[\s\S]*?)\s+from\s+['"](.+?)['"]/g;
-      let match;
-      while ((match = importRegex.exec(content))) {
-        const importedFile = match[1];
-        const resolved = importedFile.endsWith(".js") || importedFile.endsWith(".jsx")
-          ? path.resolve(path.dirname(file), importedFile)
-          : path.resolve(path.dirname(file), `${importedFile}.js`);
+    visitedFiles.add(file);
 
+    // Extract imports before pruning
+    const importRegex = /import\s+(?:[\s\S]*?)\s+from\s+['"](.+?)['"]/g;
+    let match;
+    while ((match = importRegex.exec(raw))) {
+      const importedFile = match[1];
+      if (importedFile.startsWith(".")) {
+        const resolved = resolveImportPath(file, importedFile);
+        if (resolved) {
         gatherFiles(resolved);
+        }
       }
+    }
+
+    // Add the file's stripped version to context
+    const cleaned = stripAndTrim(raw);
+    if (cleaned) {
+      contextPackage.files[file] = cleaned;
     }
   }
 
   gatherFiles(entryFile);
 
   if (behaviorPath && options?.includeBehavior !== false) {
-    const behaviorContent = loadFile(behaviorPath);
-    if (behaviorContent) {
-      contextPackage.behaviorFile = behaviorContent;
+    const rawBehavior = readRawFile(behaviorPath);
+    if (rawBehavior) {
+      contextPackage.behaviorFile = stripAndTrim(rawBehavior);
 
       const stateRegex = /uses\s*=\s*\[([^\]]+)\]/;
-      const stateMatch = stateRegex.exec(behaviorContent);
+      const stateMatch = stateRegex.exec(rawBehavior);
       if (stateMatch) {
         const paths = stateMatch[1]
           .split(",")
@@ -77,9 +106,9 @@ export function buildContextForComponent(
           .map(rel => path.resolve(path.dirname(behaviorPath), `../state/${rel}.js`));
 
         for (const statePath of paths) {
-          const content = loadFile(statePath);
+          const content = readRawFile(statePath);
           if (content) {
-            contextPackage.stateFiles![statePath] = content;
+            contextPackage.stateFiles![statePath] = stripAndTrim(content);
           }
         }
       }

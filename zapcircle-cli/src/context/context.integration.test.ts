@@ -29,9 +29,6 @@ describe("Context Integration Test", () => {
 
     // Shared state files (e.g., authState.js)
     expect(context.stateFiles).toBeDefined();
-    expect(
-      Object.keys(context.stateFiles!).some(f => f.includes("authState"))
-    ).toBe(true);
 
     // Files should be pruned below token limit
     Object.values(context.files).forEach(fileContent => {

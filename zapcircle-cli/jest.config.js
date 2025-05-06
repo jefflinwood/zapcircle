@@ -1,5 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
+  roots: ["<rootDir>/src"],
   collectCoverage: true,
   coverageDirectory: "coverage",
   testEnvironment: "node",
@@ -7,4 +8,5 @@ module.exports = {
     "^.+.tsx?$": ["ts-jest", {}],
   },
   modulePathIgnorePatterns: ["scratch"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"]
 };
