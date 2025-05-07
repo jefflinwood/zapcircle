@@ -5,9 +5,11 @@ import { renderGenerationPrompt } from "./promptBuilder";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { findBehaviorForIssue } from "../behaviors/matcher";
 import { findLikelyComponentForIssue } from "../behaviors/findComponent";
+import { resolveComponentFromBehavior } from "../behaviors/resolveComponentFromBehavior";
 
 import { writeOutputFile } from "../utils/writeOutputFile";
-import { resolveComponentFromBehavior } from "../behaviors/resolveComponentFromBehavior";
+import { writeIssueLog } from "./writeIssueLog";
+
 
 type Issue = {
   id: number;
@@ -59,6 +61,20 @@ export async function runAgentOnIssue(issue: Issue) {
   // Step 5: Write output
   const outputPath = path.resolve(componentPath); // Overwrites component for now
   await writeOutputFile(outputPath, result, true);
+
+  writeIssueLog(issue.id, {
+    id: issue.id,
+    status: "completed",
+    title: issue.title,
+    description: issue.description,
+    comments: issue.comments,
+    componentPath,
+    behaviorPath,
+    generatedAt: new Date().toISOString(),
+    outputPath: componentPath,
+    promptPreview: prompt.slice(0, 500),
+    reviewPassed: true // placeholder; to be updated when review is integrated
+  });
 
   console.log(`✅ Updated file written to: ${outputPath}`);
 }
