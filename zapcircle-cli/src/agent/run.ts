@@ -8,6 +8,7 @@ import { resolveComponentFromBehavior } from "../behaviors/resolveComponentFromB
 
 import { writeOutputFile } from "../utils/writeOutputFile";
 import { writeIssueLog } from "./writeIssueLog";
+import { renderReviewPrompt } from "./renderReviewPrompt";
 
 
 type Issue = {
@@ -47,7 +48,38 @@ export async function runAgentOnIssue(issue: Issue) {
     // Step 4: Generate code
     const result = await invokeLLMWithSpinner(prompt, true);
 
-    // Step 5: Write output
+    // Step 5: Review code
+    const reviewPrompt = renderReviewPrompt({
+      originalPrompt: prompt,
+      generatedCode: result
+    });
+
+    const reviewResult = await invokeLLMWithSpinner(reviewPrompt, true);
+
+    console.log("\n🔍 Review Result:\n", reviewResult);
+
+    const approved = reviewResult.trim().startsWith("APPROVED");
+
+    if (!approved) {
+      console.warn("⚠️ Review failed. The file will NOT be written.");
+
+      writeIssueLog(issue.id, {
+        id: issue.id,
+        status: "failed",
+        title: issue.title,
+        description: issue.description,
+        comments: issue.comments,
+        componentPath,
+        behaviorPath,
+        failedAt: new Date().toISOString(),
+        reviewPassed: false,
+        failureReason: "Review rejected: " + reviewResult.trim()
+      });
+
+      return;
+    }
+
+    // Step 6: Write output
     const outputPath = path.resolve(componentPath);
     await writeOutputFile(outputPath, result, true);
 
