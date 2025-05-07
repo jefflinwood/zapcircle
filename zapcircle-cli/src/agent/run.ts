@@ -46,37 +46,67 @@ export async function runAgentOnIssue(issue: Issue) {
     const prompt = renderGenerationPrompt({ issue, contextPackage: context });
 
     // Step 4: Generate code
-    const result = await invokeLLMWithSpinner(prompt, true);
+    var result = await invokeLLMWithSpinner(prompt, true);
 
     // Step 5: Review code
-    const reviewPrompt = renderReviewPrompt({
-      originalPrompt: prompt,
-      generatedCode: result
-    });
+    // First review attempt
+    let reviewPrompt = renderReviewPrompt({ originalPrompt: prompt, generatedCode: result });
+    let reviewResult = await invokeLLMWithSpinner(reviewPrompt, true);
 
-    const reviewResult = await invokeLLMWithSpinner(reviewPrompt, true);
+    console.log("\n🔍 Review Result (1st pass):\n", reviewResult);
 
-    console.log("\n🔍 Review Result:\n", reviewResult);
-
-    const approved = reviewResult.trim().startsWith("APPROVED");
+    let approved = reviewResult.trim().startsWith("APPROVED");
 
     if (!approved) {
-      console.warn("⚠️ Review failed. The file will NOT be written.");
+      console.warn("⚠️ Review failed. Attempting one refinement pass...");
 
-      writeIssueLog(issue.id, {
-        id: issue.id,
-        status: "failed",
-        title: issue.title,
-        description: issue.description,
-        comments: issue.comments,
-        componentPath,
-        behaviorPath,
-        failedAt: new Date().toISOString(),
-        reviewPassed: false,
-        failureReason: "Review rejected: " + reviewResult.trim()
+      // Refine the prompt with feedback
+      const retryPrompt = `
+    The last attempt was rejected for the following reason:
+
+    ${reviewResult.trim()}
+
+    Please regenerate the code with this in mind. Only modify what is necessary to address the original issue.
+
+    ---
+
+    ${prompt}
+    `;
+
+      const retriedResult = await invokeLLMWithSpinner(retryPrompt, true);
+
+      // Second review
+      const secondReviewPrompt = renderReviewPrompt({
+        originalPrompt: prompt,
+        generatedCode: retriedResult
       });
 
-      return;
+      const secondReviewResult = await invokeLLMWithSpinner(secondReviewPrompt, true);
+      console.log("\n🔍 Review Result (2nd pass):\n", secondReviewResult);
+
+      approved = secondReviewResult.trim().startsWith("APPROVED");
+
+      if (!approved) {
+        console.error("❌ Second review failed. Aborting write.");
+
+        writeIssueLog(issue.id, {
+          id: issue.id,
+          status: "failed",
+          title: issue.title,
+          description: issue.description,
+          comments: issue.comments,
+          componentPath,
+          behaviorPath,
+          failedAt: new Date().toISOString(),
+          reviewPassed: false,
+          failureReason: "Second review failed: " + secondReviewResult.trim()
+        });
+
+        return;
+      }
+
+      // Overwrite the result with the retried version
+      result = retriedResult;
     }
 
     // Step 6: Write output
