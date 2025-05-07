@@ -1,4 +1,3 @@
-import fs from "fs";
 import path from "path";
 import { buildContextForComponent } from "../context/index";
 import { renderGenerationPrompt } from "./promptBuilder";
@@ -18,63 +17,69 @@ type Issue = {
   description: string;
   comments: string[];
 };
-
 export async function runAgentOnIssue(issue: Issue) {
-  console.log(`🧠 Running ZapCircle Agent on issue #${issue.id}...`);
+  console.log(`Running ZapCircle Agent on issue #${issue.id}...`);
 
-  // Step 1: Try to find behavior
-  let behaviorPath = findBehaviorForIssue(issue);
-  let componentPath: string;
+  let behaviorPath: string | undefined;
+  let componentPath: string | undefined;
 
-  if (behaviorPath) {
-    const resolved = resolveComponentFromBehavior(behaviorPath);
-    if (!resolved) {
-      console.error("❌ Could not find matching component file for behavior.");
-      return;
-    }
-    componentPath = resolved;
-  } else {
-    console.warn("⚠️ No behavior file matched. Searching for relevant component...");
-
-    const guessedComponent = findLikelyComponentForIssue(issue);
-    if (!guessedComponent) {
-      console.error("❌ Could not infer a relevant component for this issue.");
-      return;
+  try {
+    // Step 1: Find behavior or fallback to component
+    behaviorPath = findBehaviorForIssue(issue);
+    if (behaviorPath) {
+      const resolved = resolveComponentFromBehavior(behaviorPath);
+      if (!resolved) throw new Error("Could not find component file for matched behavior.");
+      componentPath = resolved;
+    } else {
+      console.warn("⚠️ No behavior file matched. Searching for relevant component...");
+      const guessed = findLikelyComponentForIssue(issue);
+      if (!guessed) throw new Error("Could not guess component file.");
+      componentPath = guessed;
+      console.warn(`⚠️ Proceeding with: ${componentPath}`);
     }
 
-    componentPath = guessedComponent;
-    console.warn(`⚠️ Proceeding with: ${componentPath}`);
+    // Step 2: Build context
+    const context = await buildContextForComponent(componentPath, behaviorPath);
+
+    // Step 3: Construct prompt
+    const prompt = renderGenerationPrompt({ issue, contextPackage: context });
+
+    // Step 4: Generate code
+    const result = await invokeLLMWithSpinner(prompt, true);
+
+    // Step 5: Write output
+    const outputPath = path.resolve(componentPath);
+    await writeOutputFile(outputPath, result, true);
+
+    // ✅ Final log
+    writeIssueLog(issue.id, {
+      id: issue.id,
+      status: "completed",
+      title: issue.title,
+      description: issue.description,
+      comments: issue.comments,
+      componentPath,
+      behaviorPath,
+      generatedAt: new Date().toISOString(),
+      outputPath,
+      promptPreview: prompt.slice(0, 500),
+      reviewPassed: true,
+    });
+
+    console.log(`✅ Updated file written to: ${outputPath}`);
+  } catch (err: any) {
+    console.error(`❌ Agent run failed: ${err.message}`);
+
+    writeIssueLog(issue.id, {
+      id: issue.id,
+      status: "failed",
+      title: issue.title,
+      description: issue.description,
+      comments: issue.comments,
+      behaviorPath,
+      componentPath,
+      failedAt: new Date().toISOString(),
+      failureReason: err.message
+    });
   }
-
-  // Step 2: Build context
-  const context = await buildContextForComponent(componentPath, behaviorPath);
-
-  // Step 3: Prompt construction
-  const prompt = renderGenerationPrompt({
-    issue,
-    contextPackage: context,
-  });
-
-  // Step 4: Run generation
-  const result = await invokeLLMWithSpinner(prompt, true);
-
-  // Step 5: Write output
-  const outputPath = path.resolve(componentPath); // Overwrites component for now
-  await writeOutputFile(outputPath, result, true);
-
-  writeIssueLog(issue.id, {
-    id: issue.id,
-    status: "completed",
-    title: issue.title,
-    description: issue.description,
-    comments: issue.comments,
-    componentPath,
-    behaviorPath,
-    generatedAt: new Date().toISOString(),
-    outputPath: componentPath,
-    promptPreview: prompt.slice(0, 500),
-    reviewPassed: true // placeholder; to be updated when review is integrated
-  });
-
-  console.log(`✅ Updated file written to: ${outputPath}`);
 }
