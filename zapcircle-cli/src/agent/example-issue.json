@@ -1,0 +1,10 @@
+{
+    "id": 42,
+    "title": "Fix login redirect after successful auth",
+    "priority": "High",
+    "description": "Users are not being redirected after logging in. This should trigger navigation to /dashboard on success.",
+    "comments": [
+      "Seems related to LoginForm.jsx",
+      "Possibly missing useNavigate hook?"
+    ]
+  }

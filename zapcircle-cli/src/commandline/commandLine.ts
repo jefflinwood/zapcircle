@@ -13,6 +13,7 @@ import { review } from "../commands/review";
 import { distill } from "../commands/distill";
 import { context } from "../commands/context";
 import { zapcircleNew } from "../commands/new";
+import { agentRunCommand } from "../commands/agent";
 
 const program = new Command();
 
@@ -128,6 +129,18 @@ program
     console.log(`Running ZapCircle Context...`);
     context(pathToCode, options);
   });
+
+const agent = program
+  .command("agent")
+  .description("ZapCircle Agentic AI - contains subcommands")
+
+agent
+  .command("run")
+  .action(() => {
+    console.log(`Running ZapCircle agent run...`);
+    agentRunCommand();
+  });
+
 
 program
   .command("configure")
