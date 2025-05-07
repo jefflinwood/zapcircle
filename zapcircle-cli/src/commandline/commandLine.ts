@@ -14,6 +14,7 @@ import { distill } from "../commands/distill";
 import { context } from "../commands/context";
 import { zapcircleNew } from "../commands/new";
 import { agentRunCommand } from "../commands/agent";
+import { showAgentStatus } from "../agent/status";
 
 const program = new Command();
 
@@ -139,6 +140,13 @@ agent
   .action(() => {
     console.log(`Running ZapCircle agent run...`);
     agentRunCommand();
+  });
+
+agent
+  .command("status")
+  .action(() => {
+    console.log(`Displaying ZapCircle agent status...`);
+    showAgentStatus();
   });
 
 

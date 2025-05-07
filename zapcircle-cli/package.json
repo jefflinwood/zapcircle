@@ -55,6 +55,7 @@
     "@langchain/google-vertexai": "^0.2.4",
     "@langchain/openai": "^0.3.16",
     "commander": "^13.0.0",
+    "console-table-printer": "^2.12.1",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.2",
