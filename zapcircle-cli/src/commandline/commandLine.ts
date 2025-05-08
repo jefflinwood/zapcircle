@@ -15,6 +15,7 @@ import { context } from "../commands/context";
 import { zapcircleNew } from "../commands/new";
 import { agentRunCommand } from "../commands/agent";
 import { showAgentStatus } from "../agent/status";
+import { runAgentChat } from "../agent/chat";
 
 const program = new Command();
 
@@ -149,6 +150,11 @@ agent
     showAgentStatus();
   });
 
+agent
+  .command("chat")
+  .action(() => {
+    runAgentChat();
+  });
 
 program
   .command("configure")
