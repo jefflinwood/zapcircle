@@ -77,6 +77,7 @@ Do not include any markdown or comments, just JSON suitable for ingestion in ano
   writeIssueLog(issue.id, {
     ...issue,
     status: "pending",
+    source: "chat",
     createdAt: new Date().toISOString()
   });
 
