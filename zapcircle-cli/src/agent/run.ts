@@ -9,6 +9,7 @@ import { resolveComponentFromBehavior } from "../behaviors/resolveComponentFromB
 import { writeOutputFile } from "../utils/writeOutputFile";
 import { writeIssueLog } from "./writeIssueLog";
 import { renderReviewPrompt } from "./renderReviewPrompt";
+import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForComponent";
 
 
 type Issue = {
@@ -38,6 +39,8 @@ export async function runAgentOnIssue(issue: Issue) {
       componentPath = guessed;
       console.warn(`⚠️ Proceeding with: ${componentPath}`);
     }
+
+    behaviorPath = await ensureBehaviorForComponent(componentPath);
 
     // Step 2: Build context
     const context = await buildContextForComponent(componentPath, behaviorPath);

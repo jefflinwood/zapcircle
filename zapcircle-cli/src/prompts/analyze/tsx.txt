@@ -4,6 +4,11 @@ ${global_prompt}
 
 ${analyze_prompt}
 
+
+If a behavior file already exists, you may use it for context or refinement:
+
+${existingBehavior}
+
 Component Source Code:
 \`\`\`
 ${sourceCode}
