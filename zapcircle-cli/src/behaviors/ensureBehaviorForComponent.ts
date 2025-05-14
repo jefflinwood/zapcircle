@@ -19,7 +19,7 @@ export async function ensureBehaviorForComponent(componentPath: string) {
   await analyze(ext, componentPath, {
     verbose: false,
     interactive: false,
-    output: behaviorPath,
+    output: dir,
   });
 
   return behaviorPath;
