@@ -14,7 +14,7 @@
     "format": "prettier --write .",
     "test": "jest",
     "build": "tsc && copyfiles -u 1 ./src/prompts/**/* ./dist/src",
-    "prepare": "husky install",
+    "prepare": "cd ../ && husky zapcircle-cli/.husky",
     "start": "ts-node src/commandline/commandLine.ts",
     "review": "node dist/src/commandline/commandLine.js review --github --verbose --provider=openai --model=o4-mini",
     "review-dev": "ts-node src/commandline/commandLine.ts review --verbose --provider=openai --model=o4-mini"

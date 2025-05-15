@@ -1,0 +1,3 @@
+cd zapcircle-cli
+npm run format
+npm test
