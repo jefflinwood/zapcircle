@@ -2,6 +2,7 @@ import readline from "readline/promises";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { runAgentOnIssue } from "./run";
 import { writeIssueLog } from "./writeIssueLog";
+import { AgentIssue } from "../issues/types";
 
 type StructuredIssue = {
   title: string;
@@ -65,12 +66,16 @@ Do not include any markdown or comments, just JSON suitable for ingestion in ano
   }
 
   const issueId = Date.now(); // simple temporary ID
-  const issue = {
+  const issue: AgentIssue = {
     id: issueId,
+    source: "chat",
+    author: "chat",
+    status: "pending",
+    createdAt: Date().toString(),
     title: structured.title,
     description: structured.description,
     comments: [],
-    priority: "Normal"
+    priority: "Medium"
   };
 
   // Save to issue log as pending

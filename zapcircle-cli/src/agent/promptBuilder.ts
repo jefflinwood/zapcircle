@@ -1,10 +1,11 @@
 import { ContextPackage } from "../context/types";
+import { AgentIssue } from "../issues/types";
 
 export function renderGenerationPrompt({
   issue,
   contextPackage,
 }: {
-  issue: { title: string; description: string; comments: string[] };
+  issue: AgentIssue;
   contextPackage: ContextPackage;
 }): string {
   const { behaviorFile, files, stateFiles } = contextPackage;

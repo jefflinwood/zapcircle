@@ -10,16 +10,11 @@ import { writeOutputFile } from "../utils/writeOutputFile";
 import { writeIssueLog } from "./writeIssueLog";
 import { renderReviewPrompt } from "./renderReviewPrompt";
 import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForComponent";
+import { AgentIssue } from "../issues/types";
 
 
-type Issue = {
-  id: number;
-  title: string;
-  priority: string;
-  description: string;
-  comments: string[];
-};
-export async function runAgentOnIssue(issue: Issue) {
+
+export async function runAgentOnIssue(issue: AgentIssue) {
   console.log(`Running ZapCircle Agent on issue #${issue.id}...`);
 
   let behaviorPath: string | undefined;

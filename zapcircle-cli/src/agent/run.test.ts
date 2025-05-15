@@ -2,6 +2,7 @@ import { runAgentOnIssue } from "./run";
 import { writeOutputFile } from "../utils/writeOutputFile";
 import { writeIssueLog } from "./writeIssueLog";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
+import { AgentIssue } from "../issues/types";
 
 jest.mock("../context/index", () => ({
   buildContextForComponent: jest.fn(() => ({
@@ -40,13 +41,17 @@ jest.mock("../behaviors/ensureBehaviorForComponent", () => ({
 const mockInvoke = invokeLLMWithSpinner as jest.Mock;
 
 describe("runAgentOnIssue", () => {
-  const mockIssue = {
+  const mockIssue: AgentIssue = {
     id: 42,
     title: "Fix login redirect",
+    status: "pending",
+    author: "Mock Author",
+    source: "github",
+    createdAt: "",
     description: "Redirect after login is broken",
     priority: "High",
     comments: [],
-  };
+  }
 
   beforeEach(() => {
     jest.clearAllMocks();

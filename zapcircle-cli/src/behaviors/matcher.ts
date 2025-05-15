@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { globSync } from "glob";
+import { AgentIssue } from "../issues/types";
 
 // Utility: Fuzzy match a component name against issue text
 function textMatches(text: string, componentName: string): boolean {
@@ -19,11 +20,7 @@ function getComponentName(filePath: string): string {
 }
 
 // Main function
-export function findBehaviorForIssue(issue: {
-  title: string;
-  description: string;
-  comments: string[];
-}): string | undefined {
+export function findBehaviorForIssue(issue: AgentIssue): string | undefined {
   const behaviorFiles = findAllBehaviorFiles();
 
   for (const behaviorPath of behaviorFiles) {
@@ -32,7 +29,7 @@ export function findBehaviorForIssue(issue: {
     const match =
       textMatches(issue.title, componentName) ||
       textMatches(issue.description, componentName) ||
-      issue.comments.some((c) => textMatches(c, componentName));
+      issue.comments.some((c) => textMatches(c.body, componentName));
 
     if (match) return behaviorPath;
   }
