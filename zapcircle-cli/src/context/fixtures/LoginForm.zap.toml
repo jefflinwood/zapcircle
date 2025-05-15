@@ -1,0 +1,13 @@
+name = "LoginForm"
+
+[component]
+role = "Displays a login form and handles user input for authentication."
+
+inputs = ["email"]
+behavior = """
+LoginForm allows users to input their email address and submit it via a button.
+When submitted, it calls the login function provided by the useAuth hook.
+"""
+
+[state]
+uses = ["authState"]

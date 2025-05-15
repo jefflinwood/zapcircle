@@ -1,0 +1,12 @@
+name = "ImportWalker"
+
+role = "Recursively finds and returns all local file imports starting from a root file."
+
+inputs = ["entryFile", "maxDepth"]
+behavior = """
+The walkImports function performs static analysis of ESModule-style imports starting from a specified entry file.
+
+It uses Babel to parse the file into an AST, and walks `import` declarations to find local files. It skips imports from `node_modules` and avoids infinite cycles by tracking visited files.
+
+The function supports a configurable depth limit to control traversal, and returns a list of absolute file paths representing the full local dependency tree of the entry file.
+"""

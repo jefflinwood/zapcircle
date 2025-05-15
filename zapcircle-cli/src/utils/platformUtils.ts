@@ -20,6 +20,9 @@ export const getCurrentDir = (): string => process.cwd();
 export const readFile = (filePath: string): string =>
   fs.readFileSync(filePath, "utf-8");
 
+export const readDirSync = (dirPath: string): string[] =>
+  fs.readdirSync(dirPath);
+
 export const createReadlineInterface = (): readline.Interface => {
   return readline.createInterface({
     input: process.stdin,

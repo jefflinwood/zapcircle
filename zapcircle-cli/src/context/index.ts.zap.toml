@@ -1,0 +1,19 @@
+name = "ContextBuilder"
+
+role = "Builds a minimal LLM context package for a React component, optionally using a behavior file."
+
+inputs = ["entryFile", "behaviorPath", "options"]
+behavior = """
+Given an entry file for a React component, buildContextForComponent will:
+
+1. Walk static imports from the entry file to gather all locally referenced files.
+2. Load each file's contents, stripping comments and unused code, respecting token limits.
+3. If a behaviorPath is provided, load and include the behavior file in the context.
+4. If the behavior file defines shared state, resolve and include those state files.
+5. Return a structured ContextPackage including all relevant files for prompt construction.
+
+The function ensures no files outside of `src/` are included, ignores node_modules, and avoids token overflow by pruning per file.
+"""
+
+[state]
+provides = ["ContextPackage"]

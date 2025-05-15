@@ -1,0 +1,13 @@
+Based on the following behavior description, generate a TypeScript source code file.
+
+${global_prompt}
+
+${generate_prompt}
+
+${behavior}
+
+The output should only contain the component implementation in TS format. 
+
+Do not include comments, markdown, or any other text. 
+
+Do not include the ``` code delimiters for markdown.

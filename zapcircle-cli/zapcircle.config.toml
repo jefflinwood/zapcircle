@@ -1,0 +1,7 @@
+# ZapCircle Project Configuration
+[prompts]
+all = ""
+analyze = ""
+generate = ""
+
+[filetype.generate]

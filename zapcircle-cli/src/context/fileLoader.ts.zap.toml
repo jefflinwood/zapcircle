@@ -1,0 +1,17 @@
+name = "FileLoader"
+
+role = "Loads a source file and trims it for use in an LLM context, respecting token constraints."
+
+inputs = ["path", "maxTokens"]
+behavior = """
+The loadAndTrimFile function reads the contents of a given local file path and prepares it for inclusion in an LLM context.
+
+It performs the following actions:
+
+1. Reads the file from disk.
+2. Removes full-line comments and inline comments, if present.
+3. Trims sections of the file that are not needed for prompt-based reasoning (e.g., unused exports or constants).
+4. Truncates the file intelligently if it exceeds the maxTokens limit, prioritizing top-level exports and functions.
+
+This function assumes that code is JavaScript or TypeScript and may contain JSX. It does not attempt full tree-shaking but avoids unnecessary bloat by stripping known non-critical sections.
+"""

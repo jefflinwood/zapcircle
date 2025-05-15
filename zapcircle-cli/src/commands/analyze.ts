@@ -1,4 +1,4 @@
-import { readdirSync, statSync, readFileSync } from "fs";
+import { readdirSync, statSync, readFileSync, existsSync } from "fs";
 import path from "path";
 import toml from "@iarna/toml";
 import { loadPrompt } from "../core/promptLoader";
@@ -15,54 +15,60 @@ export async function analyze(
     const isVerbose = options.verbose || false;
     const isInteractive = options.interactive || false;
 
-    // Helper function for recursion
     const processPath = async (currentPath: string) => {
       const stats = statSync(currentPath);
 
       if (stats.isDirectory()) {
-        // Recursively analyze files in the directory
         const files = readdirSync(currentPath);
         for (const file of files) {
           await processPath(path.join(currentPath, file));
         }
       } else if (stats.isFile() && currentPath.endsWith("." + fileType)) {
-        // Analyze the source code file
         const sourceFileContents = readFileSync(currentPath, "utf-8");
+        const baseName = path.basename(currentPath, "." + fileType);
+        const behaviorFilePath = path.join(outputDir, `${baseName}.zap.toml`);
 
-        const baseName = path.basename(currentPath);
+        let existingBehaviorText = "";
+        let existingBehaviorObject = {};
 
-        const analysisVariables = {
-          name: baseName as string,
-          sourceCode: sourceFileContents as string,
-        };
+        if (existsSync(behaviorFilePath)) {
+          try {
+            const raw = readFileSync(behaviorFilePath, "utf-8");
+            existingBehaviorObject = toml.parse(raw);
+            existingBehaviorText = raw;
+          } catch (err) {
+            console.warn(
+              `⚠️ Failed to parse existing behavior file: ${behaviorFilePath}`,
+            );
+          }
+        }
 
-        const prompt = await loadPrompt(fileType, "analyze", analysisVariables);
+        const prompt = await loadPrompt(fileType, "analyze", {
+          name: baseName,
+          sourceCode: sourceFileContents,
+          existingBehavior: existingBehaviorText || "None",
+        });
 
         const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
-        const tomlVariables = {
+        // Merge new behavior result into existingBehaviorObject
+        const updatedBehavior = {
+          ...existingBehaviorObject,
           name: baseName,
-          behavior: result,
+          behavior: result.trim(),
         };
 
-        const tomlContents = toml.stringify(tomlVariables);
-
-        const outputFilePath = path.join(
-          outputDir,
-          path.basename(currentPath) + ".zap.toml",
-        );
-
+        const tomlContents = toml.stringify(updatedBehavior);
+        const outputFilePath = path.join(outputDir, `${baseName}.zap.toml`);
         writeOutputFile(outputFilePath, tomlContents, isInteractive);
 
-        console.log(`Analysis generated: ${outputFilePath}`);
+        console.log(`🧠 Behavior updated: ${outputFilePath}`);
       }
     };
 
-    // Start processing from the target path
     await processPath(targetPath);
-
-    console.log(`Analysis completed for path: ${targetPath}`);
+    console.log(`✅ Analysis completed for path: ${targetPath}`);
   } catch (error) {
-    console.error("Error analyzing component:", error);
+    console.error("❌ Error analyzing component:", error);
   }
 }
