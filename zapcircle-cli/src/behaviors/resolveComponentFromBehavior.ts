@@ -3,7 +3,9 @@ import path from "path";
 
 const supportedExtensions = [".jsx", ".tsx", ".js", ".ts"];
 
-export function resolveComponentFromBehavior(behaviorPath: string): string | undefined {
+export function resolveComponentFromBehavior(
+  behaviorPath: string,
+): string | undefined {
   const baseName = path.basename(behaviorPath).replace(/\.zap\.toml$/, "");
   const dir = path.dirname(behaviorPath);
 

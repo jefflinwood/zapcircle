@@ -13,7 +13,7 @@ export async function ensureBehaviorForComponent(componentPath: string) {
   console.log(
     behaviorExists
       ? `🛠️ Updating behavior file: ${behaviorPath}`
-      : `🧪 Creating new behavior file: ${behaviorPath}`
+      : `🧪 Creating new behavior file: ${behaviorPath}`,
   );
 
   await analyze(ext, componentPath, {

@@ -3,10 +3,7 @@ import * as babel from "@babel/parser";
 import traverse from "@babel/traverse";
 import { globSync } from "glob";
 
-import {
-  readFile,
-  pathExists,
-} from "../utils/platformUtils";
+import { readFile, pathExists } from "../utils/platformUtils";
 
 export function findComponentUsages(componentName: string): string[] {
   const usageFiles: string[] = [];
@@ -34,41 +31,43 @@ export function findComponentUsages(componentName: string): string[] {
     let aliases: string[] = [];
 
     traverse(ast, {
-        ImportDeclaration(path) {
-            const basename = path.node.source.value
-              .split("/")
-              .pop()
-              ?.replace(/\.[jt]sx?$/, "");
-          
-            path.node.specifiers.forEach((specifier) => {
-              let importedName: string | undefined;
-              let localName: string;
-          
-              if (specifier.type === "ImportSpecifier") {
-                importedName =
-                  specifier.imported.type === "Identifier" ? specifier.imported.name : undefined;
-                localName = specifier.local.name;
-              } else if (specifier.type === "ImportDefaultSpecifier") {
-                // Default import
-                importedName = undefined;
-                localName = specifier.local.name;
-              } else if (specifier.type === "ImportNamespaceSpecifier") {
-                // import * as Foo from ...
-                importedName = undefined;
-                localName = specifier.local.name;
-              } else {
-                return;
-              }
-          
-              if (
-                importedName === componentName ||
-                localName === componentName ||
-                basename === componentName
-              ) {
-                aliases.push(localName);
-              }
-            });
-          },
+      ImportDeclaration(path) {
+        const basename = path.node.source.value
+          .split("/")
+          .pop()
+          ?.replace(/\.[jt]sx?$/, "");
+
+        path.node.specifiers.forEach((specifier) => {
+          let importedName: string | undefined;
+          let localName: string;
+
+          if (specifier.type === "ImportSpecifier") {
+            importedName =
+              specifier.imported.type === "Identifier"
+                ? specifier.imported.name
+                : undefined;
+            localName = specifier.local.name;
+          } else if (specifier.type === "ImportDefaultSpecifier") {
+            // Default import
+            importedName = undefined;
+            localName = specifier.local.name;
+          } else if (specifier.type === "ImportNamespaceSpecifier") {
+            // import * as Foo from ...
+            importedName = undefined;
+            localName = specifier.local.name;
+          } else {
+            return;
+          }
+
+          if (
+            importedName === componentName ||
+            localName === componentName ||
+            basename === componentName
+          ) {
+            aliases.push(localName);
+          }
+        });
+      },
 
       JSXOpeningElement(path) {
         if (

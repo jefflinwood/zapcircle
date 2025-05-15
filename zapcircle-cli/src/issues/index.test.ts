@@ -1,5 +1,10 @@
 import * as platformUtils from "../utils/platformUtils";
-import { listIssues, readIssueSync, writeIssue, logIssueSyncEvent } from "./index";
+import {
+  listIssues,
+  readIssueSync,
+  writeIssue,
+  logIssueSyncEvent,
+} from "./index";
 import toml from "@iarna/toml";
 import path from "path";
 import { AgentIssue } from "./types";
@@ -37,7 +42,9 @@ describe("Issue Store with spies", () => {
 
     jest.spyOn(platformUtils, "writeFile").mockImplementation(() => {});
     jest.spyOn(platformUtils, "pathExists").mockImplementation(() => true);
-    jest.spyOn(platformUtils, "createDirectory").mockImplementation((p:string) => "");
+    jest
+      .spyOn(platformUtils, "createDirectory")
+      .mockImplementation((p: string) => "");
   });
 
   it("reads an issue from disk", () => {
@@ -50,7 +57,7 @@ describe("Issue Store with spies", () => {
     writeIssue(fakeIssue);
     expect(platformUtils.writeFile).toHaveBeenCalledWith(
       expect.stringContaining("42.toml"),
-      expect.stringContaining("Fix login redirect")
+      expect.stringContaining("Fix login redirect"),
     );
   });
 
@@ -69,7 +76,7 @@ describe("Issue Store with spies", () => {
 
     expect(platformUtils.writeFile).toHaveBeenCalledWith(
       expect.stringContaining("sync.log.jsonl"),
-      expect.stringContaining("pull")
+      expect.stringContaining("pull"),
     );
   });
 });

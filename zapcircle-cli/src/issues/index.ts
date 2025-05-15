@@ -7,7 +7,7 @@ import {
   writeFile,
   getCurrentDir,
   createDirectory,
-  readDirSync
+  readDirSync,
 } from "../utils/platformUtils";
 
 const issuesDir = path.join(getCurrentDir(), ".zapcircle/agent/issues");
@@ -18,12 +18,15 @@ if (!pathExists(issuesDir)) {
   createDirectory(issuesDir);
 }
 
-export function listIssues(filter?: { status?: string; source?: string }): AgentIssue[] {
-  const allFiles = readDirSync(issuesDir).filter(f => f.endsWith(".toml"));
+export function listIssues(filter?: {
+  status?: string;
+  source?: string;
+}): AgentIssue[] {
+  const allFiles = readDirSync(issuesDir).filter((f) => f.endsWith(".toml"));
   return allFiles
-    .map(file => path.join(issuesDir, file))
+    .map((file) => path.join(issuesDir, file))
     .map(readIssueSync)
-    .filter(issue => {
+    .filter((issue) => {
       if (filter?.status && issue.status !== filter.status) return false;
       if (filter?.source && issue.source !== filter.source) return false;
       return true;
@@ -36,7 +39,8 @@ export function readIssueSync(filePathOrId: string | number): AgentIssue {
       ? path.join(issuesDir, `${filePathOrId}.toml`)
       : filePathOrId;
 
-  if (!pathExists(filePath)) throw new Error(`Issue file not found: ${filePath}`);
+  if (!pathExists(filePath))
+    throw new Error(`Issue file not found: ${filePath}`);
 
   const contents = readFile(filePath);
   const issue = toml.parse(contents) as AgentIssue;

@@ -17,7 +17,9 @@ export async function runAgentChat() {
   });
 
   console.log("Welcome to ZapCircle Agent Chat!");
-  const rawInput = await rl.question("\nWhat's the problem you'd like help with?\n> ");
+  const rawInput = await rl.question(
+    "\nWhat's the problem you'd like help with?\n> ",
+  );
 
   const structuringPrompt = `
 You are a software assistant. A user has described a problem below.
@@ -55,7 +57,9 @@ Do not include any markdown or comments, just JSON suitable for ingestion in ano
   console.log("\n📝 Here's what I understood:");
   console.log(`\nTitle: ${structured.title}`);
   console.log(`Description: ${structured.description}`);
-  console.log(`Acceptance Criteria:\n${structured.acceptanceCriteria.map((c) => `- ${c}`).join("\n")}`);
+  console.log(
+    `Acceptance Criteria:\n${structured.acceptanceCriteria.map((c) => `- ${c}`).join("\n")}`,
+  );
 
   const confirmation = await rl.question("\n✅ Use this plan? [Y/n]: ");
   rl.close();
@@ -75,7 +79,7 @@ Do not include any markdown or comments, just JSON suitable for ingestion in ano
     title: structured.title,
     description: structured.description,
     comments: [],
-    priority: "Medium"
+    priority: "Medium",
   };
 
   // Save to issue log as pending
@@ -83,7 +87,7 @@ Do not include any markdown or comments, just JSON suitable for ingestion in ano
     ...issue,
     status: "pending",
     source: "chat",
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
 
   await runAgentOnIssue(issue);

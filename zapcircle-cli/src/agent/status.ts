@@ -20,13 +20,13 @@ export function showAgentStatus() {
     return;
   }
 
-  const files = fs.readdirSync(issuesDir).filter(f => f.endsWith(".json"));
+  const files = fs.readdirSync(issuesDir).filter((f) => f.endsWith(".json"));
   if (files.length === 0) {
     console.log("📭 No issue logs found in `.zapcircle/agent/issues/`.");
     return;
   }
 
-  const rows: IssueLog[] = files.map(file => {
+  const rows: IssueLog[] = files.map((file) => {
     const content = fs.readFileSync(path.join(issuesDir, file), "utf-8");
     return JSON.parse(content);
   });
@@ -39,7 +39,7 @@ export function showAgentStatus() {
       { name: "title", alignment: "left", maxLen: 30 },
       { name: "component", alignment: "left", maxLen: 30 },
       { name: "timestamp", alignment: "left", maxLen: 20 },
-    ]
+    ],
   });
 
   for (const issue of rows) {
@@ -48,7 +48,7 @@ export function showAgentStatus() {
       status: formatStatus(issue.status),
       title: issue.title,
       component: issue.componentPath ? shortPath(issue.componentPath) : "-",
-      timestamp: issue.generatedAt || issue.failedAt || "-"
+      timestamp: issue.generatedAt || issue.failedAt || "-",
     });
   }
 
@@ -61,9 +61,13 @@ function shortPath(fullPath: string): string {
 
 function formatStatus(status: string): string {
   switch (status) {
-    case "completed": return "✅ completed";
-    case "failed": return "❌ failed";
-    case "pending": return "⏳ pending";
-    default: return status;
+    case "completed":
+      return "✅ completed";
+    case "failed":
+      return "❌ failed";
+    case "pending":
+      return "⏳ pending";
+    default:
+      return status;
   }
 }

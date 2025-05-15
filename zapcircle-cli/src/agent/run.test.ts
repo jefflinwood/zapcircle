@@ -17,8 +17,8 @@ jest.mock("./promptBuilder", () => ({
 }));
 
 jest.mock("./renderReviewPrompt", () => ({
-  renderReviewPrompt: jest.fn(({ generatedCode }) =>
-    `REVIEW_PROMPT for: ${generatedCode.slice(0, 20)}`
+  renderReviewPrompt: jest.fn(
+    ({ generatedCode }) => `REVIEW_PROMPT for: ${generatedCode.slice(0, 20)}`,
   ),
 }));
 
@@ -35,7 +35,9 @@ jest.mock("../behaviors/resolveComponentFromBehavior", () => ({
   resolveComponentFromBehavior: jest.fn(() => "src/components/LoginForm.jsx"),
 }));
 jest.mock("../behaviors/ensureBehaviorForComponent", () => ({
-  ensureBehaviorForComponent: jest.fn(() => "src/components/LoginForm.zap.toml"),
+  ensureBehaviorForComponent: jest.fn(
+    () => "src/components/LoginForm.zap.toml",
+  ),
 }));
 
 const mockInvoke = invokeLLMWithSpinner as jest.Mock;
@@ -51,7 +53,7 @@ describe("runAgentOnIssue", () => {
     description: "Redirect after login is broken",
     priority: "High",
     comments: [],
-  }
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -70,7 +72,7 @@ describe("runAgentOnIssue", () => {
       expect.objectContaining({
         status: "completed",
         reviewPassed: true,
-      })
+      }),
     );
   });
 
@@ -90,14 +92,16 @@ describe("runAgentOnIssue", () => {
         status: "failed",
         reviewPassed: false,
         failureReason: expect.stringContaining("Second review failed"),
-      })
+      }),
     );
   });
 
   it("fails immediately if component cannot be resolved", async () => {
     const { findBehaviorForIssue } = await import("../behaviors/matcher");
     (findBehaviorForIssue as jest.Mock).mockReturnValue(undefined);
-    const { findLikelyComponentForIssue } = await import("../behaviors/findComponent");
+    const { findLikelyComponentForIssue } = await import(
+      "../behaviors/findComponent"
+    );
     (findLikelyComponentForIssue as jest.Mock).mockReturnValue(undefined);
 
     await runAgentOnIssue(mockIssue);
@@ -107,8 +111,10 @@ describe("runAgentOnIssue", () => {
       expect.any(Number),
       expect.objectContaining({
         status: "failed",
-        failureReason: expect.stringContaining("Could not guess component file"),
-      })
+        failureReason: expect.stringContaining(
+          "Could not guess component file",
+        ),
+      }),
     );
   });
 });

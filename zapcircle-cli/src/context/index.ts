@@ -9,7 +9,7 @@ export function buildContextForComponent(
     maxFiles?: number;
     maxTokensPerFile?: number;
     includeBehavior?: boolean;
-  }
+  },
 ): ContextPackage {
   const maxFiles = options?.maxFiles ?? 10;
   const maxTokensPerFile = options?.maxTokensPerFile ?? 1000;
@@ -34,13 +34,18 @@ export function buildContextForComponent(
   function stripAndTrim(content: string): string {
     const stripped = content.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
     const tokenEstimate = stripped.split(/\s+/).length;
-    return tokenEstimate <= maxTokensPerFile ? stripped : stripped.slice(0, maxTokensPerFile);
+    return tokenEstimate <= maxTokensPerFile
+      ? stripped
+      : stripped.slice(0, maxTokensPerFile);
   }
 
-  function resolveImportPath(baseFile: string, importedPath: string): string | null {
+  function resolveImportPath(
+    baseFile: string,
+    importedPath: string,
+  ): string | null {
     const baseDir = path.dirname(baseFile);
     const fullPath = path.resolve(baseDir, importedPath);
-  
+
     const candidates = [
       fullPath,
       `${fullPath}.js`,
@@ -52,11 +57,11 @@ export function buildContextForComponent(
       path.join(fullPath, "index.jsx"),
       path.join(fullPath, "index.tsx"),
     ];
-  
+
     for (const candidate of candidates) {
       if (fs.existsSync(candidate)) return candidate;
     }
-  
+
     return null;
   }
 
@@ -78,7 +83,7 @@ export function buildContextForComponent(
       if (importedFile.startsWith(".")) {
         const resolved = resolveImportPath(file, importedFile);
         if (resolved) {
-        gatherFiles(resolved);
+          gatherFiles(resolved);
         }
       }
     }
@@ -102,8 +107,10 @@ export function buildContextForComponent(
       if (stateMatch) {
         const paths = stateMatch[1]
           .split(",")
-          .map(s => s.trim().replace(/['"]/g, ""))
-          .map(rel => path.resolve(path.dirname(behaviorPath), `../state/${rel}.js`));
+          .map((s) => s.trim().replace(/['"]/g, ""))
+          .map((rel) =>
+            path.resolve(path.dirname(behaviorPath), `../state/${rel}.js`),
+          );
 
         for (const statePath of paths) {
           const content = readRawFile(statePath);

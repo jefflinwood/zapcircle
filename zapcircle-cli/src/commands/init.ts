@@ -11,13 +11,17 @@ export const initProject = () => {
 
   // Check if config already exists
   if (fs.existsSync(projectConfigPath)) {
-    console.error("❌ A ZapCircle configuration already exists in this directory.");
+    console.error(
+      "❌ A ZapCircle configuration already exists in this directory.",
+    );
     return;
   }
 
   // Warn if accidentally running in home dir
   if (projectRoot === require("os").homedir()) {
-    console.warn("⚠️ You are running init in your home directory. Are you sure this is a project?");
+    console.warn(
+      "⚠️ You are running init in your home directory. Are you sure this is a project?",
+    );
   }
 
   // Write default project config

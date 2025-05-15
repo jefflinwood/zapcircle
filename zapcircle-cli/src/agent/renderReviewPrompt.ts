@@ -1,11 +1,11 @@
 export function renderReviewPrompt({
-    originalPrompt,
-    generatedCode
-  }: {
-    originalPrompt: string;
-    generatedCode: string;
-  }) {
-    return `
+  originalPrompt,
+  generatedCode,
+}: {
+  originalPrompt: string;
+  generatedCode: string;
+}) {
+  return `
   You are a secure and cautious AI reviewer.
   
   # Instructions
@@ -26,4 +26,4 @@ export function renderReviewPrompt({
   - REJECTED: if there are issues
   Also explain why in 2-4 sentences.
   `.trim();
-  }
+}

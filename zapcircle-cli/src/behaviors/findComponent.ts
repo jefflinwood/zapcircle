@@ -6,7 +6,9 @@ function textMatches(text: string, name: string): boolean {
   return text.toLowerCase().includes(name.toLowerCase());
 }
 
-export function findLikelyComponentForIssue(issue: AgentIssue): string | undefined {
+export function findLikelyComponentForIssue(
+  issue: AgentIssue,
+): string | undefined {
   const files = glob.sync("src/components/**/*.{jsx,tsx}", { absolute: true });
 
   for (const file of files) {

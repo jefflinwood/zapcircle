@@ -12,8 +12,6 @@ import { renderReviewPrompt } from "./renderReviewPrompt";
 import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForComponent";
 import { AgentIssue } from "../issues/types";
 
-
-
 export async function runAgentOnIssue(issue: AgentIssue) {
   console.log(`Running ZapCircle Agent on issue #${issue.id}...`);
 
@@ -25,10 +23,13 @@ export async function runAgentOnIssue(issue: AgentIssue) {
     behaviorPath = findBehaviorForIssue(issue);
     if (behaviorPath) {
       const resolved = resolveComponentFromBehavior(behaviorPath);
-      if (!resolved) throw new Error("Could not find component file for matched behavior.");
+      if (!resolved)
+        throw new Error("Could not find component file for matched behavior.");
       componentPath = resolved;
     } else {
-      console.warn("⚠️ No behavior file matched. Searching for relevant component...");
+      console.warn(
+        "⚠️ No behavior file matched. Searching for relevant component...",
+      );
       const guessed = findLikelyComponentForIssue(issue);
       if (!guessed) throw new Error("Could not guess component file.");
       componentPath = guessed;
@@ -48,7 +49,10 @@ export async function runAgentOnIssue(issue: AgentIssue) {
 
     // Step 5: Review code
     // First review attempt
-    let reviewPrompt = renderReviewPrompt({ originalPrompt: prompt, generatedCode: result });
+    let reviewPrompt = renderReviewPrompt({
+      originalPrompt: prompt,
+      generatedCode: result,
+    });
     let reviewResult = await invokeLLMWithSpinner(reviewPrompt, true);
 
     console.log("\n🔍 Review Result (1st pass):\n", reviewResult);
@@ -76,10 +80,13 @@ export async function runAgentOnIssue(issue: AgentIssue) {
       // Second review
       const secondReviewPrompt = renderReviewPrompt({
         originalPrompt: prompt,
-        generatedCode: retriedResult
+        generatedCode: retriedResult,
       });
 
-      const secondReviewResult = await invokeLLMWithSpinner(secondReviewPrompt, true);
+      const secondReviewResult = await invokeLLMWithSpinner(
+        secondReviewPrompt,
+        true,
+      );
       console.log("\n🔍 Review Result (2nd pass):\n", secondReviewResult);
 
       approved = secondReviewResult.trim().startsWith("APPROVED");
@@ -97,7 +104,7 @@ export async function runAgentOnIssue(issue: AgentIssue) {
           behaviorPath,
           failedAt: new Date().toISOString(),
           reviewPassed: false,
-          failureReason: "Second review failed: " + secondReviewResult.trim()
+          failureReason: "Second review failed: " + secondReviewResult.trim(),
         });
 
         return;
@@ -139,7 +146,7 @@ export async function runAgentOnIssue(issue: AgentIssue) {
       behaviorPath,
       componentPath,
       failedAt: new Date().toISOString(),
-      failureReason: err.message
+      failureReason: err.message,
     });
   }
 }

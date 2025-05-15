@@ -37,7 +37,9 @@ export async function analyze(
             existingBehaviorObject = toml.parse(raw);
             existingBehaviorText = raw;
           } catch (err) {
-            console.warn(`⚠️ Failed to parse existing behavior file: ${behaviorFilePath}`);
+            console.warn(
+              `⚠️ Failed to parse existing behavior file: ${behaviorFilePath}`,
+            );
           }
         }
 

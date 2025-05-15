@@ -33,12 +33,11 @@ jest.mock("../utils/platformUtils", () => ({
   pathExists: jest.fn((filePath: string) => filePath in fakeFiles),
 }));
 
-
 // Mock globSync to return just the fake file paths
 jest.mock("glob", () => ({
-    ...jest.requireActual("glob"),
-    globSync: jest.fn(() => Object.keys(fakeFiles)),
-  }));
+  ...jest.requireActual("glob"),
+  globSync: jest.fn(() => Object.keys(fakeFiles)),
+}));
 
 describe("findComponentUsages", () => {
   beforeEach(() => {

@@ -14,10 +14,15 @@ export const agentRunCommand = async () => {
   console.log("📋 Available Issues:\n");
 
   issues.forEach((issue, index) => {
-    const statusLabel = issue.status === "completed" ? "✅ done" :
-                        issue.status === "failed" ? "❌ failed" :
-                        "🆕 new";
-    console.log(`${index + 1}) ${issue.title} (${issue.priority.toLowerCase()}) [${statusLabel}]`);
+    const statusLabel =
+      issue.status === "completed"
+        ? "✅ done"
+        : issue.status === "failed"
+          ? "❌ failed"
+          : "🆕 new";
+    console.log(
+      `${index + 1}) ${issue.title} (${issue.priority.toLowerCase()}) [${statusLabel}]`,
+    );
   });
 
   const rl = createReadlineInterface();

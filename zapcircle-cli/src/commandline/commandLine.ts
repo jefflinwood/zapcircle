@@ -134,27 +134,21 @@ program
 
 const agent = program
   .command("agent")
-  .description("ZapCircle Agentic AI - contains subcommands")
+  .description("ZapCircle Agentic AI - contains subcommands");
 
-agent
-  .command("run")
-  .action(() => {
-    console.log(`Running ZapCircle agent run...`);
-    agentRunCommand();
-  });
+agent.command("run").action(() => {
+  console.log(`Running ZapCircle agent run...`);
+  agentRunCommand();
+});
 
-agent
-  .command("status")
-  .action(() => {
-    console.log(`Displaying ZapCircle agent status...`);
-    showAgentStatus();
-  });
+agent.command("status").action(() => {
+  console.log(`Displaying ZapCircle agent status...`);
+  showAgentStatus();
+});
 
-agent
-  .command("chat")
-  .action(() => {
-    runAgentChat();
-  });
+agent.command("chat").action(() => {
+  runAgentChat();
+});
 
 program
   .command("configure")

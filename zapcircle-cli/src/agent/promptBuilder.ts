@@ -14,8 +14,6 @@ export function renderGenerationPrompt({
     ? `# Behavior\n${behaviorFile}`
     : `# Behavior\n⚠️ No behavior file was provided. Infer behavior based on the issue description and the provided component code. Be conservative with changes.`;
 
-
-
   return `
 You are a behavior-driven assistant.
 
@@ -34,11 +32,13 @@ ${Object.entries(files)
   .join("\n\n")}
 
 # Shared State
-${stateFiles
-  ? Object.entries(stateFiles)
-      .map(([path, content]) => `// ${path}\n${content}`)
-      .join("\n\n")
-  : ""}
+${
+  stateFiles
+    ? Object.entries(stateFiles)
+        .map(([path, content]) => `// ${path}\n${content}`)
+        .join("\n\n")
+    : ""
+}
 
 # Task
 Modify the above component(s) to resolve the issue described. Do not add new dependencies.

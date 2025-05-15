@@ -18,11 +18,11 @@ describe("Context Integration Test", () => {
 
     // Should include related files (e.g., Button, hooks)
     expect(
-      Object.keys(context.files).some(f => f.includes("Button.jsx"))
+      Object.keys(context.files).some((f) => f.includes("Button.jsx")),
     ).toBe(true);
     expect(
-        Object.keys(context.files).some(f => f.includes("useAuth.js"))
-      ).toBe(true);
+      Object.keys(context.files).some((f) => f.includes("useAuth.js")),
+    ).toBe(true);
 
     // Behavior should be included
     expect(context.behaviorFile).toContain("LoginForm");
@@ -31,7 +31,7 @@ describe("Context Integration Test", () => {
     expect(context.stateFiles).toBeDefined();
 
     // Files should be pruned below token limit
-    Object.values(context.files).forEach(fileContent => {
+    Object.values(context.files).forEach((fileContent) => {
       const tokenEstimate = fileContent.split(/\s+/).length; // crude token proxy
       expect(tokenEstimate).toBeLessThanOrEqual(1000);
     });
