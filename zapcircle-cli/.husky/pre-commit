@@ -1,3 +1,2 @@
 cd zapcircle-cli
-npm run format
-npm test
+npx lint-staged
