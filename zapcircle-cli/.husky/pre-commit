@@ -1,0 +1,2 @@
+cd zapcircle-cli
+npx lint-staged

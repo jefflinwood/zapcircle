@@ -85,6 +85,6 @@ export async function zapcircleNew(
 
   console.log("✅ Project scaffolding complete!");
   console.log(
-    "👉 You can now run your app or customize App.tsx and the components.",
+    "You can now run your app or customize App.tsx and the components.",
   );
 }
