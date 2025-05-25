@@ -5,6 +5,7 @@ import { scaffoldBehaviorsFromProject } from "./new/scaffoldBehaviors";
 import { zapcircleValidate } from "./validate";
 import { generateAllComponents } from "./new/generateAllComponents";
 import { loadPrompt } from "../core/promptLoader";
+import { deduplicateComponentsInToml } from "../utils/deduplicateComponentsInToml";
 
 export async function zapcircleNew(
   projectType: string,
@@ -38,8 +39,9 @@ export async function zapcircleNew(
         ideaPrompt: ideaPrompt,
       });
 
-      tomlContents = await invokeLLMWithSpinner(prompt, isVerbose);
-      writeFileSync(projectTomlPath, tomlContents);
+      let rawToml = await invokeLLMWithSpinner(prompt, isVerbose);
+      rawToml = deduplicateComponentsInToml(rawToml);
+      writeFileSync(projectTomlPath, rawToml);
       console.log(`📄 Overwrote ${projectTomlPath}`);
     } else {
       tomlContents = readFileSync(projectTomlPath, "utf-8");
