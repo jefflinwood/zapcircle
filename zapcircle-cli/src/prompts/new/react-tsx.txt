@@ -9,7 +9,11 @@ The TOML must include:
   - A `role` describing what it does
   - `inputs`: list of props it receives
   - `behavior`: a high-level description of what the component does and why
+    - Describe user interactivity, state changes, animations, layout, and expected UX
+    - Focus on polish, reactivity, and clean visual structure
+    - Use specific examples like “card layout”, “responsive grid”, “modal dialog”, etc.
   - `providesState` or `managesState` if applicable
+
 • `[[routes]]`: each top-level page must have a `path` and `component` name
 • `[interaction]`: how state flows, how props/context are used
 • `[build]`: always set `target = "./src"`

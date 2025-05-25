@@ -1,5 +1,6 @@
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "fs";
 import path from "path";
+import toml from "@iarna/toml";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { scaffoldBehaviorsFromProject } from "./new/scaffoldBehaviors";
 import { zapcircleValidate } from "./validate";
@@ -80,6 +81,17 @@ export async function zapcircleNew(
   if (!existsSync(srcDir)) {
     mkdirSync(srcDir, { recursive: true });
     console.log("📁 Created src directory");
+  }
+
+  // Validate TOML before moving forward
+  let parsedProject;
+  try {
+    const tomlRaw = readFileSync(projectTomlPath, "utf-8");
+    parsedProject = toml.parse(tomlRaw);
+  } catch (err: any) {
+    console.error("❌ Error: project.zap.toml is not valid TOML.");
+    console.error(err.message || err);
+    process.exit(1); // abort early
   }
 
   // Step 2: Scaffold behavior files from project.zap.toml

@@ -21,6 +21,16 @@ You must:
   - Uses Tailwind CSS for layout (e.g. `min-h-screen`, `flex-col`, etc.)
 - Ensure each page route (e.g. `/customers`, `/pets`) renders the appropriate component
 - Include a `DashboardPage` as the default route at path `"/"`
+- Use consistent prop types and shared state as described in the behavior definitions
+
+If you are generating the `DashboardPage` component:
+- Use Tailwind CSS to create a visually engaging dashboard layout
+- Display key stats (like total products, customers, and messages) using styled cards in a responsive grid
+- Each card should use padding, shadows, rounded corners, and a distinct accent color
+- Simulate dynamic data loading using `useEffect()` and `useState()` with mock values
+- Include a welcome message and page title with strong visual hierarchy
+- The layout should feel modern, clean, and mobile-friendly
+
 - Each component should initialize any required mock data using `useState()` or context
 - If shared state (like products, users, or messages) is required, initialize it with realistic sample entries
 - Use fake but plausible values: names, dates, contact info, etc.
