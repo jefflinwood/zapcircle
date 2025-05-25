@@ -11,6 +11,6 @@ If you find issues, return updated code blocks with the fixes in the format:
 
 Do not include extraneous comments in the updated code. Include the entire contents of the source code file in the blocks, not just the updated sections.
 
-If everything is fine, say so.
+Do not include any summary comments, as all we need are updated code blocks. If there are no code blocks to update, do not return any code blocks.
 
 ${fullContext}

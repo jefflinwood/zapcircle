@@ -1,14 +1,36 @@
-You are a senior React developer. Given the project.zap.toml file and the following component behaviors, generate the complete set of React component files for this application.
+You are a senior React developer. Given the following project.zap.toml and component behaviors, generate the complete set of React component files for this application.
+
+The project uses:
+- React with TypeScript and function components
+- Tailwind CSS for styling
+- React Router v7 (using `createBrowserRouter` and `<RouterProvider>`)
+- No additional libraries
 
 You must:
-- Include one top-level App.tsx
-- Generate one file for each component
-- Ensure that props and shared state are used consistently
-- Include only valid TypeScript React code, using function components
-- Use Tailwind CSS classes where layout is relevant
-- Do not include markdown, commentary, or explanations
+- Generate one file per component
+- Include a valid `main.tsx` that:
+  - Uses `createBrowserRouter()` to define all routes from the `[[routes]]` section
+  - Declares a layout route with `element: <App />`
+  - Specifies each screen as a nested route using `children`
+  - Wraps the router in `<RouterProvider>`
+- Include a valid `App.tsx` that:
+  - Renders the application shell with:
+    - A top `<NavBar />`
+    - A central content area using `<Outlet />`
+    - A `<Footer />` at the bottom
+  - Uses Tailwind CSS for layout (e.g. `min-h-screen`, `flex-col`, etc.)
+- Ensure each page route (e.g. `/customers`, `/pets`) renders the appropriate component
+- Include a `DashboardPage` as the default route at path `"/"`
+- Each component should initialize any required mock data using `useState()` or context
+- If shared state (like products, users, or messages) is required, initialize it with realistic sample entries
+- Use fake but plausible values: names, dates, contact info, etc.
+- Use consistent prop types and shared state as described in the behavior definitions
+- Do not include markdown, explanations, or commentary
 
-Format your output using:
+Format your output using this pattern:
+=== main.tsx ===
+<code>
+
 === App.tsx ===
 <code>
 

@@ -6,6 +6,7 @@ import { zapcircleValidate } from "./validate";
 import { generateAllComponents } from "./new/generateAllComponents";
 import { loadPrompt } from "../core/promptLoader";
 import { deduplicateComponentsInToml } from "../utils/deduplicateComponentsInToml";
+import { createBaseProjectWithVite } from "./new/createBaseProjectWithVite";
 
 export async function zapcircleNew(
   projectType: string,
@@ -14,6 +15,7 @@ export async function zapcircleNew(
   options: { interactive?: boolean; output?: string; verbose?: boolean } = {},
 ) {
   const outputDir = path.resolve(projectDir);
+
   const projectTomlPath = path.join(outputDir, "project.zap.toml");
 
   const isVerbose = options.verbose || false;
@@ -26,6 +28,16 @@ export async function zapcircleNew(
   });
 
   let tomlContents = "";
+
+  const packageJsonPath = path.join(projectDir, "package.json");
+
+  if (!existsSync(packageJsonPath)) {
+    await createBaseProjectWithVite(projectDir, isVerbose);
+  } else if (isVerbose) {
+    console.log(
+      "📦 Existing project detected (package.json found) — skipping base Vite setup.",
+    );
+  }
 
   if (existsSync(projectTomlPath)) {
     const useExisting = await rl.question(
