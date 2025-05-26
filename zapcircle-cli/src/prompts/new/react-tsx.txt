@@ -13,9 +13,14 @@ The TOML must include:
     - Focus on polish, reactivity, and clean visual structure
     - Use specific examples like “card layout”, “responsive grid”, “modal dialog”, etc.
   - `providesState` or `managesState` if applicable
-
+	If a component is meant to manage data (e.g. users, products, messages), include behavior that supports basic CRUD operations:
+	- Display a form for creating new entries
+	- Allow inline editing of existing entries
+	- Include Save and Cancel buttons
+	- Manage changes in local state using `useState()`
+	- Do not persist data — just simulate interactivity with realistic UI structure
 • `[[routes]]`: each top-level page must have a `path` and `component` name
-• `[interaction]`: how state flows, how props/context are used
+• `[interaction]`: the `description` describes how state flows, how props/context are used
 • `[build]`: always set `target = "./src"`
 • `[design]`: visual styling such as theme, primaryColor, secondaryColor, fontFamily
 
