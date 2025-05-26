@@ -47,8 +47,7 @@ export async function zapcircleValidate(
 
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
-  console.log("\n🧠 LLM Validation Report:\n");
-  console.log(result);
+  console.log("\LLM Validation Complete.\n");
 
   if (doAutofix) {
     const codeBlocks = result.match(/=== (.*?) ===\n([\s\S]*?)(?=\n===|$)/g);

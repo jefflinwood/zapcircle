@@ -32,6 +32,8 @@ Always include:
 • `[[routes]]` for all pages, including the dashboard
 • Only `[[components]]` (not `[components]` or `[[component]]`)
 
+Every TOML key must follow this format: `key = "value"` or `key = [array]`. Do not include free-floating strings or blocks of text without keys. For example, `[interaction]` must contain a named field like `description = "..."`.
+
 Respond ONLY with the contents of `project.zap.toml` — no markdown, no code fences, and no extra commentary.
 
 App idea:
