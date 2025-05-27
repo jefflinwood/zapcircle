@@ -53,7 +53,7 @@ export async function generateAllComponents(
         console.log(`🧩 Wrote ${filename}`);
       }
     }
-    console.log("✅ All components and App.tsx generated successfully.");
+    console.log("✅ All components generated successfully.");
   } else {
     console.error("❌ Failed to parse output. No files were generated.");
   }

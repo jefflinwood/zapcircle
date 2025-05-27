@@ -31,16 +31,12 @@ export async function zapcircleValidate(
 
   console.log("🔍 Sending source code to LLM for validation...");
 
-  const componentsPath = path.join(srcDir, "components");
-  const componentFiles = readdirSync(componentsPath).filter((f) =>
-    f.endsWith(".tsx"),
-  );
+  const componentFiles = readdirSync(srcDir).filter((f) => f.endsWith(".tsx"));
 
-  const appPath = path.join(srcDir, "App.tsx");
-  let fullContext = `=== App.tsx ===\n${readFileSync(appPath, "utf-8").trim()}\n\n`;
+  let fullContext = "";
 
   for (const file of componentFiles) {
-    const fullPath = path.join(componentsPath, file);
+    const fullPath = path.join(srcDir, file);
     const content = readFileSync(fullPath, "utf-8");
     fullContext += `=== ${file} ===\n${content.trim()}\n\n`;
   }
@@ -51,8 +47,7 @@ export async function zapcircleValidate(
 
   const result = await invokeLLMWithSpinner(prompt, isVerbose);
 
-  console.log("\n🧠 LLM Validation Report:\n");
-  console.log(result);
+  console.log("\LLM Validation Complete.\n");
 
   if (doAutofix) {
     const codeBlocks = result.match(/=== (.*?) ===\n([\s\S]*?)(?=\n===|$)/g);
@@ -69,11 +64,7 @@ export async function zapcircleValidate(
             .replace(/```$/gm, "")
             .trim();
 
-          const filePath =
-            fileName === "App.tsx"
-              ? appPath
-              : path.join(componentsPath, fileName);
-
+          const filePath = path.join(srcDir, fileName);
           writeFileSync(filePath, newCode);
           console.log(`🛠️  Auto-fixed ${fileName}`);
         }

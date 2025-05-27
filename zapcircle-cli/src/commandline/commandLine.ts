@@ -98,7 +98,10 @@ program
     "Create a new application from an idea. Supports react-tsx as a project type.",
   )
   .option("--verbose", "Display LLM prompt and response in the console log")
-  .option("--interactive", "Operate in interactive mode, ask for input")
+  .option(
+    "--interactive",
+    "Operate in interactive mode, ask for input (default)",
+  )
   .action((projectType, pathToCode, ideaPrompt, options) => {
     console.log(`Running ZapCircle New...`);
     zapcircleNew(projectType, pathToCode, ideaPrompt, options);

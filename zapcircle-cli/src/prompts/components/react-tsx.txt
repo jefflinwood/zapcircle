@@ -1,14 +1,56 @@
-You are a senior React developer. Given the project.zap.toml file and the following component behaviors, generate the complete set of React component files for this application.
+You are a senior React developer. Given the following project.zap.toml and component behaviors, generate the complete set of React component files for this application.
+
+The project uses:
+- React with TypeScript and function components
+- Tailwind CSS for styling
+- React Router v7 (using `createBrowserRouter` and `<RouterProvider>`)
+- No additional libraries
 
 You must:
-- Include one top-level App.tsx
-- Generate one file for each component
-- Ensure that props and shared state are used consistently
-- Include only valid TypeScript React code, using function components
-- Use Tailwind CSS classes where layout is relevant
-- Do not include markdown, commentary, or explanations
+- Generate one file per component
+- Include a valid `main.tsx` that:
+  - Uses `createBrowserRouter()` to define all routes from the `[[routes]]` section
+  - Declares a layout route with `element: <App />`
+  - Specifies each screen as a nested route using `children`
+  - Wraps the router in `<RouterProvider>`
+- Include a valid `App.tsx` that:
+  - Renders the application shell with:
+    - A top `<NavBar />`
+    - A central content area using `<Outlet />`
+    - A `<Footer />` at the bottom
+  - Uses Tailwind CSS for layout (e.g. `min-h-screen`, `flex-col`, etc.)
+- Ensure each page route (e.g. `/customers`, `/pets`) renders the appropriate component
+- Include a `DashboardPage` as the default route at path `"/"`
+- Use consistent prop types and shared state as described in the behavior definitions
 
-Format your output using:
+If you are generating the `DashboardPage` component:
+- Use Tailwind CSS to create a visually engaging dashboard layout
+- Display key stats (like total products, customers, and messages) using styled cards in a responsive grid
+- Each card should use padding, shadows, rounded corners, and a distinct accent color
+- Simulate dynamic data loading using `useEffect()` and `useState()` with mock values
+- Include a welcome message and page title with strong visual hierarchy
+- The layout should feel modern, clean, and mobile-friendly
+
+- All shared mock data should be initialized in `App.tsx` using `useState()`
+  - This includes arrays like `products`, `users`, or `messages`
+  - Use realistic sample values and initialize them only once in `App.tsx`
+- Pass this data down as props to routed components
+  - If a route renders `UserList`, pass the `users` array as a prop
+- Components should define their props correctly and use the received data directly- Use fake but plausible values: names, dates, contact info, etc.
+For data-driven components like ProductList, UserDetails, or MessageForm:
+- Include a simple form using input fields for creating or editing items
+- Use Tailwind to style inputs and buttons (e.g. `rounded`, `border`, `p-2`, etc.)
+- Store new/edited data in local component state
+- Simulate basic validation and Save/Cancel logic
+- Use consistent prop types and shared state as described in the behavior definitions
+
+For all components:
+- Do not include markdown, explanations, or commentary
+
+Format your output using this pattern:
+=== main.tsx ===
+<code>
+
 === App.tsx ===
 <code>
 
