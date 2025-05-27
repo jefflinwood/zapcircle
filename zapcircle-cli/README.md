@@ -1,128 +1,151 @@
-# ZapCircle: Behavior-Driven Development for your Development Workflow
+# ZapCircle: Behavior-Driven Development for Your Codebase
 
-ZapCircle is a cutting-edge **Behavior-Driven Development (BDD)** command line tool that integrates seamlessly into your development workflow. It helps developers bridge the gap between human-readable behaviors and production-ready code, enabling faster iterations, fewer bugs, and a deeper understanding of your application.
+ZapCircle is a modern **Behavior-Driven Development (BDD)** tool for front-end developers. It bridges the gap between **human intent** and **production-grade code**, helping you ship faster, reduce bugs, and keep your code aligned with design intent.
 
-Initially, we're focused on being excellent for front end developers - specifically for JSX and TSX React components.
+Built with React developers in mind, ZapCircle lets you **analyze**, **generate**, and **refactor** components using plain-English behaviors — stored in `.zap.toml` files — powered by your choice of LLM.
 
-🚀 **ZapCircle lets developers:**
-
-- **Analyze** existing components to generate `.zap.toml` behavior files.
-- **Generate** new components directly from behavior definitions.
-- **Update** components with confidence, guided by behavior-driven insights.
-
-### Why ZapCircle?
-
-ZapCircle takes BDD to the next level by leveraging modern technologies like **LLMs** to generate, maintain, and evolve your code. It's a little different from the old behavior-driven test cases you might be familiar with.
+You can use ZapCircle with your existing code base, with no dependencies. If you want to stop using ZapCircle as a development assistant, nothing will break.
 
 ---
 
-## ✨ Features
+## 🚀 What You Can Do with ZapCircle
 
-- **Behavior-First Development:** Define your components using `.zap.toml` files.
-- **LLM-Powered:** Use your preferred AI model to assist in code creation. Currently supporting OpenAI, Google Gemini, Anthropic/Claude, and local LLMs through LangChain.
-- **Component Drift Detection:** Automatically track and resolve inconsistencies between your code and behaviors. Coming soon!
-- **Seamless Integration:** Works with your favorite frameworks like React, Next.js, and Remix/React Router.
-- **Open Source:** ZapCircle is licensed under the MIT License.
+- **Have an LLM Review your Code**
+  Take all the code you've changed - unstaged, staged, and committed, and get an LLM to do a code review before you create a pull request, by running one command:
+  ```bash
+  npx zapcircle review
+  ```
+  You can also use ZapCircle to review your pull requests, as a GitHub Action.
+  Works on any type of project, not just React.
 
----
+- **Create New Projects Instantly**  
+  Scaffold a full React Router app with Tailwind, a NavBar, a Dashboard, and behaviors — all with one prompt:
+  ```bash
+  npx zapcircle new
+  ```
 
-## 🔧 Usage
+- **Analyze Existing Components**  
+  Generate behavior definitions from code:
+  ```bash
+  npx zapcircle analyze jsx ./src/components
+  ```
 
-### Analyze Existing Components
+- **Generate New Components**  
+  Use `.zap.toml` behavior files to create React components:
+  ```bash
+  npx zapcircle generate jsx ./src/components/LoginForm.jsx.zap.toml
+  ```
 
-ZapCircle inspects your current codebase and generates behavior definitions in `.zap.toml` files:
-
-```bash
-npx zapcircle analyze jsx ./src/components
-```
-
-ZapCircle works by filetype, so specify the extension (such as jsx or tsx) for the files you want analyzed.
-
-You can also analyze just one component at a time:
-
-```bash
-npx zapcircle analyze jsx ./src/components/LoginForm.jsx
-```
-
-### Create New Components
-
-Generate React components from `.zap.toml` behavior files:
-
-```bash
-npx zapcircle generate jsx ./src/components/LoginForm.jsx.zap.toml
-```
-
-### Update Components
-
-Sync existing components to align with updated behaviors (Coming Soon!):
-
-```bash
-npx zapcircle update
-```
-
-### Choose Your LLM
-
-Select the AI model that fits your team’s needs with environment variables.
-
-We're building on top of [LangChain](https://js.langchain.com/docs/introduction/).
-
-```bash
-OPENAI_API_KEY=secret
-LLM_MODEL=gpt-4o-mini
-```
+- **Update Existing Components** (Coming Soon!)  
+  Sync your code with evolving behaviors:
+  ```bash
+  npx zapcircle update
+  ```
 
 ---
 
-## 🌟 Example Workflow
+## ✨ Key Features
 
-1. **Analyze**: Start with existing components to generate `.zap.toml` files.
-2. **Edit**: Modify or extend behaviors to meet new requirements.
-3. **Generate**: Create new components from these behaviors.
-4. **Refactor**: Update components with behavior-driven insights, ensuring code stays aligned with design intent.
+- 🧠 **Behavior-First Development**: Define intent in `.zap.toml`, not just code.
+- 🤖 **LLM-Powered**: Works with OpenAI, Claude, Gemini, and more via LangChain.
+- 🧪 **Local Review**: Run `npx zapcircle review` to get AI code reviews before PRs.
+- 🔍 **Component Drift Detection** (coming soon): Know when code drifts from behavior.
+- 🧰 **CLI-First Design**: No IDE plugin required. Everything runs locally.
+- 🌐 **React-Friendly**: Supports JSX/TSX with Next.js and Remix/React Router.
 
 ---
 
-## 📖 Documentation
+## 🛠️ Quick Start
 
-Visit our full documentation for a complete guide, API references, and tutorials: [ZapCircle Docs](https://www.zapcircle.com/)
+Install and configure ZapCircle with your LLM details:
+
+```bash
+npx zapcircle configure
+```
+
+Try ZapCircle on a new project with:
+
+```bash
+npx zapcircle new
+```
+
+Then follow the prompts to describe your app, generate components, and start developing.
+
+---
+
+## 🔁 Typical Workflow
+
+1. **New**: Generate a full React + Tailwind app scaffold.
+2. **Analyze**: Create `.zap.toml` behavior files from existing components.
+3. **Edit**: Tweak behavior descriptions for new use cases.
+4. **Generate**: Produce new components directly from the updated behaviors.
+5. **Review**: Use `zapcircle review` to catch issues before making a pull request.
+
+---
+
+## 📚 Documentation
+
+Need examples, guides, or advanced configuration?  
+👉 Visit [zapcircle.com](https://www.zapcircle.com/) for full documentation.
+
+
+---
+## 🤖 Architecture
+
+### 🧩 Layer 3: UI/UX Integrations (Future)
+
+| Studio (planned) | Fire Extension (planned) | VS Code Plugin (planned) |
+|------------------|----------------|---------------------------|
+
+---
+
+### 🧠 Layer 2: Composite Features
+
+| `new` | `distill` | `architect` | `agent` (run/chat)` |
+|-------|-----------|-------------|----------------------|
+
+---
+
+### ⚙️ Layer 1: Primary Capabilities
+
+| `generate` | `analyze` | `review` | `updateCode` | `generateTests` |
+|------------|-----------|----------|--------------|------------------|
+
+---
+
+### 🧱 Layer 0: Core Services (Foundations)
+
+| Prompt Loader | invokeLLM | Context Builder | File I/O + Diff |
+|---------------|-----------|------------------|------------------|
+
+---
+
+## 💬 Community & Support
+
+- 🐙 GitHub: [github.com/jefflinwood/zapcircle](https://github.com/jefflinwood/zapcircle)
+- 🧵 Twitter/X: [@jefflinwood](https://twitter.com/jefflinwood)
+- 📬 Email: support@zapcircle.com
 
 ---
 
 ## 🤝 Contributing
 
-We’d love your help! Whether you want to report a bug, suggest a feature, or contribute code, check out our [Contributing Guide](CONTRIBUTING.md).
+We welcome contributions!
 
-1. Fork the repo.
-2. Create a feature branch: `git checkout -b feature/awesome-new-ai-feature`.
-3. Commit your changes: `git commit -m 'feat:Add awesome new AI feature'`.
-4. Push your branch: `git push origin feature/amazing-new-ai-feature`.
-5. Open a Pull Request.
+```bash
+git clone https://github.com/jefflinwood/zapcircle
+cd zapcircle
+npm install
+```
 
----
-
-## 📢 Community and Support
-
-- 💬 Join the discussions on [GitHub](https://github.com/jefflinwood/zapcircle).
-- 🐦 Follow us on [Twitter/X](https://twitter.com/jefflinwood).
-- 📧 Have questions? Email us at support@zapcircle.com.
+Then follow the [Contributing Guide](CONTRIBUTING.md) to open a PR.
 
 ---
 
-## 🚀 Roadmap
-
-Here's what we're working on next:
-
-- 📋 Workflow for making changes to behaviors, and seeing that reflected in components.
-- 🎨 Generating unit tests from the behaviors and the source code.
-- 📊 Rolling up individual component behavior into an application-wide dashboard for insights.
-- Supporting additional types of source code above and beyond React components.
-
----
-
-## 🛡️ License
+## 🪪 License
 
 ZapCircle is released under the [MIT License](LICENSE).
 
 ---
 
-Let us know what you think! Contributions, feedback, and ideas are always welcome.
+**ZapCircle** helps you code like you mean it — with clarity, intent, and lightning speed.
