@@ -1,82 +1,82 @@
 ---
 title: Creating a New Project with ZapCircle
-description: Use ZapCircle to go from an idea prompt to a full React codebase with a data model, design, and human-readable behaviors
+description: Use ZapCircle to go from an idea prompt to a full React + React Router + Tailwind codebase with human-readable behaviors
 ---
 
-When you start a project from scratch, or you just want to see how you might build something, the `zapcircle new` command lets you take a single prompt and turn it into a working React application.
+Whether you’re starting a new project from scratch or exploring an idea, the `npx zapcircle new` command lets you take a single prompt and turn it into a working React application.
 
-You'll have your React components as TSX files, a `project.zap.toml` file that describes how data flows within the application, and `.zap.toml` behavior files you can adjust as necessary to get the requirements for your application.
+You'll get:
 
-## Creating your React Project
+* A full Vite + React + TypeScript project scaffold
+* Tailwind CSS preconfigured
+* React Router installed and routes set up
 
-Start things out by creating a new React project, for instance with vite:
+* A `project.zap.toml` file describing your layout, state, and component design
+* Individual `.zap.toml` behavior files for each component
+* Human-readable, editable behaviors
 
-```bash
-npm create vite@latest
-```
+* Automatically generated React TSX components
+* A validation pass over the generated project to fix any errors
 
-Choose React + TypeScript. If you're using Tailwind, install Tailwind according to their directions.
-
-ZapCircle does not do all of this for you - it builds on top of existing solutions.
 
 ## Generating an Application with ZapCircle
 
-Once you have ZapCircle [set up](./getting-started), you can create a new React application by running:
+Once you have ZapCircle [configured](./getting-started), you can create a new React application by running:
 
 ```bash
 npx zapcircle new react-tsx my-app-directory "A calming mood tracker with soft colors and a centered layout"
 ```
 
-If you omit the description, ZapCircle will prompt you interactively for your idea.
+If you omit the description, ZapCircle will prompt you interactively for your idea. 
+
+The project type is required for now — just use `react-tsx`.
+
+The next argument is the directory where you want the project - this should be empty, or not created yet.
 
 Here's an example output:
 
 ```bash
-Running ZapCircle New...
+💡 Let's define your new project
 What are you building? A soothing mindfulness application that lets me keep track of my moods through the day
-Processing... done!
-📄 Created /Users/jefflinwood/Projects/zc-examples/zc-example/project.zap.toml
-📁 Created src/components directory
-📝 Created: /Users/jefflinwood/Projects/zc-examples/zc-example/src/components/MoodLogger.tsx.zap.toml
-📝 Created: /Users/jefflinwood/Projects/zc-examples/zc-example/src/components/MoodVisualizer.tsx.zap.toml
-📝 Created: /Users/jefflinwood/Projects/zc-examples/zc-example/src/components/MoodSelector.tsx.zap.toml
-✅ Behavior files created:
-MoodLogger.tsx.zap.toml
-MoodVisualizer.tsx.zap.toml
-MoodSelector.tsx.zap.toml
-Processing... done!
-🧩 Wrote App.tsx
-🧩 Wrote MoodLogger.tsx
-🧩 Wrote MoodVisualizer.tsx
-🧩 Wrote MoodSelector.tsx
-✅ All components and App.tsx generated successfully.
+📦 Creating base Vite + React + TS project at ./mindful-moods...
+📄 Created project.zap.toml
+🧠 Here's your generated project.zap.toml:
+  1 | name = "MindfulMoodTracker"
+  2 | description = "A soothing mindfulness application..."
+... (more lines)
+✏️  Press Enter to continue once you've reviewed or edited the project.zap.toml
+🔍 Scaffolding behaviors...
+🧠 Example behavior file: MoodLogger.tsx.zap.toml
+  1 | name = "MoodLogger"
+  2 | role = "Logs mood entries from the user"
+... (more lines)
+✏️  Press Enter to continue once you've reviewed or edited this behavior file
+⚙️ Generating components...
 🧪 Running TypeScript check...
-✅ TypeScript check passed with no compile-time errors.
-🔍 Sending source code to LLM for validation...
-Processing... done!
-
-🧠 LLM Validation Report:
-
-Everything is fine. The props are passed correctly, state is handled and shared logically, components are structured in a maintainable and valid way, and the names of all variables passed between components match appropriately.
-✅ No fixes returned. Project looks good.
+✅ TypeScript check passed
+🔍 LLM Validation: Everything looks good
 ✅ Project scaffolding complete!
-👉 You can now run your app or customize App.tsx and the components.
+👉 Next steps:
+   - Run the dev server: `npm run dev`
+   - Edit components in `src/`
+   - Modify behavior files and run: `npx zapcircle generate`
+   - Get AI-assisted feedback with: `npx zapcircle review`
 ```
 
 Your output will differ based on your project - and due to the nature of LLM-driven development - it can be different every time you run it.
 
-## New Project Generation Process
+## Example Prompt
 
-After running `zapcircle new`, ZapCircle will:
-	1.	Generate a `project.zap.toml` file based on your idea
-	2.	Scaffold `.zap.toml` behavior files for each component from the 
-	3.	Use one-shot LLM code generation to:
-	•	Create each component file (e.g. `MoodList.tsx`, `MoodEntryForm.tsx`)
-	•	Generate a complete `App.tsx` that wires everything together
-	4.  Validate the codebase with TypeScript
-	5.	Fix issues using a single round of LLM-based validation
+```bash
+npx zapcircle new mood-tracker "I'm building a mood tracker app that lets users log how they're feeling each day. I'd like a calming visual style, with soft blue and green colors, and a rounded look. The layout should be centered and minimalist."
+```
 
-After the command completes, you’ll have a ready-to-run React app in the folder you specified.
+This will produce:
+
+* A layout defined in `project.zap.toml`
+* Three to five components with behaviors
+* Editable behavior files
+* A functional, stylized React + Tailwind + Router app
 
 ## The `project.zap.toml` File
 
@@ -154,26 +154,12 @@ borderRadius = "rounded-xl"
 
 These preferences are incorporated into the generated Tailwind components, giving your project a personal touch from the beginning.
 
-## Example Project
-
-Here’s a prompt you can try:
-
-```bash
-npx zapcircle new mood-tracker "I'm building a mood tracker app that lets users log how they're feeling each day. I'd like a calming visual style, with soft blue and green colors, and a rounded look. The layout should be centered and minimalist."
-```
-
-This will produce:
-
-* A project.zap.toml with all layout, state, and design metadata
-* Component behaviors like MoodEntryForm, MoodList, and MoodSummary
-* A functional React app scaffolded and styled according to your prompt
-
 ## What’s Next?
 
 After your project is scaffolded, you can:
-*	Customize the generated behavior files and re-generate source code individually with `zapcircle generate`
+*	Edit any of the `.zap.toml` behavior files and re-run `npx zapcircle generate` to update the code
 *	Add new components and write `.zap.toml` behavior files manually
-*	Use `zapcircle analyze` to extract behaviors from existing code
-*	Use `zapcircle validate` to check correctness or apply improvement
+*	Use `npx zapcircle analyze` to extract behaviors from existing code
+*	Run `npx zapcircle review` for an AI-powered code review before opening your pull request
 
 To learn how to go from behaviors to custom components, check out the [Generating Code](./generating-code) guide.
