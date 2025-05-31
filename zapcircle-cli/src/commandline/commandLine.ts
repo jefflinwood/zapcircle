@@ -18,6 +18,7 @@ import { showAgentStatus } from "../agent/status";
 import { runAgentChat } from "../agent/chat";
 import { runBenchmark } from "../commands/benchmark";
 import { benchmarkReport } from "../commands/benchmarkReport";
+import { runAllBenchmarks } from "../commands/benchmarkRunAll";
 
 const program = new Command();
 
@@ -179,6 +180,18 @@ benchmark
   .action((taskName, options) =>
     runBenchmark({ taskName: taskName, ...options }),
   );
+
+benchmark
+  .command("runAll")
+  .option(
+    "--provider <provider>",
+    "LLM provider to use (e.g., openai, anthropic, google, local)",
+  )
+  .option(
+    "--model <model>",
+    "Model to use (e.g., o4-mini, claude-3-opus, gemini-2.0-flash)",
+  )
+  .action((options) => runAllBenchmarks(options));
 
 program
   .command("configure")
