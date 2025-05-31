@@ -18,8 +18,8 @@ export async function runBenchmark(options: BenchmarkOptions) {
     taskName,
     outputDir = ".zapcircle/benchmark/output",
     verbose = false,
-    provider,
-    model,
+    provider = "openai",
+    model = "gpt-4",
   } = options;
 
   const taskDir = path.resolve(`.zapcircle/benchmark/tasks/${taskName}`);
@@ -40,10 +40,11 @@ export async function runBenchmark(options: BenchmarkOptions) {
     ? fs.readFileSync(behaviorPath, "utf8")
     : null;
 
-  const taskOutputDir = path.join(outputDir, taskName);
+  const modelSlug = `${provider}-${model}`;
+  const taskOutputDir = path.join(outputDir, modelSlug, taskName);
   fs.mkdirSync(taskOutputDir, { recursive: true });
 
-  console.log(`▶️ Running benchmark: ${taskName} for ${provider} and ${model}`);
+  console.log(`▶️ Running benchmark: ${taskName} (${modelSlug})`);
 
   // Code-only generation
   const codeOnlyPrompt = `Here is the existing code:\n\n${baseCode}\n\nPlease implement the following issue:\n${issue}`;
