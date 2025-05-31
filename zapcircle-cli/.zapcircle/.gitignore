@@ -1,2 +1,5 @@
 # ZapCircle Agent Logs
 agent/issues/
+
+# ZapCircle Benchmark Output
+benchmark/output/
