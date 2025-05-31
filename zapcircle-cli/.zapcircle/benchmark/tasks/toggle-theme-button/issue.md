@@ -1,0 +1,1 @@
+When the user clicks the button, toggle between light and dark mode. Apply a class to document.body: 'theme-light' or 'theme-dark'.

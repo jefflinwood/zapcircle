@@ -1,0 +1,8 @@
+name = "ProfilePictureUpload"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Renders an area where users can drag and drop an image to upload their profile picture.
+Displays a preview of the uploaded image.
+"""

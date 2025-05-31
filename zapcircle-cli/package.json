@@ -18,7 +18,7 @@
     "start": "ts-node src/commandline/commandLine.ts",
     "review": "node dist/src/commandline/commandLine.js review --github --verbose --provider=openai --model=o4-mini",
     "review-dev": "ts-node src/commandline/commandLine.ts review --verbose --provider=openai --model=o4-mini",
-    "benchmark-dev": "ts-node src/commandline/commandLine.ts benchmark loginform-validation"
+    "benchmark-dev": "ts-node src/commandline/commandLine.ts benchmark profile-picture-upload"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",

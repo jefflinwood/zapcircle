@@ -1,0 +1,1 @@
+Ensure the button has an accessible label. Add an aria-label prop that can be passed in and used on the element.
