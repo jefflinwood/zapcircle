@@ -1,0 +1,1 @@
+Add a validation message to the LoginForm that shows an error if the password is shorter than 8 characters.

@@ -16,6 +16,7 @@ import { zapcircleNew } from "../commands/new";
 import { agentRunCommand } from "../commands/agent";
 import { showAgentStatus } from "../agent/status";
 import { runAgentChat } from "../agent/chat";
+import { runBenchmark } from "../commands/benchmark";
 
 const program = new Command();
 
@@ -157,6 +158,10 @@ agent.command("status").action(() => {
 agent.command("chat").action(() => {
   runAgentChat();
 });
+
+program
+  .command("benchmark <taskName>")
+  .action((taskName) => runBenchmark({ taskName: taskName }));
 
 program
   .command("configure")

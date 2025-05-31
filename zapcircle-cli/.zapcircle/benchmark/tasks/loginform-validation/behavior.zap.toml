@@ -1,0 +1,7 @@
+name = "LoginForm"
+
+behavior = """
+Renders a login form with fields for username and password.
+Validates that password must be at least 8 characters.
+If password is too short, shows an error message.
+"""
