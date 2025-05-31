@@ -1,0 +1,8 @@
+name = "UserInfo"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Fetches user information from an API when the component mounts.
+Displays the user's name and email once loaded.
+"""

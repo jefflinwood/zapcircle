@@ -1,0 +1,9 @@
+name = "Product"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Displays product name and price.
+Formats price to USD currency with two decimals.
+Price is right-aligned within its container.
+"""

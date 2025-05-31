@@ -1,0 +1,1 @@
+Format the price to USD with two decimals and right-align it in the container.

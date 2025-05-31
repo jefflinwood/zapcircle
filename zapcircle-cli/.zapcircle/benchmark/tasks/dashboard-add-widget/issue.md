@@ -1,0 +1,1 @@
+Add a 'WeatherWidget' component inside the dashboard layout. Place it at the top.
