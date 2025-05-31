@@ -3,13 +3,16 @@ title: ZapCircle - Behavior-Driven Development with LLMs
 description: Accelerate your development with human-readable behavior
 template: splash
 hero:
-  tagline: Get developers and product owners on the same page with Behavior-Driven Development (BDD). <br/>ZapCircle improves your development workflow and makes working with LLM-generated code much more fun.
+  tagline: |
+    <span class="text-4xl font-bold">ZapCircle</span><br/>
+    <span class="text-xl font-medium">Behavior-Driven Development with LLMs</span><br/>
+    <span class="text-base">Get developers and product owners aligned with behavior-driven workflows powered by AI.</span>
   image:
-    file: ../../assets/LoginForm.zap.toml.png
+    file: ../../assets/zebra-mascot.png
   actions:
-    - text: Get Started
-      link: /guides/getting-started/
-      icon: right-arrow
+    - text: Try Local Code Review
+      link: /guides/reviewing-changes/
+      icon: approve-check-circle
     - text: Explore Behaviors
       link: /behaviors/front-end/login-form/
       icon: right-arrow
@@ -17,57 +20,137 @@ hero:
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
+## 🧪 Local Code Review Before You Push
+
+**Get LLM-powered feedback on your code _before_ you create a pull request.**
+
+Run `npx zapcircle review` to:
+- Catch mistakes before your team sees them
+- Write cleaner, more consistent code
+- Save reviewer time by fixing issues upfront
+
+ZapCircle works with any Git project and gives you behavior-aware comments.
+
+```bash
+npx zapcircle review
+```
+
+✨ You can even integrate it into your pre-commit workflow or CI pipeline.
+
+[🔍 Learn More →](/guides/reviewing-changes/)
+
+---
+
+## How It Works
+
+1. ✏️ Write your `.zap.toml` file describing the component’s behavior
+2. ⚙️ Run `zapcircle generate` to create the React component
+3. ✅ Use or edit the generated component as needed
+
+## Example Behavior → Code
+
+:::code-group
+```toml [.zap.toml]
+name = "LoginForm"
+behavior = """
+Display an email and password input. Validate that both fields are filled.
+Show an error if login fails. Submit form on Enter.
+"""
+```
+```tsx [LoginForm.tsx]
+export function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!email || !password) {
+      setError("Please fill in both fields");
+      return;
+    }
+    // submit login...
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      {error && <div>{error}</div>}
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```
+:::
+
+## Start Here
+
+[🧭 Begin the Journey →](/guides/getting-started/)
+
 ## Developer Guides
 
 <CardGrid stagger>
 	<Card title="Getting Started" icon="rocket">
 		Set up ZapCircle and integrate it into your project.
-
 		[Read](/guides/getting-started/)
-
 	</Card>
 	<Card title="Create Behaviors" icon="pencil">
 		Learn how to define and manage behaviors with `.zap.toml`.
-
 		[Read](/guides/create-behaviors/)
-
 	</Card>
 	<Card title="Generating Code" icon="seti:react">
 		Automatically generate React components from behaviors.
-
 		[Read](/guides/generating-code/)
-
 	</Card>
 	<Card title="Generating Tests" icon="seti:javascript">
 		Combine your React components with their underlying behaviors to generate better unit tests.
-
 		[Read](/guides/generating-tests/)
-
 	</Card>
 	<Card title="Updating Code" icon="pen">
-		Describe the new changes to your code's behavior and let ZapCircle to do the code update for you.
-
+		Describe changes to your code's behavior and let ZapCircle update the implementation.
 		[Read](/guides/updating-code/)
-
 	</Card>
 	<Card title="Reviewing Pull Requests" icon="approve-check-circle">
-		Bring ZapCircle into your Continuous Integration (CI) pipeline, and get a code review and inspection from the LLM for any modified files.
-
+		Use ZapCircle in CI to get behavior-aware code reviews from LLMs.
 		[Read](/guides/reviewing-changes/)
-
 	</Card>
-	<Card title="Creating New Projects" icon="rocket">
-		Create a new React application from just an idea - ZapCircle creates the design, code, and behaviors for your next big project.
-
+	<Card title="Creating New Projects" icon="sparkles">
+		Turn an idea into a working React app with Tailwind, routing, and behaviors.
 		[Read](/guides/new-project/)
-
 	</Card>
-
 </CardGrid>
 
 ## Example Behaviors
 
-**Explore common front-end components and their behavior-driven specifications.**
+**Explore front-end components with behavior-driven specifications.**
+
+<div class="behavior-grid">
+	<div>
+		### Login Form
+		Behavior-driven login experience.
+		[Example](/behaviors/front-end/login-form/)
+	</div>
+	<div>
+		### Search Bar
+		Debounced input field with API calls.
+		[Example](/behaviors/front-end/search-bar/)
+	</div>
+	<div>
+		### Button
+		Flexible button with variants and loaders.
+		[Example](/behaviors/front-end/button/)
+	</div>
+	<div>
+		### Modal Dialog
+		Accessible dialog for messages or forms.
+		[Example](/behaviors/front-end/modal-dialog/)
+	</div>
+	<div>
+		### Notification Banner
+		Alert and success banner with dismiss.
+		[Example](/behaviors/front-end/notification-banner/)
+	</div>
+</div>
 
 <style>
 {`
@@ -83,74 +166,26 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 	border-radius: 8px;
 	background-color: #f9f9f9;
 }
-
-
 .behavior-grid div a {
 	color: #0078d4;
 	text-decoration: none;
 }
-
 @media (prefers-color-scheme: dark) {
 	.behavior-grid div {
-		border: 1px solid #444444; /* Dark mode border */
-		background-color: #2e2e2e; /* Dark mode background */
-		color: #ffffff; /* Light text for contrast */
+		border: 1px solid #444444;
+		background-color: #2e2e2e;
+		color: #ffffff;
 	}
-
 	.behavior-grid div a {
 		color: #b6c6fa;
-		text-decoration: none;
 	}
 }
-
 `}
 </style>
-
-<div class="behavior-grid">
-	<div>
-		### Login Form
-		Behavior-driven implementation for a user-friendly login experience.
-
-		[Example](/behaviors/front-end/login-form/)
-	</div>
-	<div>
-		### Search Bar
-		Behavior-driven search input with debounced API calls.
-
-		[Example](/behaviors/front-end/search-bar/)
-	</div>
-	<div>
-		### Button
-		Versatile button component with variant support and loading state.
-
-		[Example](/behaviors/front-end/button/)
-	</div>
-	<div>
-		### Modal Dialog
-		Popup container for messages or forms with accessible behavior.
-
-		[Example](/behaviors/front-end/modal-dialog/)
-	</div>
-	<div>
-		### Notification Banner
-		Dismissible banner for displaying alerts or success messages.
-
-		[Example](/behaviors/front-end/notification-banner/)
-	</div>
-</div>
 
 ## Concepts
 
 <CardGrid stagger>
-	<LinkCard title="Behavior-Driven Development (BDD)" 
-	href="/concepts/behavior-driven-development"
-	description="Learn how Behavior-Driven Development works in 2025 with ZapCircle and LLM-powered code generation.">
-		
-	</LinkCard>
-	<LinkCard title="Developer Workflow"
-	href="/concepts/developer-workflow"
-	description="Integrate ZapCircle into your developer workflow as a gradual improvement to your existing process."
-	>
-		Expand the example library by adding new behavior categories.
-	</LinkCard>
+	<LinkCard title="Behavior-Driven Development (BDD)" href="/concepts/behavior-driven-development" description="Learn how Behavior-Driven Development works in 2025 with ZapCircle and LLM-powered code generation."></LinkCard>
+	<LinkCard title="Developer Workflow" href="/concepts/developer-workflow" description="Integrate ZapCircle into your dev workflow to streamline collaboration and reduce drift."></LinkCard>
 </CardGrid>
