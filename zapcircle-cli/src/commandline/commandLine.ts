@@ -87,6 +87,11 @@ program
   )
   .option("--verbose", "Display LLM prompt and response in the console log")
   .option("--github", "Post review to GitHub")
+  .option(
+    "--contextLimit",
+    "Number of tokens to use for context limit (default: 128000)",
+  )
+  .option("--baseBranch", "Base branch to use (default: origin/main)")
   .action((options) => {
     console.log(`Running ZapCircle Review...`);
     review(options);

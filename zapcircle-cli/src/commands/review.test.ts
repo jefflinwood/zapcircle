@@ -5,7 +5,7 @@ import {
   formatPRComment,
   generateSummary,
   postGitHubComment,
-} from "./review"; // Update the path to match your structure
+} from "./review";
 
 jest.mock("child_process", () => ({
   execSync: jest.fn(),
@@ -19,7 +19,9 @@ global.fetch = jest.fn(() =>
   Promise.resolve({
     ok: true,
     json: () =>
-      Promise.resolve([{ id: 123, body: "🚀 **ZapCircle PR Review**" }]),
+      Promise.resolve([
+        { id: 123, body: "\ud83d\ude80 **ZapCircle PR Review**" },
+      ]),
   }),
 ) as jest.Mock;
 
@@ -48,7 +50,7 @@ describe("ZapCircle Review Tests", () => {
     expect(result).toContain("file2.ts");
     expect(result).toContain("Line 25");
     expect(result).toContain("Potential security risk");
-    expect(result).toContain("🔴");
+    expect(result).toContain("\ud83d\udd34");
   });
 
   test("should return an empty string if no issues found", () => {
@@ -69,7 +71,7 @@ describe("ZapCircle Review Tests", () => {
       expect.objectContaining({
         method: "PATCH",
         body: JSON.stringify({
-          body: "🚀 **ZapCircle PR Review**\n\nSummary\n\nPR issues here",
+          body: "\ud83d\ude80 **ZapCircle PR Review**\n\nSummary\n\nPR issues here",
         }),
       }),
     );
@@ -94,7 +96,7 @@ describe("ZapCircle Review Tests", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
-          body: "🚀 **ZapCircle PR Review**\n\nSummary\n\nPR issues here",
+          body: "\ud83d\ude80 **ZapCircle PR Review**\n\nSummary\n\nPR issues here",
         }),
       }),
     );

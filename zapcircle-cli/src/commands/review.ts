@@ -13,14 +13,21 @@ export async function review(options: {
   verbose?: boolean;
   github?: boolean;
   contextLimit?: number;
+  baseBranch?: string;
 }) {
   try {
     const isVerbose = options.verbose || false;
     const isGitHubEnabled = options.github || false;
     const contextLimit = options.contextLimit || DEFAULT_CONTEXT_LIMIT;
+    const baseBranch = options.baseBranch || "origin/main";
+
+    if (!isGitRepo()) {
+      console.warn("⚠️ Not a git repository. Skipping review.");
+      return;
+    }
 
     console.log("🔍 Fetching changed files...");
-    const changedFiles = getChangedFiles();
+    const changedFiles = getChangedFiles(baseBranch);
 
     if (changedFiles.length === 0) {
       console.log("✅ No files changed. Skipping review.");
@@ -52,13 +59,14 @@ export async function review(options: {
         });
       }
 
-      const fileDiff = getDiffForFile(absolutePath);
+      const fileDiff = getDiffForFile(absolutePath, baseBranch);
       totalTokensUsed += estimateTokenCount(fileDiff);
 
       if (totalTokensUsed > contextLimit) {
         console.warn(`Skipping ${filePath} diff to stay within token limit.`);
         continue;
       }
+
       codeToReview.push({ fileName: filePath, fileDiff: fileDiff });
 
       const reviewVariables = {
@@ -111,8 +119,8 @@ export async function review(options: {
         options.provider,
         options.model,
       );
-      console.log("📢 Posting PR review...");
 
+      console.log("📢 Posting PR review...");
       if (isGitHubEnabled) {
         await postGitHubComment(summary, formatPRComment(reviewResults));
       } else {
@@ -126,23 +134,27 @@ export async function review(options: {
   }
 }
 
+function isGitRepo(): boolean {
+  try {
+    execSync("git rev-parse --is-inside-work-tree", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function estimateTokenCount(text: string): number {
   return encode(text).length;
 }
 
-/**
- * Generates a high-level summary of the code changes using LLM.
- */
 export async function generateSummary(
   codeToReview: any[],
   verbose: boolean,
   isGitHubEnabled: boolean,
-  provider: string | undefined = undefined,
-  model: string | undefined = undefined,
+  provider?: string,
+  model?: string,
 ): Promise<string> {
-  const reviewData = {
-    reviewData: JSON.stringify(codeToReview),
-  };
+  const reviewData = { reviewData: JSON.stringify(codeToReview) };
   const summaryPrompt = await loadPrompt("pullrequest", "review", reviewData);
   return await invokeLLMWithSpinner(
     summaryPrompt,
@@ -153,57 +165,60 @@ export async function generateSummary(
     model,
   );
 }
-/**
- * Fetches the list of files changed in the current PR and resolves them relative to the Git repository root.
- * @param baseBranch - The base branch to compare against (default: origin/main).
- */
+
 export function getChangedFiles(baseBranch: string = "origin/main"): string[] {
   try {
-    // Get the absolute path to the root of the Git repository
-    const repoRoot = execSync(`git rev-parse --show-toplevel`)
+    const repoRoot = execSync("git rev-parse --show-toplevel")
       .toString()
       .trim();
 
-    // Run the diff command to get changed files
     const diffOutput = execSync(
       `git diff --name-status ${baseBranch}`,
     ).toString();
+    const untrackedOutput = execSync(
+      "git ls-files --others --exclude-standard",
+    ).toString();
 
-    return diffOutput
+    const tracked = diffOutput
       .trim()
       .split("\n")
       .map((line) => {
         const [status, ...fileParts] = line.split(/\s+/);
-        const filePath = fileParts.join(" "); // Handle file paths with spaces
+        const filePath = fileParts.join(" ");
         return status === "M" || status === "A"
           ? resolve(repoRoot, filePath)
           : null;
-      })
-      .filter((filePath): filePath is string => filePath !== null); // Remove null values
+      });
+
+    const untracked = untrackedOutput
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((filePath) => resolve(repoRoot, filePath));
+
+    return [...new Set([...tracked, ...untracked])].filter(
+      (x): x is string => !!x,
+    );
   } catch (error) {
     console.error("❌ Error fetching changed files:", error);
     return [];
   }
 }
 
-/**
- * Fetches the diff for a given file.
- */
-export function getDiffForFile(filePath: string): string {
+export function getDiffForFile(
+  filePath: string,
+  baseBranch: string = "origin/main",
+): string {
   try {
-    return execSync(`git diff origin/main -- ${filePath}`).toString();
+    return execSync(`git diff ${baseBranch} -- ${filePath}`).toString();
   } catch (error) {
     console.error(`❌ Error fetching diff for ${filePath}:`, error);
     return "";
   }
 }
 
-/**
- * Formats the LLM review results into a structured GitHub PR comment.
- */
 export function formatPRComment(reviewData: any[]): string {
   let comment = "";
-
   const iconMap: Record<string, string> = {
     low: "🟡",
     medium: "🟠",
@@ -226,9 +241,6 @@ export function formatPRComment(reviewData: any[]): string {
   return comment;
 }
 
-/**
- * Posts (or updates) the review summary and issues as a GitHub PR comment.
- */
 export async function postGitHubComment(
   summary: string,
   reviewComment: string,
@@ -247,7 +259,6 @@ export async function postGitHubComment(
   const apiUrl = `https://api.github.com/repos/${repo}/issues/${prNumber}/comments`;
 
   try {
-    // Check if an existing ZapCircle comment exists
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -266,24 +277,23 @@ export async function postGitHubComment(
     const existingComment = comments.find((comment: any) =>
       comment.body.includes("🚀 **ZapCircle PR Review**"),
     );
-
     const newCommentBody = `🚀 **ZapCircle PR Review**\n\n${summary}\n\n${reviewComment}`;
 
     if (existingComment) {
-      // Update existing comment
-      const updateUrl = `https://api.github.com/repos/${repo}/issues/comments/${existingComment.id}`;
-      await fetch(updateUrl, {
-        method: "PATCH",
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: "application/vnd.github.v3+json",
-          "Content-Type": "application/json",
+      await fetch(
+        `https://api.github.com/repos/${repo}/issues/comments/${existingComment.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: "application/vnd.github.v3+json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ body: newCommentBody }),
         },
-        body: JSON.stringify({ body: newCommentBody }),
-      });
+      );
       console.log("✅ Updated PR review comment.");
     } else {
-      // Post a new comment
       await fetch(apiUrl, {
         method: "POST",
         headers: {
