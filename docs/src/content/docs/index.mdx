@@ -8,17 +8,84 @@ hero:
     <span class="text-xl font-medium">Behavior-Driven Development with LLMs</span><br/>
     <span class="text-base">Get developers and product owners aligned with behavior-driven workflows powered by AI.</span>
   image:
-    file: ../../assets/zc-zebra-transparent.png
+    file: ../../assets/zebra-mascot.png
   actions:
-    - text: Get Started
-      link: /guides/getting-started/
-      icon: right-arrow
+    - text: Try Local Code Review
+      link: /guides/reviewing-changes/
+      icon: approve-check-circle
     - text: Explore Behaviors
       link: /behaviors/front-end/login-form/
       icon: right-arrow
 ---
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## 🧪 Local Code Review Before You Push
+
+**Get LLM-powered feedback on your code _before_ you create a pull request.**
+
+Run `npx zapcircle review` to:
+- Catch mistakes before your team sees them
+- Write cleaner, more consistent code
+- Save reviewer time by fixing issues upfront
+
+ZapCircle works with any Git project and gives you behavior-aware comments.
+
+```bash
+npx zapcircle review
+```
+
+✨ You can even integrate it into your pre-commit workflow or CI pipeline.
+
+[🔍 Learn More →](/guides/reviewing-changes/)
+
+---
+
+## How It Works
+
+1. ✏️ Write your `.zap.toml` file describing the component’s behavior
+2. ⚙️ Run `zapcircle generate` to create the React component
+3. ✅ Use or edit the generated component as needed
+
+## Example Behavior → Code
+
+:::code-group
+```toml [.zap.toml]
+name = "LoginForm"
+behavior = """
+Display an email and password input. Validate that both fields are filled.
+Show an error if login fails. Submit form on Enter.
+"""
+```
+```tsx [LoginForm.tsx]
+export function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!email || !password) {
+      setError("Please fill in both fields");
+      return;
+    }
+    // submit login...
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+      <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+      {error && <div>{error}</div>}
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```
+:::
+
+## Start Here
+
+[🧭 Begin the Journey →](/guides/getting-started/)
 
 ## Developer Guides
 
