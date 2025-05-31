@@ -12,9 +12,10 @@ export async function semanticDiffLLM(args: {
   issue: string;
   expected: string;
   generated: string;
+  provider?: string;
   model?: string;
 }): Promise<SemanticDiffResult> {
-  const { issue, expected, generated, model = "gpt-4" } = args;
+  const { issue, expected, generated, provider, model } = args;
 
   const prompt = `
 You are evaluating a code generation task.

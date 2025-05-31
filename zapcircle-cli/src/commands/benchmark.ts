@@ -7,7 +7,8 @@ import { semanticDiffLLM } from "../utils/diffUtils";
 
 interface BenchmarkOptions {
   taskName: string;
-  llm?: string;
+  provider?: string;
+  model?: string;
   outputDir?: string;
   verbose?: boolean;
 }
@@ -15,9 +16,10 @@ interface BenchmarkOptions {
 export async function runBenchmark(options: BenchmarkOptions) {
   const {
     taskName,
-    llm = "gpt-4",
     outputDir = ".zapcircle/benchmark/output",
     verbose = false,
+    provider,
+    model,
   } = options;
 
   const taskDir = path.resolve(`.zapcircle/benchmark/tasks/${taskName}`);
@@ -38,14 +40,22 @@ export async function runBenchmark(options: BenchmarkOptions) {
     ? fs.readFileSync(behaviorPath, "utf8")
     : null;
 
-  fs.mkdirSync(outputDir, { recursive: true });
+  const taskOutputDir = path.join(outputDir, taskName);
+  fs.mkdirSync(taskOutputDir, { recursive: true });
 
-  console.log(`▶️ Running benchmark: ${taskName}`);
+  console.log(`▶️ Running benchmark: ${taskName} for ${provider} and ${model}`);
 
   // Code-only generation
   const codeOnlyPrompt = `Here is the existing code:\n\n${baseCode}\n\nPlease implement the following issue:\n${issue}`;
-  const codeOnlyResult = await invokeLLMWithSpinner(codeOnlyPrompt, true);
-  const codeOnlyOutputPath = path.join(outputDir, "code-only.tsx");
+  const codeOnlyResult = await invokeLLMWithSpinner(
+    codeOnlyPrompt,
+    false,
+    false,
+    true,
+    provider,
+    model,
+  );
+  const codeOnlyOutputPath = path.join(taskOutputDir, "code-only.tsx");
   writeFileSync(codeOnlyOutputPath, codeOnlyResult);
   if (verbose) console.log("🔍 Code Only Output:\n", codeOnlyResult);
 
@@ -54,8 +64,15 @@ export async function runBenchmark(options: BenchmarkOptions) {
     ? `Here is the existing code:\n\n${baseCode}\n\nHere is the behavior:\n\n${behavior}\n\nPlease implement the following issue:\n${issue}`
     : codeOnlyPrompt;
 
-  const behaviorResult = await invokeLLMWithSpinner(withBehaviorPrompt, true);
-  const behaviorOutputPath = path.join(outputDir, "with-behavior.tsx");
+  const behaviorResult = await invokeLLMWithSpinner(
+    withBehaviorPrompt,
+    false,
+    false,
+    true,
+    provider,
+    model,
+  );
+  const behaviorOutputPath = path.join(taskOutputDir, "with-behavior.tsx");
   writeFileSync(behaviorOutputPath, behaviorResult);
   if (verbose) console.log("📘 With Behavior Output:\n", behaviorResult);
 
@@ -67,15 +84,23 @@ export async function runBenchmark(options: BenchmarkOptions) {
       issue,
       expected,
       generated: codeOnlyResult,
-      model: llm,
+      model,
     });
 
     const diffWithBehavior = await semanticDiffLLM({
       issue,
       expected,
       generated: behaviorResult,
-      model: llm,
+      model,
     });
+
+    const codeOnlyEvalPath = path.join(taskOutputDir, "code-only-eval.json");
+    const behaviorEvalPath = path.join(
+      taskOutputDir,
+      "with-behavior-eval.json",
+    );
+    writeFileSync(codeOnlyEvalPath, JSON.stringify(diffCodeOnly, null, 2));
+    writeFileSync(behaviorEvalPath, JSON.stringify(diffWithBehavior, null, 2));
 
     console.log("\n📊 Semantic Evaluation vs Expected:");
     console.log("- Code Only:");
