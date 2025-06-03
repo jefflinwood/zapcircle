@@ -19,6 +19,7 @@ import { runAgentChat } from "../agent/chat";
 import { runBenchmark } from "../commands/benchmark";
 import { benchmarkReport } from "../commands/benchmarkReport";
 import { runAllBenchmarks } from "../commands/benchmarkRunAll";
+import { benchmarkReportTests } from "../commands/benchmarkReportTests";
 
 const program = new Command();
 
@@ -166,6 +167,9 @@ const benchmark = program
   .description("Benchmark coding tasks for an LLM");
 
 benchmark.command("report").action((options) => benchmarkReport(options));
+benchmark
+  .command("reportTests")
+  .action((options) => benchmarkReportTests(options));
 
 benchmark
   .command("run <taskName>")
@@ -191,6 +195,7 @@ benchmark
     "--model <model>",
     "Model to use (e.g., o4-mini, claude-3-opus, gemini-2.0-flash)",
   )
+  .option("--include-tests", "Benchmark tests in addition to components")
   .action((options) => runAllBenchmarks(options));
 
 program

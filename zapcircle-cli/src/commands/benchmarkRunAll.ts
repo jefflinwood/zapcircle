@@ -2,12 +2,14 @@
 import fs from "fs";
 import path from "path";
 import { runBenchmark } from "./benchmark";
+import { generateTestsForBenchmark } from "./benchmarkGenerateTests";
 
 export async function runAllBenchmarks(options: {
   outputDir?: string;
   provider?: string;
   model?: string;
   verbose?: boolean;
+  includeTests?: boolean;
 }) {
   const tasksDir = ".zapcircle/benchmark/tasks";
   const taskDirs = fs
@@ -24,6 +26,16 @@ export async function runAllBenchmarks(options: {
         model: options.model,
         verbose: options.verbose,
       });
+
+      if (options.includeTests) {
+        await generateTestsForBenchmark({
+          taskName,
+          outputDir: options.outputDir,
+          provider: options.provider,
+          model: options.model,
+          verbose: options.verbose,
+        });
+      }
     } catch (err) {
       console.error(`❌ Failed to run benchmark for ${taskName}:`, err);
     }
