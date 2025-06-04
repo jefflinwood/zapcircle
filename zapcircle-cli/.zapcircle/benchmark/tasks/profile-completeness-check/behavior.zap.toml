@@ -1,0 +1,9 @@
+name = "ProfileStatus"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Displays a user's profile image or a placeholder if no image is present.
+If the user has a profile image, email, and bio, the profile is marked as complete.
+Otherwise, it shows as incomplete.
+"""

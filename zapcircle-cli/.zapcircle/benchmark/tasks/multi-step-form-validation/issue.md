@@ -1,0 +1,1 @@
+Implement a two-step signup form. Step 1 collects name and email. Step 2 collects password and confirm password. Step 1 is only valid if name is not empty and email contains '@'. Step 2 is only valid if password is at least 8 characters and matches confirm. Submit the form only when all validations pass.

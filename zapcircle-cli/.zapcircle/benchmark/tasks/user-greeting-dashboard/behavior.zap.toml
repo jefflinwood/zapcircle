@@ -1,0 +1,9 @@
+name = "Dashboard"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Dashboard renders a greeting to the user.
+Greeting varies based on time of day (morning, afternoon, evening).
+If no user is present, shows a guest greeting.
+"""
