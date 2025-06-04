@@ -1,0 +1,1 @@
+Add logic to check if the user has uploaded a photo, written a bio, and entered an email. If all are present, show '✅ Profile Complete'. Otherwise, show '⚠️ Profile Incomplete'.

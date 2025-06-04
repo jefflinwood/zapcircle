@@ -1,0 +1,1 @@
+Fetch user info from `/api/user` and display their name and email when the component mounts.

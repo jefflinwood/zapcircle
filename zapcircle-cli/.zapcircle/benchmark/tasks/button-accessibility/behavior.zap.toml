@@ -1,0 +1,9 @@
+name = "Button"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Renders a button component that can receive children.
+Supports an optional aria-label prop for accessibility.
+If aria-label is provided, it is applied to the button element.
+"""

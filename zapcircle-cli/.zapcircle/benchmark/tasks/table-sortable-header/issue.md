@@ -1,0 +1,1 @@
+Make the table headers clickable so that the user can sort by that column. Initial sort should be ascending. Toggle direction on repeat clicks.

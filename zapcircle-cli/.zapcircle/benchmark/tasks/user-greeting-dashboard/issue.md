@@ -1,0 +1,1 @@
+Implement a Dashboard component that renders a time-based greeting. It should say 'Good morning/afternoon/evening, [name]!' based on the hour. If no user is provided, it should fall back to 'Hello, guest!'.

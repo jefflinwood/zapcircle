@@ -1,0 +1,1 @@
+Add drag-and-drop functionality for uploading a profile picture. Display the uploaded image as a preview.

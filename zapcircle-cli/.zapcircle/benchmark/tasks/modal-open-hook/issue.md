@@ -1,0 +1,1 @@
+Create a useModal hook and refactor the Modal component to use it for showing/hiding.

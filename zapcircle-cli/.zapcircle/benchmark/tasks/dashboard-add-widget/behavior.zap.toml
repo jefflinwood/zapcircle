@@ -1,0 +1,8 @@
+name = "Dashboard"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Renders a dashboard layout.
+Includes a WeatherWidget component positioned at the top of the dashboard.
+"""

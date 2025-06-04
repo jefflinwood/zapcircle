@@ -1,0 +1,10 @@
+name = "SignupForm"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Renders a two-step signup form.
+Step 1: Collects name and email. Requires name to be non-empty and email to contain '@'.
+Step 2: Collects password and confirmation. Requires password to be at least 8 characters and match confirmation.
+Progresses to next step or submits based on validation.
+"""

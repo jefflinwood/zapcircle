@@ -1,0 +1,1 @@
+Wrap the AppContent component in an error boundary named ErrorBoundary. This should catch any rendering errors.

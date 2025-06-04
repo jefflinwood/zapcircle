@@ -1,0 +1,7 @@
+name = "Table"
+
+behavior = """
+Renders a table with headers and rows.
+Each column header is clickable and toggles sorting of the table.
+Initial sort direction is ascending. Clicking again toggles it.
+"""

@@ -1,0 +1,7 @@
+name = "ToggleThemeButton"
+
+behavior = """
+Renders a button labeled 'Toggle Theme'.
+When clicked, it toggles the theme between light and dark.
+The document.body class is updated to 'theme-light' or 'theme-dark' accordingly.
+"""

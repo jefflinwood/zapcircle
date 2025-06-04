@@ -1,0 +1,8 @@
+name = "AppContent"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Displays the main application content inside a layout.
+Wraps content in an ErrorBoundary to catch rendering errors.
+"""

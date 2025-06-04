@@ -1,0 +1,8 @@
+name = "Modal"
+codeLocked = false
+testsLocked = false
+
+behavior = """
+Displays a modal dialog.
+Uses a useModal hook to control visibility.
+"""
