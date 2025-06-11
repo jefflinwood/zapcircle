@@ -11,8 +11,18 @@ import { writeIssueLog } from "./writeIssueLog";
 import { renderReviewPrompt } from "./renderReviewPrompt";
 import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForComponent";
 import { AgentIssue } from "../issues/types";
+import { createBackup } from "./undoManager";
+import fs from "fs";
 
-export async function runAgentOnIssue(issue: AgentIssue) {
+interface RunAgentOptions {
+  interactive?: boolean;
+  stylePreferences?: Record<string, string>;
+}
+
+export async function runAgentOnIssue(
+  issue: AgentIssue,
+  options: RunAgentOptions = {},
+) {
   console.log(`Running ZapCircle Agent on issue #${issue.id}...`);
 
   let behaviorPath: string | undefined;
@@ -42,7 +52,11 @@ export async function runAgentOnIssue(issue: AgentIssue) {
     const context = await buildContextForComponent(componentPath, behaviorPath);
 
     // Step 3: Construct prompt
-    const prompt = renderGenerationPrompt({ issue, contextPackage: context });
+    const prompt = renderGenerationPrompt({
+      issue,
+      contextPackage: context,
+      stylePreferences: options.stylePreferences,
+    });
 
     // Step 4: Generate code
     var result = await invokeLLMWithSpinner(prompt, true);
@@ -116,6 +130,13 @@ export async function runAgentOnIssue(issue: AgentIssue) {
 
     // Step 6: Write output
     const outputPath = path.resolve(componentPath);
+
+    // Backup before write
+    if (fs.existsSync(outputPath)) {
+      const existingContents = fs.readFileSync(outputPath, "utf-8");
+      createBackup(outputPath, existingContents);
+    }
+
     await writeOutputFile(outputPath, result, true);
 
     // ✅ Final log

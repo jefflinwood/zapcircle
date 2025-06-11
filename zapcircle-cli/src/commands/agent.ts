@@ -1,9 +1,10 @@
 import { listIssues, readIssueSync } from "../issues";
 import { runAgentOnIssue } from "../agent/run";
+import { runAgentPair } from "../agent/pair"; // <-- new import
 import readline from "readline/promises";
 import { createReadlineInterface } from "../utils/platformUtils";
 
-export const agentRunCommand = async () => {
+export const agentRunCommand = async ({ pairMode = false } = {}) => {
   const issues = listIssues();
 
   if (issues.length === 0) {
@@ -41,5 +42,10 @@ export const agentRunCommand = async () => {
 
   const selectedIssue = issues[index];
   console.log(`\n🧠 Running ZapCircle Agent on: ${selectedIssue.title}\n`);
-  await runAgentOnIssue(selectedIssue);
+
+  if (pairMode) {
+    await runAgentPair(selectedIssue);
+  } else {
+    await runAgentOnIssue(selectedIssue);
+  }
 };

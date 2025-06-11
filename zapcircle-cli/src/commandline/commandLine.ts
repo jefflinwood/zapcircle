@@ -162,6 +162,10 @@ agent.command("chat").action(() => {
   runAgentChat();
 });
 
+agent.command("pair").action(() => {
+  agentRunCommand({ pairMode: true });
+});
+
 const benchmark = program
   .command("benchmark")
   .description("Benchmark coding tasks for an LLM");
