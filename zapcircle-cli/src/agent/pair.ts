@@ -9,6 +9,13 @@ import { existsSync, readFileSync } from "fs";
 import { diffLinesUnified } from "jest-diff";
 import { updateSessionContext, getSessionContext } from "./sessionContext";
 import { suggestStylePreferences } from "./styleSuggester";
+import { generatePlanForIssue } from "./planGenerator";
+import { executePlanForIssue } from "./planExecutor";
+import { buildContextForComponent } from "../context/index";
+import { findBehaviorForIssue } from "../behaviors/matcher";
+import { resolveComponentFromBehavior } from "../behaviors/resolveComponentFromBehavior";
+import { findLikelyComponentForIssue } from "../behaviors/findComponent";
+import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForComponent";
 
 export async function runAgentPair(issue: AgentIssue) {
   const rl = readline.createInterface({
@@ -27,14 +34,54 @@ export async function runAgentPair(issue: AgentIssue) {
     });
   }
 
-  const continueRun = await rl.question(
-    "\n📋 Proceed with agent plan? [Y/n]: ",
+  // Context building before planning
+  let behaviorPath: string | undefined;
+  let componentPath: string | undefined;
+
+  behaviorPath = findBehaviorForIssue(issue);
+  if (behaviorPath) {
+    const resolved = resolveComponentFromBehavior(behaviorPath);
+    if (!resolved) {
+      console.log("❌ Could not resolve component path from behavior.");
+      rl.close();
+      return;
+    }
+    componentPath = resolved;
+  } else {
+    const guessed = findLikelyComponentForIssue(issue);
+    if (!guessed) {
+      console.log("❌ Could not locate related component.");
+      rl.close();
+      return;
+    }
+    componentPath = guessed;
+  }
+
+  behaviorPath = await ensureBehaviorForComponent(componentPath);
+  const contextPackage = await buildContextForComponent(
+    componentPath,
+    behaviorPath,
   );
-  if (continueRun.toLowerCase().startsWith("n")) {
-    console.log("❌ Canceled.");
+
+  // Generate planning proposal
+  const plan = await generatePlanForIssue(issue, contextPackage);
+  console.log("\n📝 Proposed Plan:");
+  plan.forEach((step: any, idx: number) => {
+    console.log(`${idx + 1}. ${step.description}`);
+    if (step.relatedFiles?.length > 0) {
+      console.log("   Files: " + step.relatedFiles.join(", "));
+    }
+  });
+
+  const confirmPlan = await rl.question("\n✅ Approve this plan? [Y/n]: ");
+  if (confirmPlan.toLowerCase().startsWith("n")) {
+    console.log("❌ Plan rejected.");
     rl.close();
     return;
   }
+
+  // Execute plan interactively (update behavior files)
+  await executePlanForIssue(plan);
 
   // Read original file contents for diffing later
   let originalContents = "";

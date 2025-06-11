@@ -13,6 +13,7 @@ import { ensureBehaviorForComponent } from "../behaviors/ensureBehaviorForCompon
 import { AgentIssue } from "../issues/types";
 import { createBackup } from "./undoManager";
 import fs from "fs";
+import readline from "readline/promises";
 
 interface RunAgentOptions {
   interactive?: boolean;
@@ -62,7 +63,7 @@ export async function runAgentOnIssue(
     var result = await invokeLLMWithSpinner(prompt, true);
 
     // Step 5: Review code
-    // First review attempt
+
     let reviewPrompt = renderReviewPrompt({
       originalPrompt: prompt,
       generatedCode: result,
@@ -76,7 +77,6 @@ export async function runAgentOnIssue(
     if (!approved) {
       console.warn("⚠️ Review failed. Attempting one refinement pass...");
 
-      // Refine the prompt with feedback
       const retryPrompt = `
     The last attempt was rejected for the following reason:
 
@@ -87,11 +87,10 @@ export async function runAgentOnIssue(
     ---
 
     ${prompt}
-    `;
+      `;
 
       const retriedResult = await invokeLLMWithSpinner(retryPrompt, true);
 
-      // Second review
       const secondReviewPrompt = renderReviewPrompt({
         originalPrompt: prompt,
         generatedCode: retriedResult,
@@ -101,13 +100,47 @@ export async function runAgentOnIssue(
         secondReviewPrompt,
         true,
       );
+
       console.log("\n🔍 Review Result (2nd pass):\n", secondReviewResult);
 
       approved = secondReviewResult.trim().startsWith("APPROVED");
 
+      if (!approved && options.interactive) {
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+        const userDecision = await rl.question(
+          "\n⚠️ Code review still not approved. Proceed anyway? [Y/n]: ",
+        );
+        rl.close();
+
+        if (userDecision.toLowerCase().startsWith("n")) {
+          console.error("❌ User aborted after failed review.");
+          writeIssueLog(issue.id, {
+            id: issue.id,
+            status: "failed",
+            title: issue.title,
+            description: issue.description,
+            comments: issue.comments,
+            componentPath,
+            behaviorPath,
+            failedAt: new Date().toISOString(),
+            reviewPassed: false,
+            failureReason: "Second review failed and user declined override.",
+          });
+          return;
+        } else {
+          console.log(
+            "✅ Proceeding despite review failure per user override.",
+          );
+          approved = true;
+          result = retriedResult;
+        }
+      }
+
       if (!approved) {
         console.error("❌ Second review failed. Aborting write.");
-
         writeIssueLog(issue.id, {
           id: issue.id,
           status: "failed",
@@ -120,11 +153,9 @@ export async function runAgentOnIssue(
           reviewPassed: false,
           failureReason: "Second review failed: " + secondReviewResult.trim(),
         });
-
         return;
       }
 
-      // Overwrite the result with the retried version
       result = retriedResult;
     }
 
