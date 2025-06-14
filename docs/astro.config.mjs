@@ -26,6 +26,12 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'Agent',
+					items: [
+						{ label: 'Working with Agent', slug: 'guides/working-with-agent'}
+					],
+				},
+				{
 					label: 'Advanced',
 					items: [
 						{ label: 'Customizing Prompts', slug: 'guides/customizing-prompts'}
