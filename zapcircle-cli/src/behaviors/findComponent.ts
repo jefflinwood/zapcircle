@@ -1,26 +1,43 @@
 import path from "path";
-import glob from "glob";
+import { globSync } from "glob";
 import { AgentIssue } from "../issues/types";
 
 function textMatches(text: string, name: string): boolean {
   return text.toLowerCase().includes(name.toLowerCase());
 }
 
+function scoreMatch(issue: AgentIssue, componentName: string): number {
+  let score = 0;
+
+  if (textMatches(issue.title, componentName)) score += 5;
+  if (textMatches(issue.description, componentName)) score += 3;
+  for (const comment of issue.comments || []) {
+    if (typeof comment === "string" && textMatches(comment, componentName))
+      score += 1;
+    if (typeof comment === "object" && textMatches(comment.body, componentName))
+      score += 1;
+  }
+
+  return score;
+}
+
 export function findLikelyComponentForIssue(
   issue: AgentIssue,
 ): string | undefined {
-  const files = glob.sync("src/components/**/*.{jsx,tsx}", { absolute: true });
+  const files = globSync("./**/*.{jsx,tsx}", { absolute: true });
 
-  for (const file of files) {
-    const componentName = path.basename(file).replace(/\.(jsx|tsx)$/, "");
+  const candidates = files
+    .map((file) => {
+      const componentName = path.basename(file).replace(/\.(jsx|tsx)$/, "");
+      const score = scoreMatch(issue, componentName);
+      return { file, score };
+    })
+    .filter((candidate) => candidate.score > 0);
 
-    const match =
-      textMatches(issue.title, componentName) ||
-      textMatches(issue.description, componentName) ||
-      issue.comments.some((c) => textMatches(c.body, componentName));
-
-    if (match) return file;
+  if (candidates.length === 0) {
+    return undefined;
   }
 
-  return undefined;
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates[0].file;
 }
