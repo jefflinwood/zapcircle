@@ -1,10 +1,11 @@
-import { listIssues, readIssueSync } from "../issues";
+import { store } from "../issues/agentStore"; // <-- new AgentStore location
 import { runAgentOnIssue } from "../agent/run";
+import { runAgentPair } from "../agent/pair";
 import readline from "readline/promises";
 import { createReadlineInterface } from "../utils/platformUtils";
 
-export const agentRunCommand = async () => {
-  const issues = listIssues();
+export const agentRunCommand = async ({ pairMode = false } = {}) => {
+  const issues = store.listIssues();
 
   if (issues.length === 0) {
     console.log("🚫 No issues found in .zapcircle/agent/issues/");
@@ -21,7 +22,7 @@ export const agentRunCommand = async () => {
           ? "❌ failed"
           : "🆕 new";
     console.log(
-      `${index + 1}) ${issue.title} (${issue.priority.toLowerCase()}) [${statusLabel}]`,
+      `${index + 1}) ${issue.title} (${issue.priority?.toLowerCase?.() ?? "unknown"}) [${statusLabel}]`,
     );
   });
 
@@ -41,5 +42,10 @@ export const agentRunCommand = async () => {
 
   const selectedIssue = issues[index];
   console.log(`\n🧠 Running ZapCircle Agent on: ${selectedIssue.title}\n`);
-  await runAgentOnIssue(selectedIssue);
+
+  if (pairMode) {
+    await runAgentPair(selectedIssue);
+  } else {
+    await runAgentOnIssue(selectedIssue);
+  }
 };

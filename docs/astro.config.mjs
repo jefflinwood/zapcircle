@@ -26,6 +26,12 @@ export default defineConfig({
 					],
 				},
 				{
+					label: 'Agent',
+					items: [
+						{ label: 'Working with Agent', slug: 'guides/working-with-agent'}
+					],
+				},
+				{
 					label: 'Advanced',
 					items: [
 						{ label: 'Customizing Prompts', slug: 'guides/customizing-prompts'}
@@ -41,7 +47,7 @@ export default defineConfig({
 				},
 				{
 					label: 'Behaviors',
-					autogenerate: { directory: 'behaviors' },
+					autogenerate: { directory: 'behaviors/front-end' },
 				},
 				{
 					label: 'Reference',
