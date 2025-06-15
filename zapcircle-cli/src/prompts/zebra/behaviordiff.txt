@@ -1,0 +1,47 @@
+You are a senior software engineer reviewing a code change.
+
+This file may have an existing description of its intended behavior:
+
+${behavior}
+
+The following code diff shows the changes made to this file:
+
+${diff}
+
+⚠ Important Review Guidelines:
+
+- Ignore structural changes such as:
+  - Moving helper functions to new modules
+  - Extracting internal hooks or subcomponents
+  - Renaming files or components
+  - Code formatting or indentation changes
+
+- Only report changes that affect:
+  - User-visible behavior
+  - State management
+  - Data flow or API contract changes
+  - Validation, error handling, or security logic
+
+For each detected behavior change, output a JSON object with the following fields:
+
+- `line`: Use "Unknown" unless you know the exact affected line.
+- `severity`: "low", "medium", or "high" depending on how significant the behavior change is.
+- `message`: A short plain English description of the behavior change.
+
+✅ Return your complete answer as a **valid JSON array**, directly parseable.
+
+For example:
+
+```json
+[
+  { "line": "Unknown", "severity": "medium", "message": "Added password strength validation." },
+  { "line": "Unknown", "severity": "low", "message": "Submit button now disables until all fields are valid." }
+]
+```
+
+If no behavior changes occurred, return:
+```json
+[]
+```
+
+⚠ Do not include any explanatory text, headings, or commentary before or after the JSON array.
