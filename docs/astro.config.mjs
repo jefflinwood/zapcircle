@@ -47,7 +47,7 @@ export default defineConfig({
 				},
 				{
 					label: 'Behaviors',
-					autogenerate: { directory: 'behaviors' },
+					autogenerate: { directory: 'behaviors/front-end' },
 				},
 				{
 					label: 'Reference',
