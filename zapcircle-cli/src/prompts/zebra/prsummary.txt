@@ -4,17 +4,28 @@ The following behavior change reviews have been collected across all modified fi
 
 ${behaviorReviews}
 
-Please generate a pull request summary with:
+## Output Format:
 
-- A short list of high-level behavior changes across the PR.
-- Any areas that may require reviewer attention due to significant behavior changes.
+Return your response as valid JSON in the following structure:
 
-Output your answer in the following format:
+```json
+{
+  "pullRequestBehaviorSummary": [
+    "High-level behavior changes across the PR."
+  ],
+  "reviewerAttention": [
+    "Behaviors that may need extra reviewer attention."
+  ],
+  "breakingChanges": [
+    "Any breaking changes that may affect users or dependent systems."
+  ],
+  "productOwnerSummary": "One or two sentences written for product owners describing user-visible changes.",
+  "statusDigest": "One or two sentences suitable for Slack or status update."
+}
+```
 
-PullRequestBehaviorSummary:
-- (summarize key behavior changes)
+Only include meaningful items in each list.
 
-ReviewerAttention:
-- (list any behaviors that may need extra review attention)
+If a field has no items, leave the array empty, or use an empty string for the summaries.
 
-If no behavior changes occurred, state that clearly.
+Do not include any commentary or explanations outside of the JSON object.

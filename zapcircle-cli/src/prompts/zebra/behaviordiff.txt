@@ -22,26 +22,31 @@ ${diff}
   - Data flow or API contract changes
   - Validation, error handling, or security logic
 
-For each detected behavior change, output a JSON object with the following fields:
+## Output Format:
 
-- `line`: Use "Unknown" unless you know the exact affected line.
-- `severity`: "low", "medium", or "high" depending on how significant the behavior change is.
-- `message`: A short plain English description of the behavior change.
-
-✅ Return your complete answer as a **valid JSON array**, directly parseable.
-
-For example:
+Please return your full response as valid JSON in the following structure:
 
 ```json
-[
-  { "line": "Unknown", "severity": "medium", "message": "Added password strength validation." },
-  { "line": "Unknown", "severity": "low", "message": "Submit button now disables until all fields are valid." }
-]
-```
+{
+  "behaviorChanges": [
+    {
+      "line": "Unknown",
+      "severity": "medium",
+      "message": "Added password strength validation."
+    }
+  ],
+  "breakingChanges": [
+    "Form now requires all fields to be populated before submission."
+  ]
+}
 
 If no behavior changes occurred, return:
+
 ```json
-[]
+{
+  "behaviorChanges": [],
+  "breakingChanges": []
+}
 ```
 
-⚠ Do not include any explanatory text, headings, or commentary before or after the JSON array.
+Do not include any commentary or explanations outside of the JSON object.

@@ -1,5 +1,3 @@
-// src/core/codeChangedProcessor.ts
-
 import path from "path";
 import { getChangedFiles, getDiffForFile } from "./diffCollector";
 import { loadBehaviorFile } from "./behaviorLoader";
@@ -15,51 +13,50 @@ export interface FileReviewInput {
   behaviorFileContents?: string;
 }
 
-export interface FileReviewResult {
-  fileName: string;
-  issues: {
-    line: string;
-    severity: string;
-    message: string;
-  }[];
-}
-
 export interface SummaryInput {
   reviewData: string;
 }
 
-export interface ReviewOutput {
-  reviewResults: FileReviewResult[];
-  summary: string;
-}
-
-export interface PromptSet {
+// 🧬 NEW: Generic PromptSet interface
+export interface PromptSet<TFileResult, TSummaryResult> {
   fileReviewPrompt: (input: FileReviewInput) => Promise<string>;
+  fileReviewParser: (raw: string) => TFileResult;
   summaryPrompt: (input: SummaryInput) => Promise<string>;
+  summaryParser: (raw: string) => TSummaryResult;
 }
 
-export interface CodeChangeProcessorOptions {
+// 🧬 NEW: Fully generic processor options
+export interface CodeChangeProcessorOptions<TFileResult, TSummaryResult> {
   baseBranch?: string;
   contextLimit?: number;
   provider?: string;
   model?: string;
   verbose: boolean;
-  promptSet: PromptSet;
+  promptSet: PromptSet<TFileResult, TSummaryResult>;
 }
 
-export async function codeChangedProcessor(
-  options: CodeChangeProcessorOptions,
-): Promise<ReviewOutput> {
+// 🧬 NEW: Fully generic return type
+export interface ReviewOutput<TFileResult, TSummaryResult> {
+  reviewResults: {
+    fileName: string;
+    result: TFileResult;
+  }[];
+  summary: TSummaryResult;
+}
+
+export async function codeChangedProcessor<TFileResult, TSummaryResult>(
+  options: CodeChangeProcessorOptions<TFileResult, TSummaryResult>,
+): Promise<ReviewOutput<TFileResult, TSummaryResult>> {
   const contextLimit = options.contextLimit || DEFAULT_CONTEXT_LIMIT;
   const baseBranch = options.baseBranch || "origin/main";
 
   const changedFiles = getChangedFiles(baseBranch);
   if (changedFiles.length === 0) {
     console.log("✅ No files changed.");
-    return { reviewResults: [], summary: "No changes." };
+    return { reviewResults: [], summary: {} as TSummaryResult };
   }
 
-  const reviewResults: FileReviewResult[] = [];
+  const reviewResults: { fileName: string; result: TFileResult }[] = [];
   const codeToReview: any[] = [];
   let totalTokensUsed = 0;
 
@@ -97,10 +94,9 @@ export async function codeChangedProcessor(
       options.model,
     );
 
-    let parsedResult;
+    let parsedResult: TFileResult;
     try {
-      console.log(rawResult);
-      parsedResult = safeParseJSON(rawResult);
+      parsedResult = options.promptSet.fileReviewParser(rawResult);
     } catch {
       console.error(`⚠️ Failed to parse LLM output for ${fileName}.`);
       continue;
@@ -108,11 +104,7 @@ export async function codeChangedProcessor(
 
     reviewResults.push({
       fileName,
-      issues: parsedResult.map((issue: any) => ({
-        line: issue.line ?? "Unknown",
-        severity: issue.severity ?? "Unknown",
-        message: issue.message ?? "No description provided.",
-      })),
+      result: parsedResult,
     });
   }
 
@@ -121,7 +113,7 @@ export async function codeChangedProcessor(
     reviewData: JSON.stringify(codeToReview),
   });
 
-  const summary = await invokeLLMWithSpinner(
+  const summaryRaw = await invokeLLMWithSpinner(
     summaryPrompt,
     options.verbose,
     false,
@@ -130,7 +122,15 @@ export async function codeChangedProcessor(
     options.model,
   );
 
-  return { reviewResults, summary };
+  let parsedSummary: TSummaryResult;
+  try {
+    parsedSummary = options.promptSet.summaryParser(summaryRaw);
+  } catch {
+    console.error("⚠️ Failed to parse summary output.");
+    parsedSummary = {} as TSummaryResult;
+  }
+
+  return { reviewResults, summary: parsedSummary };
 }
 
 function estimateTokenCount(text: string): number {

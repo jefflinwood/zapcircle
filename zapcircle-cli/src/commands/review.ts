@@ -10,6 +10,16 @@ import {
   SummaryInput,
 } from "../core/codeChangedProcessor";
 import { isGitRepo } from "../core/diffCollector";
+import { safeParseJSON } from "../utils/jsonUtils";
+
+export interface FileReviewResult {
+  fileName: string;
+  issues: {
+    line: string;
+    severity: string;
+    message: string;
+  }[];
+}
 
 export async function review(options: {
   provider?: string;
@@ -38,11 +48,13 @@ export async function review(options: {
     };
   }
 
-  const promptSet: PromptSet = {
+  const promptSet: PromptSet<FileReviewResult[], string> = {
     fileReviewPrompt: (vars) =>
       loadPrompt("code", "review", mapFileReviewInput(vars)),
+    fileReviewParser: (raw) => safeParseJSON(raw), // your existing JSON array parser
     summaryPrompt: (vars) =>
       loadPrompt("pullrequest", "review", mapSummaryInput(vars)),
+    summaryParser: (raw) => raw, // plain string summary for review
   };
 
   const result = await codeChangedProcessor({
