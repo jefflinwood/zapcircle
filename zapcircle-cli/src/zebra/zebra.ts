@@ -5,6 +5,7 @@ import { codeChangedProcessor, PromptSet } from "../core/codeChangedProcessor";
 import { isGitRepo } from "../core/diffCollector";
 import { safeParseJSON } from "../utils/jsonUtils";
 import { BehaviorDriftResult, PRSummary } from "./zebraTypes";
+import { parseBehaviorDrift, parsePRSummary } from "./zebraParsers";
 
 export async function zebra(options: {
   provider?: string;
@@ -22,10 +23,10 @@ export async function zebra(options: {
   const promptSet: PromptSet<BehaviorDriftResult, PRSummary> = {
     fileReviewPrompt: (vars) =>
       loadPrompt("behaviordiff", "zebra", mapFileReviewInput(vars)),
-    fileReviewParser: (raw) => safeParseJSON(raw) as BehaviorDriftResult,
+    fileReviewParser: parseBehaviorDrift,
     summaryPrompt: (vars) =>
       loadPrompt("prsummary", "zebra", mapSummaryInput(vars)),
-    summaryParser: (raw) => safeParseJSON(raw) as PRSummary,
+    summaryParser: parsePRSummary,
   };
 
   const result = await codeChangedProcessor({
