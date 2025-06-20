@@ -1,6 +1,10 @@
 // src/core/formatPRComment.ts
 
-export function formatPRComment(reviewData: any[]): string {
+import { FileReviewResult } from "../commands/review";
+
+export function formatPRComment(
+  reviewData: { fileName: string; result: FileReviewResult }[],
+): string {
   let comment = "";
   const iconMap: Record<string, string> = {
     low: "🟡",
@@ -8,11 +12,13 @@ export function formatPRComment(reviewData: any[]): string {
     high: "🔴",
   };
 
+  console.log("Review Data", reviewData);
+
   reviewData.forEach((file) => {
     comment += `### **${file.fileName}**\n`;
-    file.issues.forEach((issue: any) => {
+    file.result.issues.forEach((issue) => {
       const icon = iconMap[issue.severity] || "🟡";
-      comment += `- ${icon} **Line ${issue.line}**: ${issue.message} \n`;
+      comment += `- ${icon} **Line ${issue.line}**: ${issue.type} - ${issue.message} \n`;
     });
     comment += `\n`;
   });

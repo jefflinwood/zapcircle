@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { BehaviorDriftResult, PRSummary } from "./zebraTypes";
 
 // Behavior Drift (file-level)
 export const BehaviorDriftSchema = z.object({

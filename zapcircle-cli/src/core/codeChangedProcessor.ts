@@ -3,7 +3,6 @@ import { getChangedFiles, getDiffForFile } from "./diffCollector";
 import { loadBehaviorFile } from "./behaviorLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { encode } from "gpt-tokenizer";
-import { safeParseJSON } from "../utils/jsonUtils";
 
 const DEFAULT_CONTEXT_LIMIT = 128000;
 

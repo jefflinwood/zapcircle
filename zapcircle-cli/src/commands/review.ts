@@ -13,10 +13,10 @@ import { isGitRepo } from "../core/diffCollector";
 import { safeParseJSON } from "../utils/jsonUtils";
 
 export interface FileReviewResult {
-  fileName: string;
   issues: {
-    line: string;
+    line: string | number;
     severity: string;
+    type: string;
     message: string;
   }[];
 }
@@ -48,10 +48,10 @@ export async function review(options: {
     };
   }
 
-  const promptSet: PromptSet<FileReviewResult[], string> = {
+  const promptSet: PromptSet<FileReviewResult, string> = {
     fileReviewPrompt: (vars) =>
       loadPrompt("code", "review", mapFileReviewInput(vars)),
-    fileReviewParser: (raw) => safeParseJSON(raw), // your existing JSON array parser
+    fileReviewParser: (raw) => safeParseJSON(raw),
     summaryPrompt: (vars) =>
       loadPrompt("pullrequest", "review", mapSummaryInput(vars)),
     summaryParser: (raw) => raw, // plain string summary for review
@@ -65,6 +65,8 @@ export async function review(options: {
     verbose: options.verbose || false,
     promptSet,
   });
+
+  console.log(JSON.stringify(result));
 
   if (options.github) {
     await postGitHubComment(

@@ -3,7 +3,6 @@ import { postGitHubComment } from "../core/postGitHubComment";
 import { formatZebraPRComment } from "./formatZebraPRComment";
 import { codeChangedProcessor, PromptSet } from "../core/codeChangedProcessor";
 import { isGitRepo } from "../core/diffCollector";
-import { safeParseJSON } from "../utils/jsonUtils";
 import { BehaviorDriftResult, PRSummary } from "./zebraTypes";
 import { parseBehaviorDrift, parsePRSummary } from "./zebraParsers";
 

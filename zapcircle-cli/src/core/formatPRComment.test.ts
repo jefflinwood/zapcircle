@@ -1,5 +1,3 @@
-import { execSync } from "child_process";
-
 import { formatPRComment } from "./formatPRComment";
 
 jest.mock("child_process", () => ({
@@ -26,15 +24,29 @@ describe("ZapCircle Format PR Comment Tests", () => {
     const reviewData = [
       {
         fileName: "file1.ts",
-        issues: [
-          { line: 10, severity: "low", message: "Unused variable found" },
-        ],
+        result: {
+          issues: [
+            {
+              line: 10,
+              severity: "low",
+              type: "Dead Code",
+              message: "Unused variable found",
+            },
+          ],
+        },
       },
       {
         fileName: "file2.ts",
-        issues: [
-          { line: 25, severity: "high", message: "Potential security risk" },
-        ],
+        result: {
+          issues: [
+            {
+              line: 25,
+              severity: "high",
+              type: "Security Flaw",
+              message: "Potential security risk",
+            },
+          ],
+        },
       },
     ];
 
