@@ -1,11 +1,6 @@
 import { execSync } from "child_process";
-import {
-  getChangedFiles,
-  getDiffForFile,
-  formatPRComment,
-  generateSummary,
-  postGitHubComment,
-} from "./review";
+
+import { postGitHubComment } from "./postGitHubComment";
 
 jest.mock("child_process", () => ({
   execSync: jest.fn(),
@@ -25,39 +20,7 @@ global.fetch = jest.fn(() =>
   }),
 ) as jest.Mock;
 
-describe("ZapCircle Review Tests", () => {
-  /** ✅ Test formatPRComment() */
-  test("should format PR comments correctly", () => {
-    const reviewData = [
-      {
-        file: "file1.ts",
-        issues: [
-          { line: 10, severity: "low", message: "Unused variable found" },
-        ],
-      },
-      {
-        file: "file2.ts",
-        issues: [
-          { line: 25, severity: "high", message: "Potential security risk" },
-        ],
-      },
-    ];
-
-    const result = formatPRComment(reviewData);
-    expect(result).toContain("file1.ts");
-    expect(result).toContain("Line 10");
-    expect(result).toContain("Unused variable found");
-    expect(result).toContain("file2.ts");
-    expect(result).toContain("Line 25");
-    expect(result).toContain("Potential security risk");
-    expect(result).toContain("\ud83d\udd34");
-  });
-
-  test("should return an empty string if no issues found", () => {
-    const result = formatPRComment([]);
-    expect(result).toBe("");
-  });
-
+describe("ZapCircle Post GitHub Comment Tests", () => {
   /** ✅ Test postGitHubComment() */
   test("should update an existing PR comment if one exists", async () => {
     process.env.GITHUB_REF = "refs/pull/42/merge";

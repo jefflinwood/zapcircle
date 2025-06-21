@@ -20,6 +20,7 @@ import { runBenchmark } from "../commands/benchmark";
 import { benchmarkReport } from "../commands/benchmarkReport";
 import { runAllBenchmarks } from "../commands/benchmarkRunAll";
 import { benchmarkReportTests } from "../commands/benchmarkReportTests";
+import { zebra } from "../zebra/zebra";
 
 const program = new Command();
 
@@ -142,6 +143,29 @@ program
   .action((pathToCode, options) => {
     console.log(`Running ZapCircle Context...`);
     context(pathToCode, options);
+  });
+
+program
+  .command("zebra")
+  .description("ZapCircle ZEBRA Behavior Assistant")
+  .option(
+    "--provider <provider>",
+    "LLM provider to use (e.g., openai, anthropic, google, local)",
+  )
+  .option(
+    "--model <model>",
+    "Model to use (e.g., o4-mini, claude-3-opus, gemini-2.0-flash)",
+  )
+  .option("--verbose", "Display LLM prompt and response in the console log")
+  .option("--github", "Post review to GitHub")
+  .option(
+    "--contextLimit",
+    "Number of tokens to use for context limit (default: 128000)",
+  )
+  .option("--baseBranch", "Base branch to use (default: origin/main)")
+  .action((options) => {
+    console.log(`Running ZapCircle Zebra...`);
+    zebra(options);
   });
 
 const agent = program

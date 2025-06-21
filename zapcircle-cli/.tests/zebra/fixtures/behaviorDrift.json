@@ -1,0 +1,12 @@
+{
+  "behaviorChanges": [
+    {
+      "line": "Unknown",
+      "severity": "medium",
+      "message": "Added password strength validation."
+    }
+  ],
+  "breakingChanges": [
+    "Form now requires all fields to be populated before submission."
+  ]
+}

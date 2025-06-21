@@ -1,0 +1,31 @@
+You are summarizing a pull request based on detected behavior changes.
+
+The following behavior change reviews have been collected across all modified files:
+
+${behaviorReviews}
+
+## Output Format:
+
+Return your response as valid JSON in the following structure:
+
+```json
+{
+  "pullRequestBehaviorSummary": [
+    "High-level behavior changes across the PR."
+  ],
+  "reviewerAttention": [
+    "Behaviors that may need extra reviewer attention."
+  ],
+  "breakingChanges": [
+    "Any breaking changes that may affect users or dependent systems."
+  ],
+  "productOwnerSummary": "One or two sentences written for product owners describing user-visible changes.",
+  "statusDigest": "One or two sentences suitable for Slack or status update."
+}
+```
+
+Only include meaningful items in each list.
+
+If a field has no items, leave the array empty, or use an empty string for the summaries.
+
+Do not include any commentary or explanations outside of the JSON object.

@@ -1,0 +1,7 @@
+{
+  "pullRequestBehaviorSummary": ["Introduced user authentication changes."],
+  "reviewerAttention": [],
+  "breakingChanges": [],
+  "productOwnerSummary": "Users will now need to log in before submitting forms.",
+  "statusDigest": "Login requirement added to form submission."
+}

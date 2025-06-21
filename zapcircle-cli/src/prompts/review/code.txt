@@ -13,9 +13,11 @@ You are a senior code reviewer analyzing a pull request.
 
 
   Return structured JSON:
-  [
+  {
+    issues: [
     { "file": "filename.js", "line": 42, "severity": "low", "type": "Issue Type", "message": "Detailed message" }
-  ]
+    ]
+  }
 
 
 Do not include comments, markdown, or any other text. 

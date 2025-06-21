@@ -66,6 +66,7 @@
     "gpt-tokenizer": "^2.9.0",
     "inquirer": "^12.6.3",
     "jest-diff": "^30.0.0",
-    "langchain": "^0.3.9"
+    "langchain": "^0.3.9",
+    "zod": "^3.25.67"
   }
 }
