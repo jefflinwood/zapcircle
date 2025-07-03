@@ -66,9 +66,8 @@ export async function review(options: {
     promptSet,
   });
 
-  console.log(JSON.stringify(result));
-
   if (options.github) {
+    console.log("Posting Comment to GitHub");
     await postGitHubComment(
       result.summary,
       formatPRComment(result.reviewResults),

@@ -12,8 +12,6 @@ export function formatPRComment(
     high: "🔴",
   };
 
-  console.log("Review Data", reviewData);
-
   reviewData.forEach((file) => {
     comment += `### **${file.fileName}**\n`;
     file.result.issues.forEach((issue) => {
