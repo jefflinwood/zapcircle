@@ -33,6 +33,7 @@ export async function zebra(options: {
     contextLimit: options.contextLimit,
     provider: options.provider,
     model: options.model,
+    showSpinner: !options.github,
     verbose: options.verbose || false,
     promptSet,
   });

@@ -62,13 +62,13 @@ export async function review(options: {
     contextLimit: options.contextLimit,
     provider: options.provider,
     model: options.model,
+    showSpinner: !options.github,
     verbose: options.verbose || false,
     promptSet,
   });
 
-  console.log(JSON.stringify(result));
-
   if (options.github) {
+    console.log("Posting Comment to GitHub");
     await postGitHubComment(
       result.summary,
       formatPRComment(result.reviewResults),

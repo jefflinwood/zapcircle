@@ -30,6 +30,7 @@ export interface CodeChangeProcessorOptions<TFileResult, TSummaryResult> {
   contextLimit?: number;
   provider?: string;
   model?: string;
+  showSpinner: boolean;
   verbose: boolean;
   promptSet: PromptSet<TFileResult, TSummaryResult>;
 }
@@ -88,7 +89,7 @@ export async function codeChangedProcessor<TFileResult, TSummaryResult>(
       filePrompt,
       options.verbose,
       false,
-      true,
+      options.showSpinner,
       options.provider,
       options.model,
     );
@@ -116,7 +117,7 @@ export async function codeChangedProcessor<TFileResult, TSummaryResult>(
     summaryPrompt,
     options.verbose,
     false,
-    true,
+    options.showSpinner,
     options.provider,
     options.model,
   );
