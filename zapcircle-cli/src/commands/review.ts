@@ -81,6 +81,7 @@ export async function review(options: {
       const flatResults = result.reviewResults.flatMap((fileReview) =>
         fileReview.result.issues.map((issue) => ({
           file: fileReview.fileName,
+          path: fileReview.filePath,
           line: Number(issue.line),
           type: issue.type,
           severity: issue.severity,
