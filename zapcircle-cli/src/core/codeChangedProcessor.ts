@@ -39,6 +39,7 @@ export interface CodeChangeProcessorOptions<TFileResult, TSummaryResult> {
 export interface ReviewOutput<TFileResult, TSummaryResult> {
   reviewResults: {
     fileName: string;
+    filePath: string;
     result: TFileResult;
   }[];
   summary: TSummaryResult;
@@ -56,7 +57,11 @@ export async function codeChangedProcessor<TFileResult, TSummaryResult>(
     return { reviewResults: [], summary: {} as TSummaryResult };
   }
 
-  const reviewResults: { fileName: string; result: TFileResult }[] = [];
+  const reviewResults: {
+    fileName: string;
+    filePath: string;
+    result: TFileResult;
+  }[] = [];
   const codeToReview: any[] = [];
   let totalTokensUsed = 0;
 
@@ -104,6 +109,7 @@ export async function codeChangedProcessor<TFileResult, TSummaryResult>(
 
     reviewResults.push({
       fileName,
+      filePath,
       result: parsedResult,
     });
   }
