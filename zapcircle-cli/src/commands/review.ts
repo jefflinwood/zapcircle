@@ -28,6 +28,7 @@ export async function review(options: {
   github?: boolean;
   contextLimit?: number;
   baseBranch?: string;
+  output?: "text" | "json";
 }) {
   if (!isGitRepo()) {
     console.warn("⚠️ Not a git repository.");
@@ -57,12 +58,14 @@ export async function review(options: {
     summaryParser: (raw) => raw, // plain string summary for review
   };
 
+  const showSpinner = !options.github && options.output !== "json";
+
   const result = await codeChangedProcessor({
     baseBranch: options.baseBranch,
     contextLimit: options.contextLimit,
     provider: options.provider,
     model: options.model,
-    showSpinner: !options.github,
+    showSpinner: showSpinner,
     verbose: options.verbose || false,
     promptSet,
   });
@@ -74,7 +77,20 @@ export async function review(options: {
       formatPRComment(result.reviewResults),
     );
   } else {
-    console.log(result.summary);
-    console.log(formatPRComment(result.reviewResults));
+    if (options.output === "json") {
+      const flatResults = result.reviewResults.flatMap((fileReview) =>
+        fileReview.result.issues.map((issue) => ({
+          file: fileReview.fileName,
+          line: Number(issue.line),
+          type: issue.type,
+          severity: issue.severity,
+          message: issue.message,
+        })),
+      );
+      console.log(JSON.stringify(flatResults, null, 2));
+    } else {
+      console.log(result.summary);
+      console.log(formatPRComment(result.reviewResults));
+    }
   }
 }

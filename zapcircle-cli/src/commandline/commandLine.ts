@@ -97,8 +97,11 @@ program
     "Number of tokens to use for context limit (default: 128000)",
   )
   .option("--baseBranch", "Base branch to use (default: origin/main)")
+  .option(
+    "--output <output>",
+    "Type of output to return - text (default) or json",
+  )
   .action((options) => {
-    console.log(`Running ZapCircle Review...`);
     review(options);
   });
 
