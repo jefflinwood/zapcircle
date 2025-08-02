@@ -26,6 +26,8 @@ Do not include the ``` code delimiters for markdown.
 
 The output should be ready to parse as a JSON file.
 
+Use the line numbers provided (e.g.,  23 | 👉) to report issues. Focus your review on lines marked with 👉, but you may consider context if needed.
+
   Modified files:
   ${name}
   

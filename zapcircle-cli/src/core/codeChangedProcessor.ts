@@ -1,5 +1,5 @@
 import path from "path";
-import { getChangedFiles, getDiffForFile } from "./diffCollector";
+import { getChangedFiles, getSmartChunksForReview } from "./diffCollector";
 import { loadBehaviorFile } from "./behaviorLoader";
 import { invokeLLMWithSpinner } from "../commandline/invokeLLMWithSpinner";
 import { encode } from "gpt-tokenizer";
@@ -67,7 +67,7 @@ export async function codeChangedProcessor<TFileResult, TSummaryResult>(
 
   for (const filePath of changedFiles) {
     const fileName = path.basename(filePath);
-    const fileDiff = getDiffForFile(filePath, baseBranch);
+    const fileDiff = getSmartChunksForReview(filePath, baseBranch);
     const behaviorFileContents = loadBehaviorFile(filePath) || "";
 
     totalTokensUsed += estimateTokenCount(fileDiff);

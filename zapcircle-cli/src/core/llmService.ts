@@ -15,6 +15,7 @@ export async function invokeLLM(
 
   if (isVerbose) {
     console.log("Provider: " + (config.provider || "openai"));
+    console.log("Prompt:" + prompt);
   }
 
   const response = await llm.invoke(prompt);
